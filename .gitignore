@@ -1,0 +1,23 @@
+# Xcode & Swift Package Manager
+.DS_Store
+*/.DS_Store
+.build/
+Packages/
+Package.pins
+Package.resolved
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+DerivedData/
+.swiftpm/
+
+# App & Binary artifacts
+build/
+*.app
+*.dSYM
+*.ipa
+
+# Logs & Temporary files
+*.log
+scratch/
+.system_generated/
