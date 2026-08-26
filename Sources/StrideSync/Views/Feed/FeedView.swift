@@ -6,7 +6,7 @@ public struct FeedView: View {
     @State private var selectedActivityForComments: ActivityRecord?
     @State private var newCommentText: String = ""
     @State private var selectedShareActivity: ActivityRecord?
-    @State private var showingSearchSheet: Bool = false
+    @State private var showingSearchSheet: Bool = true
     @State private var showingNotificationsSheet: Bool = false
     
     public init(viewModel: FeedViewModel = FeedViewModel()) {
@@ -26,22 +26,18 @@ public struct FeedView: View {
                     } else {
                         LazyVStack(spacing: 16) {
                             ForEach(viewModel.filteredActivities) { activity in
-                                NavigationLink(destination: ActivityDetailView(activity: activity)) {
-                                    ActivityCardView(
-                                        activity: activity,
-                                        onKudosTapped: {
-                                            HapticFeedbackService.shared.playImpact(.medium)
-                                            viewModel.toggleKudos(for: activity)
-                                        },
-                                        onCommentTapped: {
-                                            selectedActivityForComments = activity
-                                        },
-                                        onShareTapped: {
-                                            selectedShareActivity = activity
-                                        }
-                                    )
-                                }
-                                .buttonStyle(.plain)
+                                ActivityCardView(
+                                    activity: activity,
+                                    onKudosTapped: {
+                                        viewModel.toggleKudos(for: activity)
+                                    },
+                                    onCommentTapped: {
+                                        selectedActivityForComments = activity
+                                    },
+                                    onShareTapped: {
+                                        selectedShareActivity = activity
+                                    }
+                                )
                                 .padding(.horizontal, 16)
                             }
                         }
