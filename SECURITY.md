@@ -16,3 +16,4 @@ The StrideSync team takes security and athlete privacy very seriously. If you di
 3. Include detailed steps to reproduce the vulnerability, along with sample payload or code if applicable.
 
 We will acknowledge your report within 48 hours and provide an estimated timeline for a patch.
+

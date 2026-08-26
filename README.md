@@ -74,11 +74,30 @@
 
 ---
 
-## 🌟 Gambaran Umum (Project Overview)
+## 🌟 Tentang Proyek (About StrideSync)
 
-**StrideSync** adalah aplikasi pelacak aktivitas luar ruangan (lari, bersepeda, hiking, dan jalan santai) berbasis iOS yang memadukan keandalan **GPS Engine kelas telemetri** dengan **ekosistem sosial komunitas olahraga**.
+**StrideSync** adalah platform pelacak aktivitas atletik luar ruangan (lari, bersepeda, hiking, dan jalan santai) berbasis iOS yang memadukan keandalan **GPS Engine kelas telemetri** dengan **ekosistem sosial komunitas olahraga modern**.
 
-Aplikasi ini dibangun dari awal mengadopsi standar arsitektur modern **Swift 6 (Strict Concurrency Checking)**, **SwiftData**, **Actor-based GPS isolation**, dan **Human Interface Guidelines (HIG) iOS 18+**.
+Proyek ini dirancang dari awal dengan prinsip **Local-First & Privacy-First Architecture**:
+* 🛡️ **Privasi Atlet Terjamin:** Data lokasi di sekitar rumah atau kantor disanitasi secara otomatis dengan geofence masking sebelum dibagikan atau diekspor ke format GPX.
+* ⚡️ **Swift 6 Strict Concurrency:** Mengeliminasi seluruh potensi *data race* pada pemrosesan koordinat GPS dengan mengisolasi perhitungan pada `actor LocationEngine`.
+* 💾 **Modern Local Persistence:** Menggunakan **SwiftData** dan **UserDefaults DTO** sehingga riwayat latihan, catatan sepatu, dan preferensi pengguna tetap tersimpan utuh secara offline.
+* 🍏 **Native Apple Ecosystem:** Memanfaatkan **ActivityKit (Dynamic Island & Lock Screen Live Activities)**, **HealthKit workout sync**, dan **ImageRenderer** untuk berbagi kartu grafis resolusi tinggi ke Instagram Stories.
+
+---
+
+## 🛠️ Tumpukan Teknologi (Tech Stack)
+
+| Kategori | Teknologi / Framework | Deskripsi Penggunaan |
+| :--- | :--- | :--- |
+| **Language** | **Swift 6.0** | Strict Concurrency Checking (`-swift-version 6`), Actor isolation, Sendable models |
+| **UI Framework** | **SwiftUI & MapKit** | Declarative modern UI, `MapPolyline` gradient styling, custom markers, haptics |
+| **Persistence** | **SwiftData & UserDefaults** | `@Model` relational storage untuk `ActivityRecord`, `Segment`, `TelemetryPoint` |
+| **Live Tracking** | **ActivityKit** | Live Activities di Dynamic Island & Lock Screen via `WorkoutActivityAttributes` |
+| **Health Sync** | **HealthKit** | Otorisasi dan sinkronisasi workout native ke Apple Health (`HKWorkout`) |
+| **Voice Audio** | **AVFoundation** | Voice feedback native via `AVSpeechSynthesizer` (Bahasa Indonesia & English) |
+| **Share Engine** | **ImageRenderer (UIKit)** | Render kartu Story rasio 9:16 resolusi tinggi (3x scale) ke galeri & media sosial |
+| **CI / CD** | **GitHub Actions** | Automated macOS 14 / Xcode 16 pipeline untuk build, linting, dan testing |
 
 ---
 
@@ -177,31 +196,6 @@ graph TD
 
 ---
 
-## ⚡️ Algoritma & Engineering Highlights
-
-### 1. Actor-Isolated Telemetry Accumulation
-Semua kalkulasi posisi GPS dilakukan di dalam `actor LocationEngine`:
-```swift
-public actor LocationEngine {
-    private var telemetryBuffer: [TelemetrySnapshot] = []
-    private var isAutoPaused: Bool = false
-    
-    public func processLocation(_ location: CLLocation) -> TrackingMetrics {
-        guard location.horizontalAccuracy >= 0 && location.horizontalAccuracy <= maxAccuracyThresholdMeters else {
-            return currentMetrics()
-        }
-        // Filtering, Auto-pause evaluation, Distance & Elevation calculation
-        ...
-    }
-}
-```
-
-### 2. Segment Polyline Proximity Matching
-Mencocokkan titik GPS pengguna dengan gerbang koordinat segmen menggunakan rumus *Haversine Geodesic Distance*:
-$$\text{distance}(P_1, P_2) \le R_{\text{gate}} \quad (R_{\text{gate}} = 40.0\text{ m})$$
-
----
-
 ## 📁 Struktur Direktori Proyek
 
 ```
@@ -216,7 +210,7 @@ Sources/
 │   │   ├── ActivityRecord.swift         # Entitas SwiftData aktivitas utama + ActivitySummarySnapshot
 │   │   ├── Segment.swift                # Model segmen virtual jalanan & leaderboard (KOM/QOM, PR)
 │   │   ├── SocialModels.swift           # AthleteProfile, Kudos, Comment, Challenge, GearItem
-│   │   ├── UserSettings.swift           # UserSettingsManager (Preferensi, unit, privasi)
+│   │   ├── UserSettings.swift           # UserSettingsManager dengan auto-persistensi ke UserDefaults
 │   │   └── NotificationItem.swift       # Model pesan & notifikasi sosial
 │   ├── Services/
 │   │   ├── LocationEngine.swift         # Actor pengolah GPS real-time & filter noise
@@ -228,8 +222,8 @@ Sources/
 │   │   ├── PrivacyZoneService.swift     # Geofence masking lokasi rumah/kantor
 │   │   └── HealthKitManager.swift       # Integrasi Apple HealthKit
 │   ├── ViewModels/
-│   │   ├── RecordViewModel.swift        # State machine perekaman HUD & live stream
-│   │   ├── FeedViewModel.swift          # Linimasa komunitas & interaksi Kudos
+│   │   ├── RecordViewModel.swift        # State machine perekaman HUD, Live Activities & GPS stream
+│   │   ├── FeedViewModel.swift          # Linimasa komunitas & SwiftData modelContext integration
 │   │   ├── SearchViewModel.swift        # Pencarian global multi-kategori
 │   │   ├── NotificationViewModel.swift  # Manajemen inbox notifikasi
 │   │   └── ActivityDetailViewModel.swift# Analisis splits & profil elevasi
@@ -241,29 +235,30 @@ Sources/
 │   │   ├── Record/
 │   │   │   └── RecordHUDView.swift      # Layar HUD live tracking OLED dark mode
 │   │   ├── Summary/
-│   │   │   └── ActivitySummaryView.swift# Post-workout breakdown & rute MapKit
+│   │   │   └── ActivitySummaryView.swift# Post-workout breakdown, rute MapKit & matched segments
 │   │   ├── Feed/
 │   │   │   ├── ActivityCardView.swift   # Kartu linimasa sosial dengan animasi Kudos
-│   │   │   └── FeedView.swift           # Timeline komunitas dengan search & notification sheets
+│   │   │   └── FeedView.swift           # Timeline komunitas dengan SwiftData auto-refresh
 │   │   ├── Explore/
 │   │   │   └── ExploreView.swift        # Peta eksplorasi rute & segmen jalanan terdekat
 │   │   ├── Challenges/
 │   │   │   └── ChallengesView.swift     # Tantangan bulanan dengan progress bar & lencana
 │   │   ├── Profile/
 │   │   │   ├── ProfileView.swift        # Profil atlet, trophy case & gear tracker
-│   │   │   ├── ProfileSettingsView.swift# Master pengaturan akun & preferensi
+│   │   │   ├── ProfileSettingsView.swift# Master pengaturan akun & GPX backup
 │   │   │   ├── EditProfileView.swift    # Form edit biodata & metrik fisik
 │   │   │   ├── PrivacyZonesSettingsView.swift # Pengaturan radius privasi rumah
 │   │   │   ├── AudioCuesSettingsView.swift    # Pengaturan bahasa suara
 │   │   │   └── ManageGearView.swift     # Manajemen sepatu lari & sepeda
 │   │   ├── Search/
-│   │   │   └── GlobalSearchView.swift   # Layar pencarian global atlet, rute & klub
+│   │   │   └── GlobalSearchView.swift   # Layar pencarian global atlet, rute & klub interaktif
 │   │   ├── Notifications/
 │   │   │   └── NotificationsView.swift  # Layar pusat notifikasi interaktif
 │   │   ├── Share/
-│   │   │   └── SocialShareCardView.swift# Generator kartu cerita 9:16 untuk Instagram Story
+│   │   │   └── SocialShareCardView.swift# Generator kartu cerita 9:16 untuk Instagram Story (ImageRenderer)
 │   │   └── Segments/
-│   │       └── SegmentLeaderboardView.swift # Papan peringkat segmen & mahkota KOM
+│   │       ├── SegmentLeaderboardView.swift # Papan peringkat segmen & mahkota KOM
+│   │       └── CreateSegmentView.swift      # Pembuat segmen kustom dari rute
 │   └── LiveActivity/
 │       ├── WorkoutActivityAttributes.swift # ActivityKit attributes
 │       └── WorkoutLiveActivityWidget.swift # Widget Dynamic Island & Lock Screen
@@ -271,14 +266,18 @@ Sources/
     └── main.swift                       # Terminal simulation runner
 Tests/
 └── StrideSyncTests/
+    ├── RecordViewModelTests.swift       # 2 Tests: HUD lifecycle, state transitions & coordinate ingestion
+    ├── FeedAndSocialTests.swift         # 3 Tests: Kudos toggle, comment additions & filtering
+    ├── PersistentSettingsTests.swift    # 1 Test: UserDefaults persistence & privacy zones
     ├── LocationEngineTests.swift        # 2 Tests: GPS noise filtering & tracking state
     ├── SplitCalculatorTests.swift       # 1 Test: 1-km pace split calculation
     ├── SegmentMatcherTests.swift        # 1 Test: Virtual segment matching
     ├── PrivacyZoneTests.swift           # 1 Test: Geofence coordinate masking
     ├── GPXServiceTests.swift            # 1 Test: GPX 1.1 XML export & parse
-    ├── LiveLocationManagerTests.swift   # 2 Tests: Hardware delegate bridge & models
+    ├── LiveLocationManagerTests.swift   # 3 Tests: Hardware delegate bridge, gear & challenges
     ├── UserSettingsTests.swift          # 1 Test: Settings state & privacy zones
-    └── SearchAndNotificationTests.swift # 2 Tests: Search scope filtering & notifications
+    ├── SearchAndNotificationTests.swift # 2 Tests: Search scope filtering & notifications
+    └── AdvancedFeaturesTests.swift      # 2 Tests: Heart Rate Zone 1-5 & Watch Session Manager
 ```
 
 ---

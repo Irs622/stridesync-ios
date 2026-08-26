@@ -29,3 +29,4 @@ If applicable, add screenshots or screen recordings to help explain your problem
 
 ### 📜 Additional Context / Logs
 Add any other context about the problem here (e.g. GPS accuracy issues, HealthKit permission alerts, crash logs).
+
