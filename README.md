@@ -268,3 +268,4 @@ Script ini akan:
 ## 📄 Lisensi (License)
 
 Proyek ini dirilis di bawah lisensi [MIT License](LICENSE) — Copyright (c) 2026 **[Irs622](https://github.com/Irs622)**.
+

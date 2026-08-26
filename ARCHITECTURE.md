@@ -134,3 +134,4 @@ State perekaman disinkronisasikan ke Dynamic Island menggunakan `ActivityKit`:
 - **Compact Leading**: Ikon jenis olahraga (misal `figure.run`) dan indikator status *recording*.
 - **Compact Trailing**: Jarak tempuh saat ini (misal `5.24 km`).
 - **Expanded Layout**: Menampilkan metrik lengkap (Jarak, Moving Time, Current Pace, dan Detak Jantung) serta tombol aksi interaktif.
+

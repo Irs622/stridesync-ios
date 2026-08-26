@@ -53,3 +53,4 @@ Terima kasih atas ketertarikan Anda untuk berkontribusi pada pengembangan **Stri
 ## 📬 Pertanyaan & Dukungan
 
 Jika Anda memiliki pertanyaan mengenai arsitektur atau ide fitur baru, silakan buka **Issue** di GitHub atau hubungi tim pengembang via GitHub repository.
+
