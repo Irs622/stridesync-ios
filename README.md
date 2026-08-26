@@ -11,8 +11,63 @@
 
 **A high-performance, modern Strava-like fitness tracking and social networking iOS platform built with Swift 6, SwiftUI, SwiftData, CoreLocation Actors, MapKit, and ActivityKit (Dynamic Island).**
 
-[Fitur Utama](#-fitur-utama) • [Arsitektur Teknis](#-arsitektur-teknis) • [Algoritma & Engineering](#-algoritma--engineering) • [Struktur Proyek](#-struktur-direktori-proyek) • [Cara Menjalankan](#-cara-menjalankan-proyek) • [Dokumentasi](#-dokumentasi-lengkap)
+[Tampilan Aplikasi](#-tampilan-antarmuka-aplikasi-visual-showcase) • [Fitur Utama](#-fitur-utama) • [Arsitektur Teknis](#-arsitektur-teknis) • [Algoritma & Engineering](#-algoritma--engineering) • [Struktur Proyek](#-struktur-direktori-proyek) • [Cara Menjalankan](#-cara-menjalankan-proyek) • [Dokumentasi](#-dokumentasi-lengkap)
 
+</div>
+
+---
+
+## 📱 Tampilan Antarmuka Aplikasi (Visual Showcase)
+
+<div align="center">
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="assets/screenshots/01_community_feed.png" alt="Community Feed" width="100%" style="border-radius: 14px;" />
+      <br />
+      <b>📰 1. Community Feed</b>
+      <br />
+      <sub>Linimasa sosial, filter olahraga & Kudos</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="assets/screenshots/03_record_hud.png" alt="Record HUD" width="100%" style="border-radius: 14px;" />
+      <br />
+      <b>⏱️ 2. Pro HUD Recording</b>
+      <br />
+      <sub>OLED dark theme, live GPS & metrik besar</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="assets/screenshots/02_explore_maps.png" alt="Explore Maps" width="100%" style="border-radius: 14px;" />
+      <br />
+      <b>🗺️ 3. Explore & Segmen</b>
+      <br />
+      <sub>Peta interaktif & rute tanjakan populer</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="33%">
+      <img src="assets/screenshots/04_challenges.png" alt="Challenges" width="100%" style="border-radius: 14px;" />
+      <br />
+      <b>🏆 4. Tantangan Bulanan</b>
+      <br />
+      <sub>Progress bar 100K & piala virtual</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="assets/screenshots/05_profile.png" alt="Profile & Gear" width="100%" style="border-radius: 14px;" />
+      <br />
+      <b>👤 5. Profil & Gear Tracker</b>
+      <br />
+      <sub>Statistik atlet & umur pakai sepatu/sepeda</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="assets/screenshots/06_global_search.png" alt="Global Search" width="100%" style="border-radius: 14px;" />
+      <br />
+      <b>🔍 6. Pencarian Global</b>
+      <br />
+      <sub>Pencarian cerdas atlet, aktivitas & klub</sub>
+    </td>
+  </tr>
+</table>
 </div>
 
 ---
@@ -268,4 +323,3 @@ Script ini akan:
 ## 📄 Lisensi (License)
 
 Proyek ini dirilis di bawah lisensi [MIT License](LICENSE) — Copyright (c) 2026 **[Irs622](https://github.com/Irs622)**.
-
