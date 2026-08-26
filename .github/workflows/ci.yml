@@ -12,23 +12,28 @@ concurrency:
 
 jobs:
   build-and-test:
-    name: Build & Test (Swift 6 / macOS Runner)
+    name: Build & Test (Swift 6 / Xcode 16)
     runs-on: macos-14
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Show Swift & Xcode Version
+      - name: Select Xcode 16 (Swift 6 Toolchain)
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '^16.0'
+
+      - name: Toolchain Verification
         run: |
           swift --version
           xcodebuild -version
 
       - name: Build StrideSync Package
-        run: swift build -v
+        run: swift build
 
       - name: Run Test Suite (14 Unit Tests across 9 Suites)
-        run: swift test -v --parallel
+        run: swift test
 
       - name: Run Demo Simulation Executable
         run: swift run StrideSyncDemo
