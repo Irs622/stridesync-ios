@@ -1,23 +1,34 @@
-# Xcode & Swift Package Manager
+# Xcode & Apple OS
 .DS_Store
-*/.DS_Store
+DerivedData/
+*.xcuserstate
+project.xcworkspace/xcuserdata/
+*.xcuserdatad/
+*.hmap
+*.xccheckout
+*.moved-aside
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager & Builds
 .build/
+build/
 Packages/
 Package.pins
 Package.resolved
-*.xcodeproj
-*.xcworkspace
-xcuserdata/
-DerivedData/
 .swiftpm/
 
-# App & Binary artifacts
-build/
+# App & Binary Artifacts
 *.app
-*.dSYM
 *.ipa
+*.pkg
 
-# Logs & Temporary files
-*.log
+# Temporary & Editor Cache
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+.gemini/
 scratch/
-.system_generated/

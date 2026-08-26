@@ -7,7 +7,7 @@
 [![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-007AFF.svg?style=flat-square)](https://developer.apple.com/xcode/swiftui/)
 [![SwiftData](https://img.shields.io/badge/Persistence-SwiftData-green.svg?style=flat-square)](https://developer.apple.com/documentation/swiftdata)
 [![CI](https://github.com/Irs622/stridesync-ios/actions/workflows/ci.yml/badge.svg)](https://github.com/Irs622/stridesync-ios/actions)
-[![Tests](https://img.shields.io/badge/Tests-14%2F14%20Passing%20(100%25)-brightgreen.svg?style=flat-square)]()
+[![Tests](https://img.shields.io/badge/Tests-20%2F20%20Passing%20(100%25)-brightgreen.svg?style=flat-square)]()
 [![SwiftLint](https://img.shields.io/badge/SwiftLint-Compliant-brightgreen.svg?style=flat-square)](.swiftlint.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
