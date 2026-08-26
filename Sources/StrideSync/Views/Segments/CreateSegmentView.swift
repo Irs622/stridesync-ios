@@ -150,3 +150,4 @@ public struct CreateSegmentView: View {
         return list
     }
 }
+

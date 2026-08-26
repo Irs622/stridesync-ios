@@ -33,3 +33,4 @@ struct AdvancedFeaturesTests {
         #expect(manager.isWatchAppInstalled == true)
     }
 }
+

@@ -56,3 +56,4 @@ public final class HapticFeedbackService: Sendable {
         case success, warning, error
     }
 }
+

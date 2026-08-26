@@ -82,3 +82,4 @@ public struct HeartRateZoneCalculator: Sendable {
         ]
     }
 }
+

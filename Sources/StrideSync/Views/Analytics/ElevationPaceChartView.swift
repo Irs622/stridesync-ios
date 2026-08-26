@@ -159,3 +159,4 @@ public struct ElevationPaceChartView: View {
         return pts
     }
 }
+

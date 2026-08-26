@@ -74,3 +74,4 @@ public struct HeartRateZonesView: View {
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
 }
+

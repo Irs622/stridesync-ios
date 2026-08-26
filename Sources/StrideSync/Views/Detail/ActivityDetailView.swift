@@ -271,3 +271,4 @@ public struct ActivityDetailView: View {
         return list
     }
 }
+
