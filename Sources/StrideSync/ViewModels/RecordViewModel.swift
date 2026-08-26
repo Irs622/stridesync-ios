@@ -42,6 +42,7 @@ public final class RecordViewModel {
         Task {
             await engine.start()
             self.trackingState = .recording
+            HapticFeedbackService.shared.playNotification(.success)
             AudioCueService.shared.speakWorkoutStatus(text: "Latihan dimulai")
             self.startTimer()
         }
@@ -52,6 +53,7 @@ public final class RecordViewModel {
         Task {
             await locationEngine?.pause()
             self.trackingState = .paused
+            HapticFeedbackService.shared.playImpact(.heavy)
             AudioCueService.shared.speakWorkoutStatus(text: "Latihan dijeda")
         }
     }
@@ -61,6 +63,7 @@ public final class RecordViewModel {
         Task {
             await locationEngine?.resume()
             self.trackingState = .recording
+            HapticFeedbackService.shared.playImpact(.medium)
             AudioCueService.shared.speakWorkoutStatus(text: "Latihan dilanjutkan")
         }
     }
@@ -71,6 +74,7 @@ public final class RecordViewModel {
         stopTimer()
         let (summary, points) = await engine.finish()
         self.trackingState = .finished
+        HapticFeedbackService.shared.playNotification(.success)
         
         let record = ActivityRecord(from: summary)
         

@@ -26,18 +26,22 @@ public struct FeedView: View {
                     } else {
                         LazyVStack(spacing: 16) {
                             ForEach(viewModel.filteredActivities) { activity in
-                                ActivityCardView(
-                                    activity: activity,
-                                    onKudosTapped: {
-                                        viewModel.toggleKudos(for: activity)
-                                    },
-                                    onCommentTapped: {
-                                        selectedActivityForComments = activity
-                                    },
-                                    onShareTapped: {
-                                        selectedShareActivity = activity
-                                    }
-                                )
+                                NavigationLink(destination: ActivityDetailView(activity: activity)) {
+                                    ActivityCardView(
+                                        activity: activity,
+                                        onKudosTapped: {
+                                            HapticFeedbackService.shared.playImpact(.medium)
+                                            viewModel.toggleKudos(for: activity)
+                                        },
+                                        onCommentTapped: {
+                                            selectedActivityForComments = activity
+                                        },
+                                        onShareTapped: {
+                                            selectedShareActivity = activity
+                                        }
+                                    )
+                                }
+                                .buttonStyle(.plain)
                                 .padding(.horizontal, 16)
                             }
                         }
