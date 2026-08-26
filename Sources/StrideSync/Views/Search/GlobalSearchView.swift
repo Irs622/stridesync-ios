@@ -5,6 +5,9 @@ public struct GlobalSearchView: View {
     @State public var viewModel: SearchViewModel
     @Environment(\.dismiss) private var dismiss
     
+    @State private var followedAthleteIds: Set<UUID> = []
+    @State private var joinedClubIds: Set<UUID> = []
+    
     public init(viewModel: SearchViewModel = SearchViewModel()) {
         self._viewModel = State(initialValue: viewModel)
     }
@@ -184,7 +187,8 @@ public struct GlobalSearchView: View {
     }
     
     private func athleteResultCard(athlete: AthleteProfile) -> some View {
-        HStack(spacing: 12) {
+        let isFollowing = followedAthleteIds.contains(athlete.id)
+        return HStack(spacing: 12) {
             Circle()
                 .fill(StrideTheme.primaryGradient)
                 .frame(width: 48, height: 48)
@@ -208,14 +212,20 @@ public struct GlobalSearchView: View {
             
             Spacer()
             
-            Button("Ikuti") {
-                // Follow Action
+            Button(isFollowing ? "Mengikuti" : "Ikuti") {
+                if isFollowing {
+                    followedAthleteIds.remove(athlete.id)
+                    HapticFeedbackService.shared.playImpact(.light)
+                } else {
+                    followedAthleteIds.insert(athlete.id)
+                    HapticFeedbackService.shared.playNotification(.success)
+                }
             }
             .font(.caption.bold())
             .padding(.horizontal, 14)
             .padding(.vertical, 6)
-            .background(StrideTheme.primaryOrange)
-            .foregroundStyle(Color.white)
+            .background(isFollowing ? Color.secondary.opacity(0.15) : StrideTheme.primaryOrange)
+            .foregroundStyle(isFollowing ? Color.primary : Color.white)
             .clipShape(Capsule())
         }
         .padding(14)
@@ -254,7 +264,8 @@ public struct GlobalSearchView: View {
     }
     
     private func clubResultCard(club: ClubItem) -> some View {
-        HStack(spacing: 12) {
+        let isJoined = joinedClubIds.contains(club.id)
+        return HStack(spacing: 12) {
             Circle()
                 .fill(Color.purple.opacity(0.15))
                 .frame(width: 48, height: 48)
@@ -266,21 +277,27 @@ public struct GlobalSearchView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(club.name)
                     .font(.system(.headline, design: .rounded, weight: .bold))
-                Text("\(club.memberCount) Anggota • \(club.location)")
+                Text("\(club.memberCount + (isJoined ? 1 : 0)) Anggota • \(club.location)")
                     .font(.caption)
                     .foregroundStyle(Color.secondary)
             }
             
             Spacer()
             
-            Button("Gabung") {
-                // Join Club Action
+            Button(isJoined ? "Tergabung" : "Gabung") {
+                if isJoined {
+                    joinedClubIds.remove(club.id)
+                    HapticFeedbackService.shared.playImpact(.light)
+                } else {
+                    joinedClubIds.insert(club.id)
+                    HapticFeedbackService.shared.playNotification(.success)
+                }
             }
             .font(.caption.bold())
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(Color.secondary.opacity(0.12))
-            .foregroundStyle(Color.primary)
+            .background(isJoined ? StrideTheme.athleticGreen.opacity(0.15) : Color.secondary.opacity(0.12))
+            .foregroundStyle(isJoined ? StrideTheme.athleticGreen : Color.primary)
             .clipShape(Capsule())
         }
         .padding(14)

@@ -98,12 +98,15 @@ public struct ActivityDetailView: View {
             }
         }
         .sheet(isPresented: $showingCreateSegmentSheet) {
-            CreateSegmentView(telemetryPoints: telemetryPoints)
+            CreateSegmentView(telemetryPoints: telemetryPoints) { newSegment in
+                HapticFeedbackService.shared.playNotification(.success)
+                showingCreateSegmentSheet = false
+            }
         }
         .alert("File GPX Berhasil Dibuat", isPresented: $showingGPXExportedAlert) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text("File GPX 1.1 XML (\(telemetryPoints.count) titik) telah siap diekspor ke perangkat lain.")
+            Text("File GPX 1.1 XML (\(telemetryPoints.count) titik) telah siap diekspor ke aplikasi lain.")
         }
     }
     

@@ -9,6 +9,7 @@ public struct ActivitySummaryView: View {
     @Bindable public var activity: ActivityRecord
     public var splits: [SplitSnapshot]
     public var telemetryPoints: [TelemetrySnapshot]
+    public var segmentEfforts: [SegmentEffort]
     public var onSave: (() -> Void)?
     public var onShare: (() -> Void)?
     
@@ -16,12 +17,14 @@ public struct ActivitySummaryView: View {
         activity: ActivityRecord,
         splits: [SplitSnapshot] = [],
         telemetryPoints: [TelemetrySnapshot] = [],
+        segmentEfforts: [SegmentEffort] = [],
         onSave: (() -> Void)? = nil,
         onShare: (() -> Void)? = nil
     ) {
         self.activity = activity
         self.splits = splits.isEmpty ? SplitCalculator().calculateSplits(from: telemetryPoints) : splits
         self.telemetryPoints = telemetryPoints
+        self.segmentEfforts = segmentEfforts
         self.onSave = onSave
         self.onShare = onShare
     }
@@ -140,6 +143,71 @@ public struct ActivitySummaryView: View {
                         }
                         .background(StrideTheme.cardBackground)
                         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .padding(.horizontal, 16)
+                    }
+                }
+                
+                // Matched Segments & KOM Achievements Section
+                if !segmentEfforts.isEmpty {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack {
+                            Text("Segmen Terlewati & Rekor")
+                                .font(.system(.headline, design: .rounded, weight: .bold))
+                            Spacer()
+                            Text("\(segmentEfforts.count) Segmen")
+                                .font(.caption.bold())
+                                .foregroundStyle(Color.secondary)
+                        }
+                        .padding(.horizontal, 20)
+                        
+                        VStack(spacing: 8) {
+                            ForEach(segmentEfforts) { effort in
+                                HStack(spacing: 12) {
+                                    Circle()
+                                        .fill(effort.isKOM ? Color.yellow.opacity(0.2) : StrideTheme.primaryOrange.opacity(0.15))
+                                        .frame(width: 42, height: 42)
+                                        .overlay {
+                                            Image(systemName: effort.isKOM ? "crown.fill" : "flag.checkered")
+                                                .font(.headline)
+                                                .foregroundStyle(effort.isKOM ? Color.yellow : StrideTheme.primaryOrange)
+                                        }
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        HStack(spacing: 6) {
+                                            Text(effort.segmentName)
+                                                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                                            
+                                            if effort.isKOM {
+                                                Text("KOM 👑")
+                                                    .font(.system(size: 9, weight: .black, design: .rounded))
+                                                    .padding(.horizontal, 6)
+                                                    .padding(.vertical, 2)
+                                                    .background(Color.yellow.opacity(0.2))
+                                                    .foregroundStyle(Color.yellow)
+                                                    .clipShape(Capsule())
+                                            } else if effort.isPersonalRecord {
+                                                Text("PR ⚡️")
+                                                    .font(.system(size: 9, weight: .black, design: .rounded))
+                                                    .padding(.horizontal, 6)
+                                                    .padding(.vertical, 2)
+                                                    .background(StrideTheme.primaryOrange.opacity(0.15))
+                                                    .foregroundStyle(StrideTheme.primaryOrange)
+                                                    .clipShape(Capsule())
+                                            }
+                                        }
+                                        
+                                        Text("Waktu: \(effort.formattedDuration) • Kecepatan: \(String(format: "%.1f km/h", effort.averageSpeedMps * 3.6))")
+                                            .font(.caption)
+                                            .foregroundStyle(Color.secondary)
+                                    }
+                                    
+                                    Spacer()
+                                }
+                                .padding(12)
+                                .background(StrideTheme.cardBackground)
+                                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            }
+                        }
                         .padding(.horizontal, 16)
                     }
                 }

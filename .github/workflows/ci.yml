@@ -32,7 +32,7 @@ jobs:
       - name: Build StrideSync Package
         run: swift build
 
-      - name: Run Test Suite (14 Unit Tests across 9 Suites)
+      - name: Run Test Suite (20 Unit Tests across 12 Suites)
         run: swift test
 
       - name: Run Demo Simulation Executable

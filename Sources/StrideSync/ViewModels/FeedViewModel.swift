@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import SwiftData
 
 /// Observable ViewModel managing social community feeds, Kudos reactions, and comments.
 @Observable
@@ -22,6 +23,19 @@ public final class FeedViewModel {
         return activities.filter { $0.activityType == filter }
     }
     
+    public func refresh(from modelContext: ModelContext?) {
+        guard let context = modelContext else { return }
+        let descriptor = FetchDescriptor<ActivityRecord>(sortBy: [SortDescriptor(\.startTime, order: .reverse)])
+        if let persisted = try? context.fetch(descriptor), !persisted.isEmpty {
+            // Keep any community mock activities that don't collide
+            var merged = persisted
+            for act in activities where !persisted.contains(where: { $0.id == act.id }) {
+                merged.append(act)
+            }
+            self.activities = merged
+        }
+    }
+    
     public func toggleKudos(for activity: ActivityRecord) {
         if activity.isLikedByCurrentUser {
             activity.isLikedByCurrentUser = false
@@ -29,6 +43,7 @@ public final class FeedViewModel {
         } else {
             activity.isLikedByCurrentUser = true
             activity.kudosCount += 1
+            HapticFeedbackService.shared.playImpact(.light)
         }
     }
     
@@ -46,6 +61,7 @@ public final class FeedViewModel {
             commentsByActivityId[activity.id] = [comment]
         }
         activity.commentsCount += 1
+        HapticFeedbackService.shared.playNotification(.success)
     }
     
     public func loadMockFeed() {

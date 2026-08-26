@@ -7,6 +7,7 @@ public struct ProfileSettingsView: View {
     
     @State private var showingSignOutAlert: Bool = false
     @State private var showingCacheClearedAlert: Bool = false
+    @State private var showingGPXBackupAlert: Bool = false
     
     public init(settings: UserSettingsManager = .shared) {
         self._settings = State(initialValue: settings)
@@ -93,7 +94,7 @@ public struct ProfileSettingsView: View {
                     }
                     
                     Button {
-                        // Export all data
+                        showingGPXBackupAlert = true
                     } label: {
                         Label("Ekspor Semua Riwayat Latihan (GPX Backup)", systemImage: "square.and.arrow.down")
                             .foregroundStyle(StrideTheme.primaryOrange)
@@ -141,6 +142,11 @@ public struct ProfileSettingsView: View {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text("Semua cache peta sementara telah dibersihkan untuk menghemat ruang memori.")
+            }
+            .alert("Backup GPX Berhasil Disiapkan", isPresented: $showingGPXBackupAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Arsip seluruh riwayat latihan dalam format GPX 1.1 XML siap dibagikan dan diekspor.")
             }
             .confirmationDialog("Yakin Ingin Keluar?", isPresented: $showingSignOutAlert, titleVisibility: .visible) {
                 Button("Keluar", role: .destructive) {

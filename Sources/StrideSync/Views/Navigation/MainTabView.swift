@@ -6,8 +6,9 @@ public struct MainTabView: View {
     public var modelContext: ModelContext?
     @State private var selectedTab: Int = 1
     @State private var isShowingRecordSheet: Bool = false
-    @State private var finishedWorkoutData: (ActivityRecord, [TelemetrySnapshot], [SplitSnapshot])? = nil
+    @State private var finishedWorkoutData: (ActivityRecord, [TelemetrySnapshot], [SplitSnapshot], [SegmentEffort])? = nil
     @State private var isShowingSummarySheet: Bool = false
+    @State private var isShowingShareSheet: Bool = false
     
     public init(modelContext: ModelContext? = nil) {
         self.modelContext = modelContext
@@ -16,7 +17,7 @@ public struct MainTabView: View {
     public var body: some View {
         TabView(selection: $selectedTab) {
             // Tab 1: Community Feed
-            FeedView()
+            FeedView(modelContext: modelContext)
                 .tabItem {
                     Label("Feed", systemImage: "newspaper.fill")
                 }
@@ -69,33 +70,100 @@ public struct MainTabView: View {
         #endif
         .sheet(isPresented: $isShowingSummarySheet) {
             if let data = finishedWorkoutData {
-                ActivitySummaryView(
-                    activity: data.0,
-                    splits: data.2,
-                    telemetryPoints: data.1,
-                    onSave: {
-                        // Persist to SwiftData if context available
-                        if let context = modelContext {
-                            context.insert(data.0)
-                            try? context.save()
+                NavigationStack {
+                    ActivitySummaryView(
+                        activity: data.0,
+                        splits: data.2,
+                        telemetryPoints: data.1,
+                        segmentEfforts: data.3,
+                        onSave: {
+                            // Persist to SwiftData if context available
+                            if let context = modelContext {
+                                let record = data.0
+                                
+                                // Map snapshots into SwiftData models
+                                for pt in data.1 {
+                                    let modelPt = TelemetryPoint(
+                                        timestamp: pt.timestamp,
+                                        latitude: pt.latitude,
+                                        longitude: pt.longitude,
+                                        altitude: pt.altitude,
+                                        speedMps: pt.speedMps,
+                                        horizontalAccuracy: pt.horizontalAccuracy,
+                                        heartRate: pt.heartRate,
+                                        cadence: pt.cadence
+                                    )
+                                    record.telemetryPoints.append(modelPt)
+                                }
+                                
+                                for sp in data.2 {
+                                    let modelSp = DistanceSplit(
+                                        splitIndex: sp.splitIndex,
+                                        distanceMeters: sp.distanceMeters,
+                                        durationSeconds: sp.durationSeconds,
+                                        averagePaceSecondsPerKm: sp.averagePaceSecondsPerKm,
+                                        elevationChangeMeters: sp.elevationChangeMeters,
+                                        averageHeartRate: sp.averageHeartRate
+                                    )
+                                    record.splits.append(modelSp)
+                                }
+                                
+                                context.insert(record)
+                                try? context.save()
+                            }
+                            
+                            // HealthKit async save
+                            if UserSettingsManager.shared.healthKitSyncEnabled {
+                                Task {
+                                    _ = await HealthKitManager.shared.saveWorkout(
+                                        activityType: data.0.activityType,
+                                        startDate: data.0.startTime,
+                                        endDate: data.0.endTime,
+                                        distanceMeters: data.0.distanceMeters,
+                                        caloriesBurned: data.0.caloriesBurned
+                                    )
+                                }
+                            }
+                            
+                            isShowingSummarySheet = false
+                            finishedWorkoutData = nil
+                            selectedTab = 0 // Go to Feed
+                        },
+                        onShare: {
+                            isShowingShareSheet = true
                         }
-                        isShowingSummarySheet = false
-                        finishedWorkoutData = nil
-                        selectedTab = 0 // Go to Feed
-                    },
-                    onShare: {
-                        // Action for sharing card
+                    )
+                }
+            }
+        }
+        .sheet(isPresented: $isShowingShareSheet) {
+            if let data = finishedWorkoutData {
+                NavigationStack {
+                    ScrollView {
+                        SocialShareCardView(
+                            activity: data.0,
+                            coordinates: data.1.map { $0.coordinate }
+                        )
+                        .padding(.vertical, 20)
                     }
-                )
+                    .navigationTitle("Bagikan Story")
+                    .toolbar {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button("Selesai") {
+                                isShowingShareSheet = false
+                            }
+                        }
+                    }
+                }
             }
         }
     }
     
     private var recordHUDSheetView: some View {
         RecordHUDView(
-            onFinish: { record, points, splits in
+            onFinish: { record, points, splits, efforts in
                 isShowingRecordSheet = false
-                finishedWorkoutData = (record, points, splits)
+                finishedWorkoutData = (record, points, splits, efforts)
                 isShowingSummarySheet = true
             },
             onDiscard: {

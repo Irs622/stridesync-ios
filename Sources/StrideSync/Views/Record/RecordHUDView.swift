@@ -7,7 +7,7 @@ import _MapKit_SwiftUI
 /// Pro-grade live workout HUD recording screen with OLED dark theme, neon accents, and MapKit route view.
 public struct RecordHUDView: View {
     @State public var viewModel: RecordViewModel
-    public var onFinish: ((ActivityRecord, [TelemetrySnapshot], [SplitSnapshot]) -> Void)?
+    public var onFinish: ((ActivityRecord, [TelemetrySnapshot], [SplitSnapshot], [SegmentEffort]) -> Void)?
     public var onDiscard: (() -> Void)?
     
     @State private var showingFinishConfirmation: Bool = false
@@ -15,7 +15,7 @@ public struct RecordHUDView: View {
     
     public init(
         viewModel: RecordViewModel = RecordViewModel(),
-        onFinish: ((ActivityRecord, [TelemetrySnapshot], [SplitSnapshot]) -> Void)? = nil,
+        onFinish: ((ActivityRecord, [TelemetrySnapshot], [SplitSnapshot], [SegmentEffort]) -> Void)? = nil,
         onDiscard: (() -> Void)? = nil
     ) {
         self._viewModel = State(initialValue: viewModel)
@@ -103,7 +103,7 @@ public struct RecordHUDView: View {
             Button("Simpan Latihan", role: .none) {
                 Task {
                     if let result = await viewModel.finishWorkout() {
-                        onFinish?(result.0, result.1, result.2)
+                        onFinish?(result.0, result.1, result.2, result.3)
                     }
                 }
             }

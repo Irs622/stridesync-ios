@@ -1,15 +1,18 @@
 import SwiftUI
+import SwiftData
 
 /// Main Community Feed screen with refined iOS navigation, search, and notification center integration.
 public struct FeedView: View {
+    public var modelContext: ModelContext?
     @State public var viewModel: FeedViewModel
     @State private var selectedActivityForComments: ActivityRecord?
     @State private var newCommentText: String = ""
     @State private var selectedShareActivity: ActivityRecord?
-    @State private var showingSearchSheet: Bool = true
+    @State private var showingSearchSheet: Bool = false
     @State private var showingNotificationsSheet: Bool = false
     
-    public init(viewModel: FeedViewModel = FeedViewModel()) {
+    public init(viewModel: FeedViewModel = FeedViewModel(), modelContext: ModelContext? = nil) {
+        self.modelContext = modelContext
         self._viewModel = State(initialValue: viewModel)
     }
     
@@ -92,6 +95,9 @@ public struct FeedView: View {
                         }
                     }
                 }
+            }
+            .onAppear {
+                viewModel.refresh(from: modelContext)
             }
         }
     }

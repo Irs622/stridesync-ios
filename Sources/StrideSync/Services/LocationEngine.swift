@@ -81,12 +81,20 @@ public actor LocationEngine {
         activityType: ActivityType = .run,
         autoPauseEnabled: Bool = true,
         autoPauseSpeedThresholdMps: Double = 0.8,
-        maxAcceptableAccuracyMeters: Double = 25.0
+        maxAcceptableAccuracyMeters: Double = 25.0,
+        initialState: TrackingState = .idle
     ) {
         self.activityType = activityType
         self.autoPauseEnabled = autoPauseEnabled
         self.autoPauseSpeedThresholdMps = autoPauseSpeedThresholdMps
         self.maxAcceptableAccuracyMeters = maxAcceptableAccuracyMeters
+        self.state = initialState
+        if initialState == .recording {
+            let now = Date()
+            self.sessionStartTime = now
+            self.lastRecordedPointTime = now
+            self.lastStateChangeTime = now
+        }
     }
     
     // MARK: - Lifecycle Controls

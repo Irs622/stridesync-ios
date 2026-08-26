@@ -13,9 +13,11 @@ echo "Compiling StrideSync for iOS Simulator (arm64)..."
 swiftc \
     -target arm64-apple-ios18.0-simulator \
     -sdk "$SDK_PATH" \
+    -module-name StrideSync \
     -swift-version 6 \
     -parse-as-library \
-    -Xlinker -syslibroot -Xlinker "$SDK_PATH" \
+    -wmo \
+    -Onone \
     -o "$APP_DIR/StrideSync" \
     $SWIFT_FILES
 
