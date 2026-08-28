@@ -198,9 +198,20 @@ struct StrideSyncDemoRunner {
         for split in splits {
             print("   👉 Km \(split.splitIndex): Waktu \(split.formattedDuration) | Pace \(split.formattedPace) | Elevasi +\(String(format: "%.0f", split.elevationChangeMeters))m")
         }
+        
+        let efforts = segmentMatcher.matchSegments(
+            activityPoints: telemetry,
+            segments: [sampleSegment],
+            athleteId: UUID(),
+            athleteName: "Budi Santoso"
+        )
+        if let firstEffort = efforts.first {
+            print("   🏅 Segmen Terdeteksi: \(sampleSegment.name) - Waktu \(firstEffort.formattedDuration) (\(firstEffort.isPersonalRecord ? "Rekor Baru! 🏆" : "Effort Tercatat"))")
+        }
+        
         _ = privacyService.sanitizeCoordinates(coords)
         let gpxXml = gpxService.exportToGPX(activity: activity, points: telemetry)
-        print("   📄 File GPX 1.1 XML berhasil dibuat (\(telemetry.count) titik).")
+        print("   📄 File GPX 1.1 XML berhasil diekspor (\(telemetry.count) titik telemetri, \(gpxXml.count) karakter XML).")
         
         print("""
         ========================================================================
