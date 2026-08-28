@@ -11,6 +11,7 @@ public final class AudioCueService: NSObject, @unchecked Sendable {
     
     public override init() {
         super.init()
+        self.synthesizer.delegate = self
     }
     
     /// Speaks split milestone announcement (e.g. "Kilometer 1, pace 5 menit 12 detik, waktu total 5 menit 12 detik").
@@ -56,6 +57,20 @@ public final class AudioCueService: NSObject, @unchecked Sendable {
         utterance.volume = 1.0
         
         synthesizer.speak(utterance)
+    }
+}
+
+extension AudioCueService: AVSpeechSynthesizerDelegate {
+    public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        #if os(iOS)
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        #endif
+    }
+    
+    public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+        #if os(iOS)
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        #endif
     }
 }
 

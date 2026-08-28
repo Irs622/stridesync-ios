@@ -40,5 +40,42 @@ struct GPXServiceTests {
         #expect(abs(parsedPoints[0].latitude - (-6.175392)) < 0.0001)
         #expect(parsedPoints[0].heartRate == 145)
     }
+    
+    @Test("Test GPX Parsing with Reversed Lon/Lat and Single Quotes")
+    func testGPXParsingVariations() throws {
+        let service = GPXService()
+        
+        let thirdPartyGpx = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <gpx version="1.1" creator="ThirdPartyApp">
+          <trk>
+            <name>Trail Run</name>
+            <trkseg>
+              <trkpt lon="106.827153" lat="-6.175392">
+                <ele>25.4</ele>
+                <time>2026-08-29T00:00:00Z</time>
+                <extensions>
+                  <gpxtpx:TrackPointExtension>
+                    <gpxtpx:hr>162</gpxtpx:hr>
+                  </gpxtpx:TrackPointExtension>
+                </extensions>
+              </trkpt>
+              <trkpt lon='106.827200' lat='-6.175300'>
+                <ele>26.0</ele>
+                <time>2026-08-29T00:00:05Z</time>
+                <hr>165</hr>
+              </trkpt>
+            </trkseg>
+          </trk>
+        </gpx>
+        """
+        
+        let parsed = service.parseGPX(xmlString: thirdPartyGpx)
+        #expect(parsed.count == 2)
+        #expect(abs(parsed[0].latitude - (-6.175392)) < 0.0001)
+        #expect(abs(parsed[0].longitude - 106.827153) < 0.0001)
+        #expect(parsed[0].heartRate == 162)
+        #expect(parsed[1].heartRate == 165)
+    }
 }
 

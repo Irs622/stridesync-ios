@@ -10,7 +10,8 @@ public enum StrideSyncSchemaV1: VersionedSchema {
             ActivityRecord.self,
             TelemetryPoint.self,
             DistanceSplit.self,
-            Segment.self
+            Segment.self,
+            GearItem.self
         ]
     }
 }

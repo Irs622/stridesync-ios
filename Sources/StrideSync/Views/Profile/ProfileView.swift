@@ -115,6 +115,9 @@ public struct ProfileView: View {
             }
             .padding(.horizontal, 16)
             
+            // Annual 52-Week Activity Heatmap Matrix
+            annualHeatmapCard
+            
             // Weekly Progress Bar Chart Simulation
             VStack(alignment: .leading, spacing: 12) {
                 Text("Aktivitas 7 Hari Terakhir")
@@ -233,6 +236,93 @@ public struct ProfileView: View {
             Text(title)
                 .font(.caption)
                 .foregroundStyle(Color.secondary)
+        }
+    }
+    
+    private var annualHeatmapCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "calendar")
+                    .foregroundStyle(StrideTheme.primaryOrange)
+                Text("Kalender Aktivitas Tahunan")
+                    .font(.system(.headline, design: .rounded, weight: .bold))
+                Spacer()
+                Text("52 Minggu")
+                    .font(.caption2.bold())
+                    .foregroundStyle(Color.secondary)
+            }
+            
+            // 52-week horizontal grid (7 rows per column)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 3) {
+                    ForEach(0..<52, id: \.self) { weekIndex in
+                        VStack(spacing: 3) {
+                            ForEach(0..<7, id: \.self) { dayIndex in
+                                let intensity = heatmapIntensity(week: weekIndex, day: dayIndex)
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(heatmapColor(for: intensity))
+                                    .frame(width: 9, height: 9)
+                            }
+                        }
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+            
+            // Legend
+            HStack(spacing: 6) {
+                Text("Sedikit")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(Color.secondary)
+                
+                ForEach(0...4, id: \.self) { level in
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(heatmapColor(for: level))
+                        .frame(width: 8, height: 8)
+                }
+                
+                Text("Banyak")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(Color.secondary)
+                
+                Spacer()
+                
+                Text("142 Hari Aktif")
+                    .font(.caption2.bold())
+                    .foregroundStyle(StrideTheme.primaryOrange)
+            }
+            .padding(.top, 2)
+        }
+        .padding(16)
+        .background(StrideTheme.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .padding(.horizontal, 16)
+    }
+    
+    private func heatmapIntensity(week: Int, day: Int) -> Int {
+        // Deterministic mock distribution representing athlete's active training days
+        let seed = (week * 7 + day) % 31
+        if seed % 7 == 0 || seed % 11 == 0 {
+            return 0 // Rest day
+        } else if seed % 5 == 0 {
+            return 4 // Long run / race
+        } else if seed % 3 == 0 {
+            return 3 // Tempo
+        } else if seed % 2 == 0 {
+            return 2 // Easy run
+        } else {
+            return 1 // Recovery
+        }
+    }
+    
+    private func heatmapColor(for intensity: Int) -> Color {
+        switch intensity {
+        case 0: return Color.secondary.opacity(0.12)
+        case 1: return StrideTheme.primaryOrange.opacity(0.3)
+        case 2: return StrideTheme.primaryOrange.opacity(0.55)
+        case 3: return StrideTheme.primaryOrange.opacity(0.8)
+        case 4: return StrideTheme.primaryOrange
+        default: return Color.secondary.opacity(0.12)
         }
     }
     

@@ -52,12 +52,26 @@ public struct GPXService: Sendable {
         return gpx
     }
     
-    /// Parses simple GPX 1.1 XML string and returns an array of TelemetrySnapshot.
+    /// Parses GPX 1.1 XML string and returns an array of TelemetrySnapshot.
     public func parseGPX(xmlString: String) -> [TelemetrySnapshot] {
+        guard let data = xmlString.data(using: .utf8) else { return [] }
+        
+        let parserDelegate = GPXParserDelegate()
+        let parser = XMLParser(data: data)
+        parser.delegate = parserDelegate
+        if parser.parse() && !parserDelegate.points.isEmpty {
+            return parserDelegate.points
+        }
+        
+        // Fallback flexible regex if XMLParser fails on non-standard fragments
+        return parseGPXRegexFallback(xmlString: xmlString)
+    }
+    
+    private func parseGPXRegexFallback(xmlString: String) -> [TelemetrySnapshot] {
         var points: [TelemetrySnapshot] = []
         let formatter = createFormatter()
         
-        let trkptPattern = #"<trkpt\s+lat="([^"]+)"\s+lon="([^"]+)">([\s\S]*?)<\/trkpt>"#
+        let trkptPattern = #"<trkpt[^>]*lat=["']([^"']+)["'][^>]*lon=["']([^"']+)["'][^>]*>([\s\S]*?)<\/trkpt>|<trkpt[^>]*lon=["']([^"']+)["'][^>]*lat=["']([^"']+)["'][^>]*>([\s\S]*?)<\/trkpt>"#
         guard let regex = try? NSRegularExpression(pattern: trkptPattern, options: []) else {
             return []
         }
@@ -66,10 +80,23 @@ public struct GPXService: Sendable {
         let matches = regex.matches(in: xmlString, options: [], range: NSRange(location: 0, length: nsString.length))
         
         for match in matches {
-            guard match.numberOfRanges >= 3 else { continue }
-            let latStr = nsString.substring(with: match.range(at: 1))
-            let lonStr = nsString.substring(with: match.range(at: 2))
-            let innerContent = match.numberOfRanges >= 4 ? nsString.substring(with: match.range(at: 3)) : ""
+            var latStr = ""
+            var lonStr = ""
+            var innerContent = ""
+            
+            if match.range(at: 1).location != NSNotFound && match.range(at: 2).location != NSNotFound {
+                latStr = nsString.substring(with: match.range(at: 1))
+                lonStr = nsString.substring(with: match.range(at: 2))
+                if match.range(at: 3).location != NSNotFound {
+                    innerContent = nsString.substring(with: match.range(at: 3))
+                }
+            } else if match.range(at: 4).location != NSNotFound && match.range(at: 5).location != NSNotFound {
+                lonStr = nsString.substring(with: match.range(at: 4))
+                latStr = nsString.substring(with: match.range(at: 5))
+                if match.range(at: 6).location != NSNotFound {
+                    innerContent = nsString.substring(with: match.range(at: 6))
+                }
+            }
             
             guard let lat = Double(latStr), let lon = Double(lonStr) else { continue }
             
@@ -90,6 +117,10 @@ public struct GPXService: Sendable {
             var heartRate: Int?
             if let hrRange = innerContent.range(of: "<gpxtpx:hr>"),
                let hrEnd = innerContent.range(of: "</gpxtpx:hr>") {
+                let hrSub = innerContent[hrRange.upperBound..<hrEnd.lowerBound]
+                heartRate = Int(hrSub)
+            } else if let hrRange = innerContent.range(of: "<hr>"),
+                      let hrEnd = innerContent.range(of: "</hr>") {
                 let hrSub = innerContent[hrRange.upperBound..<hrEnd.lowerBound]
                 heartRate = Int(hrSub)
             }
@@ -116,6 +147,76 @@ public struct GPXService: Sendable {
             .replacingOccurrences(of: ">", with: "&gt;")
             .replacingOccurrences(of: "\"", with: "&quot;")
             .replacingOccurrences(of: "'", with: "&apos;")
+    }
+}
+
+/// Internal SAX XMLParser delegate for GPX 1.1 tracks.
+final class GPXParserDelegate: NSObject, XMLParserDelegate, @unchecked Sendable {
+    var points: [TelemetrySnapshot] = []
+    
+    private var currentElement: String = ""
+    private var currentLat: Double?
+    private var currentLon: Double?
+    private var currentEle: Double?
+    private var currentTime: Date?
+    private var currentHeartRate: Int?
+    private var elementBuffer: String = ""
+    
+    private let isoFormatter: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return f
+    }()
+    
+    private let standardIsoFormatter = ISO8601DateFormatter()
+    
+    func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
+        currentElement = elementName
+        elementBuffer = ""
+        
+        if elementName == "trkpt" || elementName == "wpt" {
+            if let latStr = attributeDict["lat"], let lonStr = attributeDict["lon"] {
+                currentLat = Double(latStr)
+                currentLon = Double(lonStr)
+            } else if let latStr = attributeDict["latitude"], let lonStr = attributeDict["longitude"] {
+                currentLat = Double(latStr)
+                currentLon = Double(lonStr)
+            }
+            currentEle = nil
+            currentTime = nil
+            currentHeartRate = nil
+        }
+    }
+    
+    func parser(_ parser: XMLParser, foundCharacters string: String) {
+        elementBuffer += string
+    }
+    
+    func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
+        let trimmed = elementBuffer.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if elementName == "ele" {
+            currentEle = Double(trimmed)
+        } else if elementName == "time" {
+            currentTime = isoFormatter.date(from: trimmed) ?? standardIsoFormatter.date(from: trimmed)
+        } else if elementName == "gpxtpx:hr" || elementName == "hr" {
+            currentHeartRate = Int(trimmed)
+        } else if elementName == "trkpt" || elementName == "wpt" {
+            if let lat = currentLat, let lon = currentLon {
+                let pt = TelemetrySnapshot(
+                    timestamp: currentTime ?? Date(),
+                    latitude: lat,
+                    longitude: lon,
+                    altitude: currentEle ?? 0.0,
+                    speedMps: 0.0,
+                    horizontalAccuracy: 5.0,
+                    heartRate: currentHeartRate
+                )
+                points.append(pt)
+            }
+            currentLat = nil
+            currentLon = nil
+        }
     }
 }
 

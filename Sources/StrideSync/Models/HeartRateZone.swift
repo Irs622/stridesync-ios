@@ -55,7 +55,8 @@ public struct HeartRateZoneCalculator: Sendable {
             let prev = points[i - 1]
             let curr = points[i]
             guard let hr = curr.heartRate ?? prev.heartRate else { continue }
-            let dt = max(0, curr.timestamp.timeIntervalSince(prev.timestamp))
+            let rawDt = curr.timestamp.timeIntervalSince(prev.timestamp)
+            let dt = max(0.0, min(30.0, rawDt))
             
             if hr <= z1Range.upperBound {
                 z1Time += dt

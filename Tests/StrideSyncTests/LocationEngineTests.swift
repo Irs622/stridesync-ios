@@ -69,5 +69,66 @@ struct LocationEngineTests {
         #expect(snapshots.isEmpty)
         #expect(metrics.distanceMeters == 0.0)
     }
+    
+    @Test("Test True Average and Max Heart Rate in Summary")
+    func testHeartRateAveragesInSummary() async throws {
+        let engine = LocationEngine(activityType: .run, autoPauseEnabled: false)
+        await engine.start()
+        
+        let baseTime = Date()
+        
+        await engine.updateHeartRate(140)
+        _ = await engine.processLocation(CLLocation(
+            coordinate: CLLocationCoordinate2D(latitude: -6.175000, longitude: 106.827000),
+            altitude: 10.0,
+            horizontalAccuracy: 5.0,
+            verticalAccuracy: 5.0,
+            course: 0,
+            speed: 3.5,
+            timestamp: baseTime
+        ))
+        
+        await engine.updateHeartRate(160)
+        _ = await engine.processLocation(CLLocation(
+            coordinate: CLLocationCoordinate2D(latitude: -6.174000, longitude: 106.827000),
+            altitude: 12.0,
+            horizontalAccuracy: 5.0,
+            verticalAccuracy: 5.0,
+            course: 0,
+            speed: 3.5,
+            timestamp: baseTime.addingTimeInterval(30)
+        ))
+        
+        await engine.updateHeartRate(180)
+        _ = await engine.processLocation(CLLocation(
+            coordinate: CLLocationCoordinate2D(latitude: -6.173000, longitude: 106.827000),
+            altitude: 14.0,
+            horizontalAccuracy: 5.0,
+            verticalAccuracy: 5.0,
+            course: 0,
+            speed: 3.5,
+            timestamp: baseTime.addingTimeInterval(60)
+        ))
+        
+        let (summary, _) = await engine.finish()
+        // Average of [140, 160, 180] = 160
+        #expect(summary.averageHeartRate == 160)
+        // Max = 180
+        #expect(summary.maxHeartRate == 180)
+    }
+    
+    @Test("Test Motion Stationary Auto-Pause Transition")
+    func testMotionStationaryAutoPause() async throws {
+        let engine = LocationEngine(activityType: .run, autoPauseEnabled: true)
+        await engine.start()
+        
+        let state1 = await engine.state
+        #expect(state1 == .recording)
+        
+        // Trigger CoreMotion stationary detection
+        await engine.updateMotionStationary(isStationary: true)
+        let state2 = await engine.state
+        #expect(state2 == .autoPaused)
+    }
 }
 

@@ -168,7 +168,11 @@ public struct ActivityDetailView: View {
             statCell(title: "PACE", value: activity.formattedAveragePace, isHero: true)
             statCell(title: "ELEVASI", value: activity.formattedElevationGain, isHero: false)
             statCell(title: "KALORI", value: activity.formattedCalories, isHero: false)
-            statCell(title: "MAX SPEED", value: String(format: "%.1f km/h", activity.maxSpeedMps * 3.6), isHero: false)
+            if let rpe = activity.rpe {
+                statCell(title: "RPE KELELAHAN", value: "\(rpe)/10 ⚡️", isHero: false)
+            } else {
+                statCell(title: "MAX SPEED", value: String(format: "%.1f km/h", activity.maxSpeedMps * 3.6), isHero: false)
+            }
         }
     }
     

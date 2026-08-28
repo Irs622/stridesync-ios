@@ -160,6 +160,7 @@ public final class RecordViewModel {
         
         let metrics = await engine.processLocation(location)
         self.distanceMeters = metrics.distanceMeters
+        self.movingTimeSeconds = metrics.movingTimeSeconds
         self.currentSpeedMps = metrics.currentSpeedMps
         self.currentPaceSecondsPerKm = metrics.currentPaceSecondsPerKm
         self.averagePaceSecondsPerKm = metrics.averagePaceSecondsPerKm
@@ -271,7 +272,9 @@ public final class RecordViewModel {
         if trackingState == .recording {
             elapsedTimeSeconds += 1.0
             movingTimeSeconds += 1.0
-            updateLiveActivity()
+            if Int(elapsedTimeSeconds) % 5 == 0 {
+                updateLiveActivity()
+            }
         } else if trackingState == .paused || trackingState == .autoPaused {
             elapsedTimeSeconds += 1.0
         }

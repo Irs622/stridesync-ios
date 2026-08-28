@@ -87,11 +87,18 @@ public final class FITService: Sendable {
         // 4. Telemetry Records (24 bytes per point)
         for point in snapshots {
             var pointData = Data([0x02])
-            var latSemicircles = Int32(point.latitude * (2147483648.0 / 180.0)).littleEndian
-            var lonSemicircles = Int32(point.longitude * (2147483648.0 / 180.0)).littleEndian
-            var altMeters = UInt16((point.altitude + 500) * 5).littleEndian
-            var speedMps = UInt16(point.speedMps * 1000).littleEndian
-            let hr = UInt8(point.heartRate ?? 0)
+            let latClamped = max(-90.0, min(90.0, point.latitude))
+            let lonClamped = max(-180.0, min(180.0, point.longitude))
+            var latSemicircles = Int32(latClamped * (2147483648.0 / 180.0)).littleEndian
+            var lonSemicircles = Int32(lonClamped * (2147483648.0 / 180.0)).littleEndian
+            
+            let clampedAltValue = max(0.0, min(65535.0, (point.altitude + 500.0) * 5.0))
+            var altMeters = UInt16(clampedAltValue).littleEndian
+            
+            let clampedSpeedValue = max(0.0, min(65535.0, max(0.0, point.speedMps) * 1000.0))
+            var speedMps = UInt16(clampedSpeedValue).littleEndian
+            
+            let hr = UInt8(min(255, max(0, point.heartRate ?? 0)))
             
             pointData.append(Data(bytes: &latSemicircles, count: 4))
             pointData.append(Data(bytes: &lonSemicircles, count: 4))

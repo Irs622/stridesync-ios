@@ -48,6 +48,15 @@ public struct AthleteProfile: Codable, Sendable, Identifiable {
         let km = totalDistanceMeters / 1000.0
         return String(format: "%.1f km", km)
     }
+    
+    public static func sampleAthletes() -> [AthleteProfile] {
+        [
+            AthleteProfile(username: "sarahj", fullName: "Sarah Jenkins", bio: "Ultra trail runner 🏔️ | Chasing 100 miler", totalDistanceMeters: 840_000, totalActivitiesCount: 92, followersCount: 420, followingCount: 230),
+            AthleteProfile(username: "davidc", fullName: "David Chen", bio: "Road cyclist & Coffee enthusiast 🚴‍♂️☕️", totalDistanceMeters: 2_150_000, totalActivitiesCount: 140, followersCount: 890, followingCount: 310),
+            AthleteProfile(username: "elenar", fullName: "Elena Rostova", bio: "Track & Field athlete | Sub 18min 5K ⚡️", totalDistanceMeters: 520_000, totalActivitiesCount: 65, followersCount: 610, followingCount: 180),
+            AthleteProfile(username: "marcusv", fullName: "Marcus Vance", bio: "Triathlete in training 🏊‍♂️🚴‍♂️🏃‍♂️", totalDistanceMeters: 1_400_000, totalActivitiesCount: 115, followersCount: 740, followingCount: 412)
+        ]
+    }
 }
 
 /// A comment on an activity.

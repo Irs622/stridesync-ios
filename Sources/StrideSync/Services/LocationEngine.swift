@@ -134,6 +134,10 @@ public actor LocationEngine {
         let movingTime = accumulatedMovingTimeSeconds > 0 ? accumulatedMovingTimeSeconds : duration
         let avgSpeed = movingTime > 0 ? (distanceMeters / movingTime) : 0.0
         
+        let hrSamples = telemetrySnapshots.compactMap { $0.heartRate }
+        let avgHR = !hrSamples.isEmpty ? (hrSamples.reduce(0, +) / hrSamples.count) : currentHeartRate
+        let maxHR = hrSamples.max() ?? currentHeartRate
+        
         let summary = ActivitySummarySnapshot(
             title: "\(activityType.rawValue) Workout",
             activityType: activityType,
@@ -145,7 +149,8 @@ public actor LocationEngine {
             totalElevationGainMeters: totalElevationGainMeters,
             averageSpeedMps: avgSpeed,
             maxSpeedMps: maxSpeedMps,
-            averageHeartRate: currentHeartRate
+            averageHeartRate: avgHR,
+            maxHeartRate: maxHR
         )
         
         return (summary, telemetrySnapshots)
@@ -153,6 +158,18 @@ public actor LocationEngine {
     
     public func updateHeartRate(_ hr: Int) {
         self.currentHeartRate = hr
+    }
+    
+    /// Updates motion stationary state from CoreMotion / Accelerometer to enhance auto-pause responsiveness.
+    public func updateMotionStationary(isStationary: Bool) {
+        guard autoPauseEnabled else { return }
+        if isStationary && state == .recording {
+            state = .autoPaused
+            updateMovingTimeOnPause()
+        } else if !isStationary && state == .autoPaused && currentSpeedMps >= autoPauseSpeedThresholdMps {
+            state = .recording
+            lastRecordedPointTime = Date()
+        }
     }
     
     // MARK: - Location Processing

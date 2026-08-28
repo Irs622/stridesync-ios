@@ -109,8 +109,39 @@ public struct MainTabView: View {
                                 }
                                 
                                 context.insert(record)
+                                
+                                // Update Gear mileage
+                                if let gearName = record.gearName, !gearName.isEmpty {
+                                    let descriptor = FetchDescriptor<GearItem>()
+                                    if let gears = try? context.fetch(descriptor) {
+                                        for gear in gears where "\(gear.brand) \(gear.name)" == gearName || gear.name == gearName {
+                                            gear.currentDistanceMeters += record.distanceMeters
+                                        }
+                                    }
+                                }
+                                
+                                // Update Segment attempts & KOM records
+                                for effort in data.3 {
+                                    let segmentId = effort.segmentId
+                                    let descriptor = FetchDescriptor<Segment>(predicate: #Predicate { $0.id == segmentId })
+                                    if let matchedSegments = try? context.fetch(descriptor), let seg = matchedSegments.first {
+                                        seg.totalEffortsCount += 1
+                                        if effort.isKOM || seg.komTimeSeconds == nil || effort.elapsedTimeSeconds < (seg.komTimeSeconds ?? .infinity) {
+                                            seg.komTimeSeconds = effort.elapsedTimeSeconds
+                                            seg.komAthleteName = effort.athleteName
+                                        }
+                                    }
+                                }
+                                
                                 try? context.save()
                             }
+                            
+                            // Enqueue for offline sync
+                            BackgroundSyncManager.shared.enqueueForUpload(recordID: data.0.id)
+                            AnalyticsService.shared.logEvent(.workoutFinished(
+                                distanceKm: data.0.distanceMeters / 1000.0,
+                                durationSec: data.0.durationSeconds
+                            ))
                             
                             // HealthKit async save
                             if UserSettingsManager.shared.healthKitSyncEnabled {

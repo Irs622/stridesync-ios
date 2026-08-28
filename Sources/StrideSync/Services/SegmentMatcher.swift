@@ -50,11 +50,26 @@ public struct SegmentMatcher: Sendable {
             
             guard let eIdx = endIndex, eIdx > sIdx else { continue }
             
+            // Validate trajectory distance to reject shortcuts or detour false-positives
+            var pathDistance = 0.0
+            for i in sIdx..<eIdx {
+                let p1 = CLLocation(latitude: activityPoints[i].latitude, longitude: activityPoints[i].longitude)
+                let p2 = CLLocation(latitude: activityPoints[i + 1].latitude, longitude: activityPoints[i + 1].longitude)
+                pathDistance += p1.distance(from: p2)
+            }
+            
+            let minAllowedDist = segment.distanceMeters * 0.65
+            let maxAllowedDist = max(segment.distanceMeters * 1.6, segment.distanceMeters + 300.0)
+            guard pathDistance >= minAllowedDist && pathDistance <= maxAllowedDist else {
+                continue
+            }
+            
             // 3. Calculate effort metrics
             let startPoint = activityPoints[sIdx]
             let endPoint = activityPoints[eIdx]
             let effortDuration = max(1.0, endPoint.timestamp.timeIntervalSince(startPoint.timestamp))
-            let avgSpeed = segment.distanceMeters / effortDuration
+            let effectiveDistance = max(pathDistance, segment.distanceMeters)
+            let avgSpeed = effectiveDistance / effortDuration
             
             // Extract average HR across segment interval
             let effortPoints = activityPoints[sIdx...eIdx]

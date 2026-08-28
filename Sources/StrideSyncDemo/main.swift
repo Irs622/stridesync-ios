@@ -93,6 +93,7 @@ struct StrideSyncDemoRunner {
         activity.durationSeconds = 1200 // 20:00
         activity.movingTimeSeconds = 1152 // 19:12
         activity.averageSpeedMps = activity.distanceMeters / activity.movingTimeSeconds
+        activity.rpe = 7 // Rating of Perceived Exertion (1-10)
         activity.gearName = "Nike Vaporfly 3"
         activity.notes = "Tempo run pagi yang sangat nyaman di area Monas!"
         
@@ -102,6 +103,8 @@ struct StrideSyncDemoRunner {
         print("   ⚡️ Waktu Bergerak  : \(activity.formattedMovingTime)")
         print("   🚀 Pace Rata-rata  : \(activity.formattedAveragePace)")
         print("   ⛰️ Elevasi Naik    : \(activity.formattedElevationGain)")
+        print("   ❤️ HR Rata-rata    : \(activity.averageHeartRate != nil ? "\(activity.averageHeartRate!) bpm" : "-") (Max: \(activity.maxHeartRate != nil ? "\(activity.maxHeartRate!) bpm" : "-"))")
+        print("   ⚡️ Skala RPE (1-10): \(activity.rpe != nil ? "\(activity.rpe!)/10 (Keras/Threshold)" : "-")")
         print("   👟 Sepatu Digunakan: \(activity.gearName ?? "-")")
         
         // 5. Analisis Splits per Kilometer

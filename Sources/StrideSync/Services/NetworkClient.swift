@@ -97,7 +97,28 @@ public final class NetworkClient: Sendable {
         
         if type == SyncStatusResponse.self {
             let mock = SyncStatusResponse(success: true, message: "Synced successfully via StrideSync Network Client")
-            return mock as! T
+            if let result = mock as? T {
+                return result
+            }
+        }
+        
+        if type == [AthleteProfile].self {
+            let mock = AthleteProfile.sampleAthletes()
+            if let result = mock as? T {
+                return result
+            }
+        }
+        
+        // Generic fallback mock for basic status or empty lists
+        let fallbackJson = """
+        {
+            "success": true,
+            "message": "Mock operation succeeded"
+        }
+        """
+        if let data = fallbackJson.data(using: .utf8),
+           let decoded = try? JSONDecoder().decode(T.self, from: data) {
+            return decoded
         }
         
         throw NetworkError.decodingError

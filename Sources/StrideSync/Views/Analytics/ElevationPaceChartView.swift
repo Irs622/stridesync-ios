@@ -131,7 +131,8 @@ public struct ElevationPaceChartView: View {
                         .gesture(
                             DragGesture(minimumDistance: 0)
                                 .onChanged { value in
-                                    let x = value.location.x - geo[proxy.plotFrame!].origin.x
+                                    guard let plotFrame = proxy.plotFrame else { return }
+                                    let x = value.location.x - geo[plotFrame].origin.x
                                     if let distance: Double = proxy.value(atX: x) {
                                         selectedPoint = points.min(by: { abs($0.distanceKm - distance) < abs($1.distanceKm - distance) })
                                     }

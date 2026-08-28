@@ -56,5 +56,46 @@ struct SegmentMatcherTests {
         #expect(effort.elapsedTimeSeconds == 60.0)
         #expect(effort.isKOM == true) // 60s is faster than 120s!
     }
+    
+    @Test("Test Segment Matcher Rejects Excessive Detours")
+    func testSegmentMatchingRejectsExcessiveDetour() throws {
+        let matcher = SegmentMatcher(gateRadiusMeters: 30.0)
+        
+        let startCoord = CLLocationCoordinate2D(latitude: -6.175000, longitude: 106.827000)
+        let endCoord = CLLocationCoordinate2D(latitude: -6.170000, longitude: 106.827000)
+        
+        let segment = Segment(
+            name: "Direct Sprint",
+            activityType: .run,
+            distanceMeters: 550.0,
+            startCoordinate: startCoord,
+            endCoordinate: endCoord
+        )
+        
+        let baseTime = Date()
+        var telemetry: [TelemetrySnapshot] = []
+        
+        // Pass start gate
+        telemetry.append(TelemetrySnapshot(timestamp: baseTime, latitude: -6.175000, longitude: 106.827000))
+        
+        // Massive 5km detour to the east
+        telemetry.append(TelemetrySnapshot(timestamp: baseTime.addingTimeInterval(300), latitude: -6.175000, longitude: 106.870000))
+        telemetry.append(TelemetrySnapshot(timestamp: baseTime.addingTimeInterval(600), latitude: -6.170000, longitude: 106.870000))
+        
+        // Pass end gate (Distance traveled is > 10 km vs 550m segment)
+        telemetry.append(TelemetrySnapshot(timestamp: baseTime.addingTimeInterval(900), latitude: -6.170000, longitude: 106.827000))
+        
+        // Add padding points to exceed count >= 5
+        telemetry.append(TelemetrySnapshot(timestamp: baseTime.addingTimeInterval(930), latitude: -6.169000, longitude: 106.827000))
+        
+        let efforts = matcher.matchSegments(
+            activityPoints: telemetry,
+            segments: [segment],
+            athleteId: UUID(),
+            athleteName: "Detour Runner"
+        )
+        
+        #expect(efforts.isEmpty, "Massive detour should be rejected")
+    }
 }
 

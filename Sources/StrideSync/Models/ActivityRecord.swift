@@ -16,6 +16,7 @@ public struct ActivitySummarySnapshot: Sendable, Codable {
     public var averageHeartRate: Int?
     public var maxHeartRate: Int?
     public var caloriesBurned: Double?
+    public var rpe: Int? // Rating of Perceived Exertion (1-10)
     public var notes: String?
     public var visibility: VisibilityType
     
@@ -33,6 +34,7 @@ public struct ActivitySummarySnapshot: Sendable, Codable {
         averageHeartRate: Int? = nil,
         maxHeartRate: Int? = nil,
         caloriesBurned: Double? = nil,
+        rpe: Int? = nil,
         notes: String? = nil,
         visibility: VisibilityType = .publicVisibility
     ) {
@@ -49,6 +51,7 @@ public struct ActivitySummarySnapshot: Sendable, Codable {
         self.averageHeartRate = averageHeartRate
         self.maxHeartRate = maxHeartRate
         self.caloriesBurned = caloriesBurned
+        self.rpe = rpe
         self.notes = notes
         self.visibility = visibility
     }
@@ -71,6 +74,7 @@ public final class ActivityRecord {
     public var averageHeartRate: Int?
     public var maxHeartRate: Int?
     public var caloriesBurned: Double?
+    public var rpe: Int? // Rating of Perceived Exertion (1-10)
     public var notes: String?
     public var visibilityRaw: String
     public var kudosCount: Int
@@ -107,6 +111,7 @@ public final class ActivityRecord {
         averageHeartRate: Int? = nil,
         maxHeartRate: Int? = nil,
         caloriesBurned: Double? = nil,
+        rpe: Int? = nil,
         notes: String? = nil,
         visibility: VisibilityType = .publicVisibility,
         gearName: String? = nil
@@ -125,6 +130,7 @@ public final class ActivityRecord {
         self.averageHeartRate = averageHeartRate
         self.maxHeartRate = maxHeartRate
         self.caloriesBurned = caloriesBurned
+        self.rpe = rpe
         self.notes = notes
         self.visibilityRaw = visibility.rawValue
         self.kudosCount = 0
@@ -151,6 +157,7 @@ public final class ActivityRecord {
             averageHeartRate: snapshot.averageHeartRate,
             maxHeartRate: snapshot.maxHeartRate,
             caloriesBurned: snapshot.caloriesBurned,
+            rpe: snapshot.rpe,
             notes: snapshot.notes,
             visibility: snapshot.visibility
         )

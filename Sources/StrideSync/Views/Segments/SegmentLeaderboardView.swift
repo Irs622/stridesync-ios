@@ -5,9 +5,24 @@ public struct SegmentLeaderboardView: View {
     public let segment: Segment
     public let entries: [LeaderboardEntry]
     
+    @State private var selectedFilter: Int = 0 // 0: Semua, 1: Tahun Ini, 2: Hari Ini, 3: Mengikuti
+    
     public init(segment: Segment, entries: [LeaderboardEntry] = []) {
         self.segment = segment
         self.entries = entries.isEmpty ? Self.sampleEntries() : entries
+    }
+    
+    private var filteredEntries: [LeaderboardEntry] {
+        switch selectedFilter {
+        case 1:
+            return entries.filter { $0.dateFormatted.contains("2026") || $0.dateFormatted.contains("Kemarin") }
+        case 2:
+            return entries.filter { $0.dateFormatted.contains("Kemarin") || $0.isCurrentUser }
+        case 3:
+            return entries.filter { $0.isCurrentUser || $0.isCrownHolder }
+        default:
+            return entries
+        }
     }
     
     public var body: some View {
@@ -88,14 +103,30 @@ public struct SegmentLeaderboardView: View {
                     .padding(.horizontal, 16)
                 }
                 
+                // Filter Segmented Bar
+                Picker("Filter Peringkat", selection: $selectedFilter) {
+                    Text("Semua").tag(0)
+                    Text("Tahun Ini").tag(1)
+                    Text("Hari Ini").tag(2)
+                    Text("Mengikuti").tag(3)
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal, 16)
+                
                 // Leaderboard Table
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Papan Peringkat Keseluruhan")
-                        .font(.system(.headline, design: .rounded, weight: .bold))
-                        .padding(.horizontal, 20)
+                    HStack {
+                        Text("Papan Peringkat")
+                            .font(.system(.headline, design: .rounded, weight: .bold))
+                        Spacer()
+                        Text("\(filteredEntries.count) Atlet")
+                            .font(.caption.bold())
+                            .foregroundStyle(Color.secondary)
+                    }
+                    .padding(.horizontal, 20)
                     
                     VStack(spacing: 0) {
-                        ForEach(entries) { entry in
+                        ForEach(filteredEntries) { entry in
                             HStack(spacing: 14) {
                                 // Rank Badge
                                 rankBadge(rank: entry.rank)
@@ -134,7 +165,7 @@ public struct SegmentLeaderboardView: View {
                             .padding(.vertical, 12)
                             .padding(.horizontal, 16)
                             
-                            if entry.id != entries.last?.id {
+                            if entry.id != filteredEntries.last?.id {
                                 Divider().padding(.leading, 62)
                             }
                         }

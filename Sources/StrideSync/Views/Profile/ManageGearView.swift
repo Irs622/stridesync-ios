@@ -1,7 +1,9 @@
 import SwiftUI
+import SwiftData
 
 /// Equipment management screen for adding and updating running shoes and bicycles.
 public struct ManageGearView: View {
+    public var modelContext: ModelContext?
     @State public var gearList: [GearItem]
     @State private var showingAddGearSheet: Bool = false
     @State private var newGearName: String = ""
@@ -9,7 +11,8 @@ public struct ManageGearView: View {
     @State private var newGearMaxKm: Double = 600.0
     @State private var newGearType: ActivityType = .run
     
-    public init(gearList: [GearItem] = ProfileView.sampleGear()) {
+    public init(gearList: [GearItem] = ProfileView.sampleGear(), modelContext: ModelContext? = nil) {
+        self.modelContext = modelContext
         self._gearList = State(initialValue: gearList)
     }
     
@@ -98,6 +101,10 @@ public struct ManageGearView: View {
                                 activityType: newGearType
                             )
                             gearList.append(item)
+                            if let context = modelContext {
+                                context.insert(item)
+                                try? context.save()
+                            }
                             newGearName = ""
                             newGearBrand = ""
                             showingAddGearSheet = false

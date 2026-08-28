@@ -212,6 +212,51 @@ public struct ActivitySummaryView: View {
                     }
                 }
                 
+                // RPE (Rating of Perceived Exertion 1-10)
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack {
+                        Text("Tingkat Kelelahan (RPE 1-10)")
+                            .font(.system(.headline, design: .rounded, weight: .bold))
+                        Spacer()
+                        if let rpe = activity.rpe {
+                            Text(rpeDescription(for: rpe))
+                                .font(.caption.bold())
+                                .foregroundStyle(rpeColor(for: rpe))
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(1...10, id: \.self) { score in
+                                let isSelected = activity.rpe == score
+                                Button {
+                                    withAnimation(.snappy) {
+                                        activity.rpe = isSelected ? nil : score
+                                    }
+                                } label: {
+                                    VStack(spacing: 2) {
+                                        Text("\(score)")
+                                            .font(.system(.subheadline, design: .rounded, weight: .heavy))
+                                        Text(rpeShortLabel(for: score))
+                                            .font(.system(size: 8, weight: .bold))
+                                    }
+                                    .frame(width: 48, height: 48)
+                                    .background(isSelected ? rpeColor(for: score) : StrideTheme.cardBackground)
+                                    .foregroundStyle(isSelected ? Color.white : Color.primary)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                            .strokeBorder(isSelected ? Color.clear : Color.secondary.opacity(0.2), lineWidth: 1)
+                                    )
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                    }
+                }
+                
                 // Notes & Gear Assignment
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Catatan & Perlengkapan")
@@ -286,5 +331,38 @@ public struct ActivitySummaryView: View {
         .padding(14)
         .background(StrideTheme.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+    
+    private func rpeShortLabel(for score: Int) -> String {
+        switch score {
+        case 1...3: return "Ringan"
+        case 4...6: return "Sedang"
+        case 7...8: return "Keras"
+        case 9...10: return "Max"
+        default: return ""
+        }
+    }
+    
+    private func rpeDescription(for score: Int) -> String {
+        switch score {
+        case 1...2: return "Sangat Ringan (Pemulihan Aktif)"
+        case 3: return "Ringan (Bisa Bicara Nyaman)"
+        case 4...5: return "Sedang (Zona Aerobik Terjaga)"
+        case 6: return "Agak Berat (Tempo Latihan)"
+        case 7...8: return "Berat (Ambang Laktat / Threshold)"
+        case 9: return "Sangat Berat (Kapasitas VO2 Max)"
+        case 10: return "Maksimal / All-Out (Sprint Habis-habisan)"
+        default: return ""
+        }
+    }
+    
+    private func rpeColor(for score: Int) -> Color {
+        switch score {
+        case 1...3: return StrideTheme.athleticGreen
+        case 4...6: return Color.blue
+        case 7...8: return StrideTheme.primaryOrange
+        case 9...10: return Color.red
+        default: return Color.secondary
+        }
     }
 }

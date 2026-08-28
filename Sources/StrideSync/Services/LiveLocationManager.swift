@@ -37,8 +37,11 @@ public final class LiveLocationManager: NSObject, CLLocationManagerDelegate {
     /// Starts real-time hardware GPS location updates.
     public func startUpdatingLocation() {
         #if os(iOS)
-        locationManager.allowsBackgroundLocationUpdates = true
-        locationManager.showsBackgroundLocationIndicator = true
+        if let bgModes = Bundle.main.object(forInfoDictionaryKey: "UIBackgroundModes") as? [String],
+           bgModes.contains("location") {
+            locationManager.allowsBackgroundLocationUpdates = true
+            locationManager.showsBackgroundLocationIndicator = true
+        }
         #endif
         locationManager.startUpdatingLocation()
     }
@@ -47,7 +50,9 @@ public final class LiveLocationManager: NSObject, CLLocationManagerDelegate {
     public func stopUpdatingLocation() {
         locationManager.stopUpdatingLocation()
         #if os(iOS)
-        locationManager.allowsBackgroundLocationUpdates = false
+        if locationManager.allowsBackgroundLocationUpdates {
+            locationManager.allowsBackgroundLocationUpdates = false
+        }
         #endif
     }
     
@@ -61,10 +66,12 @@ public final class LiveLocationManager: NSObject, CLLocationManagerDelegate {
     }
     
     public nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let latest = locations.last else { return }
+        guard !locations.isEmpty else { return }
         Task { @MainActor in
-            self.lastLocation = latest
-            self.onLocationUpdate?(latest)
+            self.lastLocation = locations.last
+            for loc in locations {
+                self.onLocationUpdate?(loc)
+            }
         }
     }
     

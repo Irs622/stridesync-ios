@@ -28,6 +28,6 @@ struct AudioAndHapticServiceTests {
         haptic.playImpact(.medium)
         haptic.playNotification(.success)
         haptic.playSelection()
-        #expect(true, "Haptic feedback executed successfully")
+        #expect(Bool(true), "Haptic feedback executed successfully")
     }
 }
