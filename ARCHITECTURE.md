@@ -260,3 +260,62 @@ Layanan [`WatchWorkoutEngine.swift`](file:///Users/mac/Downloads/swift-library/S
 * Membaca sensor optik detak jantung pergelangan tangan secara real-time.
 * Menampilkan antarmuka OLED hitam kontras tinggi untuk efisiensi baterai maksimal.
 * Mengalkulasi metrik jarak, waktu bergerak, pace, dan kalori secara otonom di watchOS.
+
+---
+
+## 17. 3D Flyover Route Video Generator (`FlyoverReplayEngine.swift`)
+
+Layanan [`FlyoverReplayEngine.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/FlyoverReplayEngine.swift) dan [`FlyoverVideoPlayerView.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Views/Detail/FlyoverVideoPlayerView.swift) menghasilkan simulasi rekaman udara drone 3D fotorealistik (gaya Relive/Strava 3D):
+* **Perhitungan Kamera Dinamis:** Menginterpolasi koordinat lintasan rute untuk menghitung arah kamera (*Heading Bearing*), sudut elevasi (*Pitch 60°*), dan ketinggian altitude dinamis.
+* **Deteksi Milestone Event:** Otomatis menghasilkan penanda *Start Line*, *Splits Kilometer* (1km, 2km, ...), *Titik Elevasi Tertinggi (Peak)*, dan *Finish Line*.
+* **Scrubber & Kontrol Kecepatan:** Mendukung pemutaran interaktif 1x, 2x, 4x, dan ekspor animasi video.
+
+---
+
+## 18. Live Safety Beacon & Fall Detection (`LiveSafetyBeaconService.swift` & `FallDetectionEngine.swift`)
+
+Arsitektur keselamatan atlet real-time:
+* **Live Web Beacon:** Menghasilkan tautan web pelacakan live instan (`https://beacon.stridesync.app/live/:code`) yang dapat diakses keluarga melalui peramban web tanpa perlu menginstal aplikasi.
+* **SMS Otomatis:** Mengirimkan notifikasi ke kontak darurat begitu sesi latihan dimulai.
+* **Deteksi Benturan / Jatuh Keras:** Memantau vektor akselerasi $G = \frac{\sqrt{x^2 + y^2 + z^2}}{9.81}$. Jika $G \ge 3.5g$, sistem mengaktifkan hitung mundur alarm darurat 30 detik (`EmergencyAlertOverlayView.swift`). Jika tidak dibatalkan atlet, sistem otomatis menyiarkan sinyal SOS dan koordinat GPS darurat ke kontak terdaftar.
+
+---
+
+## 19. VO2 Max & Race Time Predictor (`VO2MaxCalculator.swift`)
+
+Layanan [`VO2MaxCalculator.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/VO2MaxCalculator.swift) mengestimasi kapasitas serapan oksigen maksimal dan memproyeksikan target waktu perlombaan:
+* **Formula Campuran VO2 Max:**
+  $$\text{BaseVO2} = 15.3 \times \frac{\text{HR}_{\max}}{\text{HR}_{\text{rest}}}$$
+  $$\text{EfficiencyVO2} = \left(\frac{\text{Velocity}_{\text{km/h}}}{\text{HR}_{\text{avg}} / \text{HR}_{\max}}\right) \times 3.6$$
+  $$\text{VO}_2\text{ Max} = 0.4 \times \text{BaseVO2} + 0.6 \times \text{EfficiencyVO2}$$
+* **Hukum Daya Riegel (*Race Prediction*):**
+  $$T_2 = T_1 \times \left(\frac{D_2}{D_1}\right)^{1.06}$$
+  Memproyeksikan estimasi waktu finish dan target pace untuk jarak 5K, 10K, Half Marathon (21.1 km), dan Full Marathon (42.2 km).
+
+---
+
+## 20. Running Dynamics & Biomechanics (`RunningDynamicsCalculator.swift`)
+
+Layanan [`RunningDynamicsCalculator.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/RunningDynamicsCalculator.swift) mengestimasi metrik efisiensi mekanika lari:
+* **Cadence (SPM):** Irama langkah per menit dan klasifikasi zona (*Optimal 170–185 SPM*).
+* **Panjang Langkah (*Stride Length*):** $L = \frac{v \times 60}{\text{Cadence}}$.
+* **Osilasi Vertikal (*Vertical Bounce*):** Ketinggian pantulan tubuh ($5.0 - 12.0 \text{ cm}$).
+* **Waktu Kontak Tanah (*Ground Contact Time*):** Durasi kaki menapak di aspal ($180 - 320 \text{ ms}$).
+* **Rasio Vertikal (*Vertical Ratio*):** Efisiensi tenaga dorong horizontal vs pantulan vertikal.
+
+---
+
+## 21. Virtual Ghost Runner (`GhostRunnerEngine.swift`)
+
+Layanan [`GhostRunnerEngine.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/GhostRunnerEngine.swift) dan [`GhostRunnerHUDCardView.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Views/Record/GhostRunnerHUDCardView.swift) memberikan pacer virtual real-time:
+* Membandingkan kemajuan atlet secara real-time terhadap Rekor Pribadi (PR) masa lalu, KOM segmen, atau pace kustom.
+* Mengalkulasi selisih jarak dalam meter ($+\text{Ahead} / -\text{Behind}$) dan delta waktu finish pada jarak yang sama.
+
+---
+
+## 22. On-Device AI Workout Storyteller (`AIWorkoutStoryteller.swift`)
+
+Layanan [`AIWorkoutStoryteller.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/AIWorkoutStoryteller.swift) dan [`AIWorkoutNarrativeView.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Views/Summary/AIWorkoutNarrativeView.swift) menghasilkan narasi rekap latihan yang hidup dan cerdas:
+* **Persona & Nada Bicara:** *Pelatih Penuh Semangat 🔥, Analis Taktis 📊, Santai & Menyenangkan ☕️, Juara Epik 🏆*.
+* **Ekstraksi Kontekstual:** Otomatis merangkum pencapaian tanjakan elevasi, kestabilan pace, zona detak jantung, dan memberikan saran nutrisi serta pemulihan yang tepat sasaran.
+
