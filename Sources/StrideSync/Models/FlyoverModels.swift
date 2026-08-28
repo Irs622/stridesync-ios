@@ -123,3 +123,4 @@ public struct FlyoverConfiguration: Sendable, Codable {
         self.cameraFollowDistanceMeters = cameraFollowDistanceMeters
     }
 }
+

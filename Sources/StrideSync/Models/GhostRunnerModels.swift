@@ -78,3 +78,4 @@ public struct GhostRunnerState: Sendable, Codable {
         self.latestDelta = latestDelta
     }
 }
+

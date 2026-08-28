@@ -26,3 +26,4 @@ struct RunningDynamicsTests {
         #expect(CadenceZone.evaluate(spm: 145) == .low)
     }
 }
+

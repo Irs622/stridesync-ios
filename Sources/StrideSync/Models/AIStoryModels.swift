@@ -38,3 +38,4 @@ public struct WorkoutNarrative: Identifiable, Sendable, Codable {
         self.generatedAt = generatedAt
     }
 }
+

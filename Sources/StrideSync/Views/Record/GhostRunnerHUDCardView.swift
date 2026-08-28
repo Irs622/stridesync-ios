@@ -72,3 +72,4 @@ public struct GhostRunnerHUDCardView: View {
         return String(format: "%d:%02d", min, sec)
     }
 }
+

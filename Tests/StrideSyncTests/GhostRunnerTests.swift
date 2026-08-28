@@ -32,3 +32,4 @@ struct GhostRunnerTests {
         #expect(deltaBehind.formattedDistanceDelta.contains("di Belakang"))
     }
 }
+

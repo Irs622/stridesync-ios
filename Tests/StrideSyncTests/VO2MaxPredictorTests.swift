@@ -37,3 +37,4 @@ struct VO2MaxPredictorTests {
         #expect(fiveK.estimatedPaceSecondsPerKm < full.estimatedPaceSecondsPerKm)
     }
 }
+

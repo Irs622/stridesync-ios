@@ -160,3 +160,4 @@ public struct VO2MaxPredictorView: View {
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }
+

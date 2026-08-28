@@ -88,3 +88,4 @@ public struct RunningDynamicsCardView: View {
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 }
+

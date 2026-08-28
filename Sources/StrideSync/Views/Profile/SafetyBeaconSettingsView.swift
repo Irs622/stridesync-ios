@@ -166,3 +166,4 @@ public struct SafetyBeaconSettingsView: View {
         }
     }
 }
+

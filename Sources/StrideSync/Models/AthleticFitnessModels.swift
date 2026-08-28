@@ -109,3 +109,4 @@ public struct VO2MaxScore: Sendable, Codable {
         self.calculatedAt = calculatedAt
     }
 }
+

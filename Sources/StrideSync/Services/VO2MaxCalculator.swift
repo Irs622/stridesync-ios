@@ -108,3 +108,4 @@ public struct VO2MaxCalculator: Sendable {
         return max(5, min(99, percentile))
     }
 }
+

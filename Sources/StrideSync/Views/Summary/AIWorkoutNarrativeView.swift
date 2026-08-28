@@ -134,3 +134,4 @@ public struct AIWorkoutNarrativeView: View {
         )
     }
 }
+
