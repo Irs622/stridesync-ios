@@ -7,11 +7,11 @@
 [![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-007AFF.svg?style=flat-square)](https://developer.apple.com/xcode/swiftui/)
 [![SwiftData](https://img.shields.io/badge/Persistence-SwiftData-green.svg?style=flat-square)](https://developer.apple.com/documentation/swiftdata)
 [![CI](https://github.com/Irs622/stridesync-ios/actions/workflows/ci.yml/badge.svg)](https://github.com/Irs622/stridesync-ios/actions)
-[![Tests](https://img.shields.io/badge/Tests-20%2F20%20Passing%20(100%25)-brightgreen.svg?style=flat-square)]()
+[![Tests](https://img.shields.io/badge/Tests-29%2F29%20Passing%20(100%25)-brightgreen.svg?style=flat-square)]()
 [![SwiftLint](https://img.shields.io/badge/SwiftLint-Compliant-brightgreen.svg?style=flat-square)](.swiftlint.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
-**A high-performance, modern Strava-like fitness tracking and social networking iOS platform built with Swift 6, SwiftUI, SwiftData, CoreLocation Actors, MapKit, and ActivityKit (Dynamic Island).**
+**A high-performance, modern Strava-like fitness tracking and social networking iOS platform built with Swift 6, SwiftUI, SwiftData, CoreLocation Actors, MapKit, ActivityKit (Dynamic Island), WidgetKit, HealthKit, and Garmin FIT 2.0.**
 
 [Tampilan Aplikasi](#-tampilan-antarmuka-aplikasi-visual-showcase) • [Fitur Utama](#-fitur-utama) • [Arsitektur Teknis](#-arsitektur-teknis) • [Algoritma & Engineering](#-algoritma--engineering) • [Struktur Proyek](#-struktur-direktori-proyek) • [Cara Menjalankan](#-cara-menjalankan-proyek) • [Dokumentasi](#-dokumentasi-lengkap)
 
@@ -78,11 +78,12 @@
 
 **StrideSync** adalah platform pelacak aktivitas atletik luar ruangan (lari, bersepeda, hiking, dan jalan santai) berbasis iOS yang memadukan keandalan **GPS Engine kelas telemetri** dengan **ekosistem sosial komunitas olahraga modern**.
 
-Proyek ini dirancang dari awal dengan prinsip **Local-First & Privacy-First Architecture**:
-* 🛡️ **Privasi Atlet Terjamin:** Data lokasi di sekitar rumah atau kantor disanitasi secara otomatis dengan geofence masking sebelum dibagikan atau diekspor ke format GPX.
+Proyek ini dirancang dari awal dengan prinsip **Local-First, Security-First & Privacy-First Architecture**:
+* 🛡️ **Privasi & Enkripsi Atlet Terjamin:** Data lokasi di sekitar rumah disanitasi dengan geofence masking, serta kredensial/token pengguna tersimpan aman di **Apple Keychain Security Framework**.
 * ⚡️ **Swift 6 Strict Concurrency:** Mengeliminasi seluruh potensi *data race* pada pemrosesan koordinat GPS dengan mengisolasi perhitungan pada `actor LocationEngine`.
-* 💾 **Modern Local Persistence:** Menggunakan **SwiftData** dan **UserDefaults DTO** sehingga riwayat latihan, catatan sepatu, dan preferensi pengguna tetap tersimpan utuh secara offline.
-* 🍏 **Native Apple Ecosystem:** Memanfaatkan **ActivityKit (Dynamic Island & Lock Screen Live Activities)**, **HealthKit workout sync**, dan **ImageRenderer** untuk berbagi kartu grafis resolusi tinggi ke Instagram Stories.
+* 💾 **Modern SwiftData Persistence & Versioning:** Menggunakan **SwiftData** `VersionedSchema` (`V1`) dan `SchemaMigrationPlan` untuk keamanan pembaruan struktur basis data.
+* 🍏 **Native Apple Ecosystem:** Memanfaatkan **ActivityKit (Dynamic Island & Lock Screen Live Activities)**, **WidgetKit (Home & Lock Screen Widgets)**, **HealthKit `HKWorkoutBuilder`**, dan **ImageRenderer** untuk berbagai kartu grafis Story resolusi tinggi.
+* 📦 **Dual Export Engine:** Ekspor dan impor data rute dalam format **GPX 1.1 XML** dan format biner Garmin **FIT 2.0**.
 
 ---
 
@@ -92,12 +93,15 @@ Proyek ini dirancang dari awal dengan prinsip **Local-First & Privacy-First Arch
 | :--- | :--- | :--- |
 | **Language** | **Swift 6.0** | Strict Concurrency Checking (`-swift-version 6`), Actor isolation, Sendable models |
 | **UI Framework** | **SwiftUI & MapKit** | Declarative modern UI, `MapPolyline` gradient styling, custom markers, haptics |
-| **Persistence** | **SwiftData & UserDefaults** | `@Model` relational storage untuk `ActivityRecord`, `Segment`, `TelemetryPoint` |
-| **Live Tracking** | **ActivityKit** | Live Activities di Dynamic Island & Lock Screen via `WorkoutActivityAttributes` |
-| **Health Sync** | **HealthKit** | Otorisasi dan sinkronisasi workout native ke Apple Health (`HKWorkout`) |
-| **Voice Audio** | **AVFoundation** | Voice feedback native via `AVSpeechSynthesizer` (Bahasa Indonesia & English) |
-| **Share Engine** | **ImageRenderer (UIKit)** | Render kartu Story rasio 9:16 resolusi tinggi (3x scale) ke galeri & media sosial |
-| **CI / CD** | **GitHub Actions** | Automated macOS 14 / Xcode 16 pipeline untuk build, linting, dan testing |
+| **Persistence** | **SwiftData & Schema Versioning** | `@Model` relational storage, `VersionedSchema` (`V1`) & `SchemaMigrationPlan` |
+| **Security** | **Keychain Security Framework** | `SecItem` API untuk enkripsi kredensial & auth token pengguna |
+| **Live Tracking** | **ActivityKit & WidgetKit** | Dynamic Island, Lock Screen Live Activities & Home Screen widgets (`WeeklyMileageWidget`) |
+| **Health Sync** | **HealthKit** | Otorisasi dan sinkronisasi workout native via modern `HKWorkoutBuilder` |
+| **Export Engines**| **GPX 1.1 & Garmin FIT 2.0** | Generator XML GPX 1.1 dan Encoder/Decoder biner Garmin FIT 2.0 dengan alignment safety |
+| **Networking** | **NetworkClient & Offline Queue** | Async HTTP REST client dengan Bearer auth injection & `BackgroundSyncManager` upload queue |
+| **Voice & i18n** | **AVFoundation & LocalizationManager** | Voice feedback `AVSpeechSynthesizer` & dynamic English/Indonesian i18n |
+| **Analytics** | **AnalyticsService** | Telemetry event logging, screen view tracking & performance metrics |
+| **CI / CD** | **GitHub Actions** | Automated macOS 14 / Xcode 16 pipeline untuk build, linting, dan test suites |
 
 ---
 
@@ -109,19 +113,22 @@ Proyek ini dirancang dari awal dengan prinsip **Local-First & Privacy-First Arch
 - **Smart Auto-Pause & Resume**: Otomatis menjeda perekaman saat atlet berhenti di lampu merah (`speed < 0.8 m/s`) dan melanjutkan kembali saat bergerak.
 - **Kilometer Splits Calculator**: Menghitung *pacing split* dan akumulasi elevasi secara presisi per kilometer.
 
-### 2. 📱 Dynamic Island & Lock Screen Live Activities
+### 2. 📱 Dynamic Island, Lock Screen & WidgetKit
 - **ActivityKit Integration**: Menampilkan jarak, durasi bergerak, dan *pace* langsung di Dynamic Island (tampilan *compact* & *expanded*) serta Lock Screen widget saat iPhone terkunci.
+- **WidgetKit Widgets**: Widget Home Screen & Lock Screen untuk progres jarak mingguan (`WeeklyMileageWidgetView`) dan pintasan cepat latihan (`QuickStartWorkoutWidgetView`).
 
 ### 3. 👑 Virtual Segments & KOM/QOM Leaderboard
 - **Spatial Segment Matcher**: Algoritma pencocokan polylines rute terhadap segmen virtual jalanan dengan radius toleransi pintu masuk/keluar (*gate radius* 40m).
 - **Crown & Personal Record (PR)**: Penentuan gelar **King/Queen of the Mountain (KOM/QOM)** tercepat dan pemecahan rekor pribadi.
 
-### 4. 🛡️ Geofence Privacy Zones & GPX 1.1 Support
+### 4. 🛡️ Geofence Privacy, Keychain & Dual Export (GPX + FIT 2.0)
 - **Privacy Geofencing**: Menyembunyikan titik awal dan akhir rute dalam radius tertentu (misal 500m di sekitar rumah atau kantor) untuk melindungi privasi atlet pada peta publik.
-- **GPX 1.1 XML Generator & Parser**: Ekspor dan impor data rute berstandar internasional lengkap dengan timestamp ISO-8601 dan elevasi.
+- **Garmin FIT 2.0 & GPX 1.1 Support**: Ekspor dan impor data rute dalam format biner Garmin FIT 2.0 dan XML GPX 1.1 lengkap dengan timestamp ISO-8601 dan elevasi.
+- **Keychain Security**: Penyimpanan aman token autentikasi dan preferensi privasi sensitif menggunakan `Security.framework`.
 
-### 5. 🗣️ Umpan Balik Suara (Audio Voice Cues)
-- Sintesis suara native via `AVSpeechSynthesizer` yang mengumumkan *pace split*, total waktu latihan, dan detak jantung dalam Bahasa Indonesia (`id-ID`) atau English (`en-US`).
+### 5. 🗣️ Umpan Balik Suara & Lokalisasi Dinamis (i18n)
+- **Audio Voice Cues**: Sintesis suara native via `AVSpeechSynthesizer` yang mengumumkan *pace split*, total waktu latihan, dan detak jantung.
+- **Dynamic Localization**: Mendukung perpindahan bahasa antarmuka dinamis antara Bahasa Indonesia (`.id`) dan Bahasa Inggris (`.en`).
 
 ### 6. 👥 Linimasa Sosial, Pencarian & Notifikasi
 - **Community Feed**: Linimasa aktivitas olahraga dengan animasi haptic **Kudos**, kolom komentar, dan *filter chip* multi-kategori.
@@ -166,13 +173,17 @@ graph TD
         SC[SplitCalculator]
         AC[AudioCueService - AVSpeechSynthesizer]
         GPX[GPXService - XML 1.1]
+        FIT[FITService - Garmin FIT 2.0]
+        KC[KeychainManager - Security]
+        NC[NetworkClient - HTTP REST]
+        LOC[LocalizationManager - i18n]
         PZ[PrivacyZoneService]
-        HK[HealthKitManager]
+        HK[HealthKitManager - HKWorkoutBuilder]
     end
 
     subgraph Data_Layer [Persistence & Operating System]
-        SD[(SwiftData - ModelContainer)]
-        AK[ActivityKit - Dynamic Island]
+        SD[(SwiftData - Schema V1 & Migration)]
+        AK[ActivityKit & WidgetKit]
         CL[CoreLocation Hardware]
     end
 
@@ -188,6 +199,11 @@ graph TD
     VM1 --> SM
     VM1 --> SC
     VM1 --> AC
+    VM1 --> GPX
+    VM1 --> FIT
+    VM1 --> KC
+    VM1 --> NC
+    VM1 --> LOC
     VM1 --> PZ
     VM1 --> HK
     VM1 --> AK
@@ -210,7 +226,8 @@ Sources/
 │   │   ├── ActivityRecord.swift         # Entitas SwiftData aktivitas utama + ActivitySummarySnapshot
 │   │   ├── Segment.swift                # Model segmen virtual jalanan & leaderboard (KOM/QOM, PR)
 │   │   ├── SocialModels.swift           # AthleteProfile, Kudos, Comment, Challenge, GearItem
-│   │   ├── UserSettings.swift           # UserSettingsManager dengan auto-persistensi ke UserDefaults
+│   │   ├── UserSettings.swift           # UserSettingsManager dengan Keychain & UserDefaults sync
+│   │   ├── StrideSyncSchema.swift       # SwiftData VersionedSchema V1 & SchemaMigrationPlan
 │   │   └── NotificationItem.swift       # Model pesan & notifikasi sosial
 │   ├── Services/
 │   │   ├── LocationEngine.swift         # Actor pengolah GPS real-time & filter noise
@@ -219,8 +236,15 @@ Sources/
 │   │   ├── SegmentMatcher.swift         # Algoritma pencocokan segmen jalanan
 │   │   ├── AudioCueService.swift        # Voice feedback AVSpeechSynthesizer
 │   │   ├── GPXService.swift             # Ekspor/Impor format GPX 1.1 XML
+│   │   ├── FITService.swift             # Encoder/Decoder format biner Garmin FIT 2.0
+│   │   ├── KeychainManager.swift        # Encrypted storage via Security.framework
+│   │   ├── NetworkClient.swift          # REST API client & Bearer token injection
+│   │   ├── LocalizationManager.swift    # Dynamic i18n localization (English & Indonesian)
+│   │   ├── AnalyticsService.swift       # Event logging & screen view telemetry
+│   │   ├── BackgroundSyncManager.swift  # Queue upload offline & BGTaskScheduler
 │   │   ├── PrivacyZoneService.swift     # Geofence masking lokasi rumah/kantor
-│   │   └── HealthKitManager.swift       # Integrasi Apple HealthKit
+│   │   ├── HealthKitManager.swift       # Integrasi Apple HealthKit (HKWorkoutBuilder)
+│   │   └── WatchSessionManager.swift    # Bidirectional WatchConnectivity sync
 │   ├── ViewModels/
 │   │   ├── RecordViewModel.swift        # State machine perekaman HUD, Live Activities & GPS stream
 │   │   ├── FeedViewModel.swift          # Linimasa komunitas & SwiftData modelContext integration
@@ -245,7 +269,7 @@ Sources/
 │   │   │   └── ChallengesView.swift     # Tantangan bulanan dengan progress bar & lencana
 │   │   ├── Profile/
 │   │   │   ├── ProfileView.swift        # Profil atlet, trophy case & gear tracker
-│   │   │   ├── ProfileSettingsView.swift# Master pengaturan akun & GPX backup
+│   │   │   ├── ProfileSettingsView.swift# Master pengaturan akun & GPX/FIT backup
 │   │   │   ├── EditProfileView.swift    # Form edit biodata & metrik fisik
 │   │   │   ├── PrivacyZonesSettingsView.swift # Pengaturan radius privasi rumah
 │   │   │   ├── AudioCuesSettingsView.swift    # Pengaturan bahasa suara
@@ -261,23 +285,28 @@ Sources/
 │   │       └── CreateSegmentView.swift      # Pembuat segmen kustom dari rute
 │   └── LiveActivity/
 │       ├── WorkoutActivityAttributes.swift # ActivityKit attributes
-│       └── WorkoutLiveActivityWidget.swift # Widget Dynamic Island & Lock Screen
+│       ├── WorkoutLiveActivityWidget.swift # Widget Dynamic Island & Lock Screen
+│       └── StrideSyncWidgets.swift          # Home & Lock Screen WidgetKit views (WeeklyMileageWidget)
 └── StrideSyncDemo/
     └── main.swift                       # Terminal simulation runner
 Tests/
 └── StrideSyncTests/
-    ├── RecordViewModelTests.swift       # 2 Tests: HUD lifecycle, state transitions & coordinate ingestion
-    ├── FeedAndSocialTests.swift         # 3 Tests: Kudos toggle, comment additions & filtering
-    ├── PersistentSettingsTests.swift    # 1 Test: UserDefaults persistence & privacy zones
-    ├── LocationEngineTests.swift        # 2 Tests: GPS noise filtering & tracking state
-    ├── SplitCalculatorTests.swift       # 1 Test: 1-km pace split calculation
-    ├── SegmentMatcherTests.swift        # 1 Test: Virtual segment matching
-    ├── PrivacyZoneTests.swift           # 1 Test: Geofence coordinate masking
-    ├── GPXServiceTests.swift            # 1 Test: GPX 1.1 XML export & parse
-    ├── LiveLocationManagerTests.swift   # 3 Tests: Hardware delegate bridge, gear & challenges
-    ├── UserSettingsTests.swift          # 1 Test: Settings state & privacy zones
-    ├── SearchAndNotificationTests.swift # 2 Tests: Search scope filtering & notifications
-    └── AdvancedFeaturesTests.swift      # 2 Tests: Heart Rate Zone 1-5 & Watch Session Manager
+    ├── RecordViewModelTests.swift       # HUD lifecycle, state transitions & coordinate ingestion
+    ├── FeedAndSocialTests.swift         # Kudos toggle, comment additions & filtering
+    ├── PersistentSettingsTests.swift    # UserDefaults persistence & privacy zones
+    ├── LocationEngineTests.swift        # GPS noise filtering & tracking state
+    ├── SplitCalculatorTests.swift       # 1-km pace split calculation
+    ├── SegmentMatcherTests.swift        # Virtual segment matching
+    ├── PrivacyZoneTests.swift           # Geofence coordinate masking
+    ├── GPXServiceTests.swift            # GPX 1.1 XML export & parse
+    ├── FITServiceTests.swift            # Garmin FIT 2.0 binary encoding & decoding
+    ├── KeychainManagerTests.swift       # Security Keychain save, read & delete
+    ├── HealthKitAndNetworkTests.swift   # HealthKitManager, NetworkClient & LocalizationManager
+    ├── AudioAndHapticServiceTests.swift # AudioCueService speech & HapticFeedbackService
+    ├── AnalyticsAndBackgroundSyncTests.swift # Telemetry logging & offline upload queue
+    ├── LiveLocationManagerTests.swift   # Hardware delegate bridge, gear & challenges
+    ├── UserSettingsTests.swift          # Settings state & privacy zones
+    └── SearchAndNotificationTests.swift # Search scope filtering & notifications
 ```
 
 ---
@@ -293,13 +322,13 @@ Tests/
 ```bash
 swift test
 ```
-*Output: 12 tests across 8 suites passed (100% Passed).*
+*Output: 29 tests across 17 suites passed (100% Passed).*
 
 ### 2. Menjalankan Simulasi Live GPS di Terminal
 ```bash
 swift run StrideSyncDemo
 ```
-*Simulasi ini akan mendemokan perekaman 5K lari, filter auto-pause, kalkulasi splits, pencocokan segmen KOM, ekspor GPX, dan feed komunitas.*
+*Simulasi ini akan mendemokan perekaman 5K lari, filter auto-pause, kalkulasi splits, pencocokan segmen KOM, ekspor GPX/FIT, dan feed komunitas.*
 
 ### 3. Menjalankan Aplikasi di iOS Simulator
 Cukup jalankan script otomatisasi:
@@ -318,6 +347,7 @@ Script ini akan:
 - 📘 [**Product Requirements Document (PRD.md)**](PRD.md) — Dokumen spesifikasi fungsional, persona pengguna, dan roadmap produk.
 - 🏛️ [**Architecture Deep Dive (ARCHITECTURE.md)**](ARCHITECTURE.md) — Penjelasan mendalam arsitektur sistem, Actor isolation, dan memory management.
 - 🤝 [**Contributing Guide (CONTRIBUTING.md)**](CONTRIBUTING.md) — Panduan kontribusi, standard kode, dan alur Pull Request.
+- 🔒 [**Security Policy (SECURITY.md)**](SECURITY.md) — Kebijakan keamanan, enkripsi Keychain, dan pelaporan kerentanan.
 
 ---
 

@@ -353,6 +353,15 @@ Aplikasi menggunakan struktur **Bottom Tab Bar 5-Menu**:
 - [x] Monthly Challenges & Badges Gamification (Progress bar & rewards).
 - [x] Gear Tracker (Masa pakai sepatu lari & sepeda).
 
+### Phase 5: Security, Dual Export & System Hardening (Completed)
+- [x] Garmin FIT 2.0 Binary Encoder & Decoder ([`FITService.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/FITService.swift)).
+- [x] Keychain Security Encrypted Storage ([`KeychainManager.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/KeychainManager.swift)).
+- [x] Cloud Network Client dengan Bearer Token Injection ([`NetworkClient.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/NetworkClient.swift)).
+- [x] SwiftData Versioned Schema `V1` & Migration Plan ([`StrideSyncSchema.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Models/StrideSyncSchema.swift)).
+- [x] Home & Lock Screen Widgets via `WidgetKit` ([`StrideSyncWidgets.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/LiveActivity/StrideSyncWidgets.swift)).
+- [x] Dynamic i18n Localization Engine ([`LocalizationManager.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/LocalizationManager.swift)).
+- [x] Telemetry Analytics & Background Offline Sync Queue ([`AnalyticsService.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/AnalyticsService.swift), [`BackgroundSyncManager.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/BackgroundSyncManager.swift)).
+
 ---
 
 ## 9. Key Performance Indicators (KPIs)

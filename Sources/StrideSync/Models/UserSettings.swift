@@ -175,6 +175,10 @@ public final class UserSettingsManager {
         if let encoded = try? JSONEncoder().encode(data) {
             UserDefaults.standard.set(encoded, forKey: Self.userDefaultsKey)
         }
+        
+        // Sync sensitive profile info to Keychain
+        KeychainManager.shared.save(key: "user_full_name", value: fullName)
+        KeychainManager.shared.save(key: "user_location", value: location)
     }
     
     public func addPrivacyZone(name: String, latitude: Double, longitude: Double, radiusMeters: Double) {

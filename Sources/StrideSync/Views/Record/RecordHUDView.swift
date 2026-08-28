@@ -52,6 +52,7 @@ public struct RecordHUDView: View {
                         .font(.system(size: 68, weight: .heavy, design: .rounded))
                         .monospacedDigit()
                         .foregroundStyle(Color.white)
+                        .accessibilityIdentifier("hud_distance_text")
                     
                     Text("KILOMETERS")
                         .font(.system(size: 13, weight: .black, design: .rounded))
@@ -59,6 +60,8 @@ public struct RecordHUDView: View {
                         .tracking(3.0)
                 }
                 .padding(.vertical, 4)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Distance: \(viewModel.formattedDistance) kilometers")
                 
                 // Secondary Metrics 2x2 Grid
                 LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {

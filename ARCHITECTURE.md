@@ -128,10 +128,47 @@ Layanan [`GPXService.swift`](file:///Users/mac/Downloads/swift-library/Sources/S
 
 ---
 
-## 6. Integrasi Ekosistem Apple (ActivityKit & Dynamic Island)
+## 6. Integrasi Ekosistem Apple (ActivityKit, WidgetKit & HealthKit)
 
-State perekaman disinkronisasikan ke Dynamic Island menggunakan `ActivityKit`:
-- **Compact Leading**: Ikon jenis olahraga (misal `figure.run`) dan indikator status *recording*.
-- **Compact Trailing**: Jarak tempuh saat ini (misal `5.24 km`).
-- **Expanded Layout**: Menampilkan metrik lengkap (Jarak, Moving Time, Current Pace, dan Detak Jantung) serta tombol aksi interaktif.
+State perekaman disinkronisasikan ke Dynamic Island, Lock Screen, dan HealthKit:
+- **Dynamic Island (`ActivityKit`)**:
+  - **Compact Leading**: Ikon jenis olahraga (misal `figure.run`) dan indikator status *recording*.
+  - **Compact Trailing**: Jarak tempuh saat ini (misal `5.24 km`).
+  - **Expanded Layout**: Menampilkan metrik lengkap (Jarak, Moving Time, Current Pace, dan Detak Jantung) serta tombol aksi interaktif.
+- **Home & Lock Screen Widgets (`WidgetKit`)**: [`StrideSyncWidgets.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/LiveActivity/StrideSyncWidgets.swift) menyediakan `WeeklyMileageWidgetView` untuk grafik progres mingguan dan `QuickStartWorkoutWidgetView` untuk pintasan perekaman.
+- **HealthKit Sync (`HKWorkoutBuilder`)**: [`HealthKitManager.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/HealthKitManager.swift) menyimpan sesi latihan menggunakan API modern `HKWorkoutBuilder` tanpa menggunakan initializer terdepresiasi.
+
+---
+
+## 7. Format Biner Garmin FIT 2.0 (`FITService.swift`)
+
+Layanan [`FITService.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/FITService.swift) memproses file biner FIT 2.0 resmi Garmin:
+1. **14-Byte Header**: Header biner berisi `header_size`, `protocol_version` (`0x20`), `profile_version` (`2100`), `data_size`, dan magic string `.FIT`.
+2. **File ID & Session Record**: Menyuplai metadata jenis latihan, durasi bergerak, dan total jarak tempuh.
+3. **Telemetry Data Records**: Mengonversi latitude/longitude ke *semicircles* Int32:
+   $$\text{semicircles} = \text{degrees} \times \left( \frac{2^{31}}{180} \right)$$
+4. **Alignment Safety Unpackers**: Menghindari *misaligned memory pointer crash* dengan ekstrak data byte-by-byte secara aman.
+
+---
+
+## 8. Layer Keamanan & Enkripsi Keychain (`KeychainManager.swift`)
+
+Untuk mematuhi standar NFR 4 (Privacy & Security), kredensial sensitif atlet dan token JWT disisolasi menggunakan `Security.framework` pada [`KeychainManager.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/KeychainManager.swift):
+- Menggunakan `kSecClassGenericPassword` dengan query spesifik `com.stridesync.app`.
+- Menyuplai otomatis header HTTP Authorization `Bearer <token>` pada setiap panggilan network client.
+
+---
+
+## 9. Network API Client & Background Sync (`NetworkClient.swift` & `BackgroundSyncManager.swift`)
+
+- **Asynchronous REST Client**: [`NetworkClient.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/NetworkClient.swift) menangani panggilan ke endpoint backend (`APIEndpoint`) secara non-blocking dengan fallback *mock mode*.
+- **Offline Upload Queue**: [`BackgroundSyncManager.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/BackgroundSyncManager.swift) mengamankan aktivitas yang tersimpan saat perangkat offline dan menjadwalkan unggahan otomatis via `BGTaskScheduler` saat perangkat online kembali.
+
+---
+
+## 10. SwiftData Versioned Schema & Strategy Migrasi (`StrideSyncSchema.swift`)
+
+- **VersionedSchema V1**: [`StrideSyncSchemaV1`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Models/StrideSyncSchema.swift#L5) mengkapsulasi entitas `@Model` `ActivityRecord`, `TelemetryPoint`, `DistanceSplit`, dan `Segment`.
+- **Migration Plan**: [`StrideSyncMigrationPlan`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Models/StrideSyncSchema.swift#L19) mengatur alur migrasi database lokal secara aman untuk mendukung rilis versi skema berikutnya tanpa risiko kehilangan data atlet.
+
 

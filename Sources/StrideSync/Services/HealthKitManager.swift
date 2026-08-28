@@ -78,18 +78,42 @@ public final class HealthKitManager: @unchecked Sendable {
         let distanceQuantity = HKQuantity(unit: .meter(), doubleValue: distanceMeters)
         let energyQuantity: HKQuantity? = caloriesBurned.map { HKQuantity(unit: .kilocalorie(), doubleValue: $0) }
         
-        let workout = HKWorkout(
-            activityType: hkActivityType,
-            start: startDate,
-            end: endDate,
-            duration: endDate.timeIntervalSince(startDate),
-            totalEnergyBurned: energyQuantity,
-            totalDistance: distanceQuantity,
-            metadata: [HKMetadataKeyIndoorWorkout: activityType == .indoorRun]
-        )
-        
+        let configuration = HKWorkoutConfiguration()
+        configuration.activityType = hkActivityType
+        configuration.locationType = (activityType == .indoorRun) ? .indoor : .outdoor
+
+        let builder = HKWorkoutBuilder(healthStore: healthStore, configuration: configuration, device: .local())
         do {
-            try await healthStore.save(workout)
+            try await builder.beginCollection(at: startDate)
+            
+            var samples: [HKSample] = []
+            let distanceTypeIdent: HKQuantityTypeIdentifier = (activityType == .ride) ? .distanceCycling : .distanceWalkingRunning
+            if let distType = HKQuantityType.quantityType(forIdentifier: distanceTypeIdent) {
+                let distSample = HKQuantitySample(
+                    type: distType,
+                    quantity: distanceQuantity,
+                    start: startDate,
+                    end: endDate
+                )
+                samples.append(distSample)
+            }
+            
+            if let energyQuantity = energyQuantity, let energyType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned) {
+                let energySample = HKQuantitySample(
+                    type: energyType,
+                    quantity: energyQuantity,
+                    start: startDate,
+                    end: endDate
+                )
+                samples.append(energySample)
+            }
+            
+            if !samples.isEmpty {
+                try await builder.addSamples(samples)
+            }
+            
+            try await builder.endCollection(at: endDate)
+            _ = try await builder.finishWorkout()
             return true
         } catch {
             return false
