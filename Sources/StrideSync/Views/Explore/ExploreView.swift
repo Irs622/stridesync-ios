@@ -81,6 +81,21 @@ public struct ExploreView: View {
                 }
             }
             .navigationTitle("Eksplorasi")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    NavigationLink {
+                        PersonalGlobalHeatmapView()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "map.fill")
+                                .font(.subheadline)
+                            Text("Heatmap")
+                                .font(.system(size: 13, weight: .bold, design: .rounded))
+                        }
+                        .foregroundStyle(StrideTheme.primaryOrange)
+                    }
+                }
+            }
         }
     }
     

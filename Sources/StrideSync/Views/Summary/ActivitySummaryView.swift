@@ -257,6 +257,17 @@ public struct ActivitySummaryView: View {
                     }
                 }
                 
+                // Physiological Recovery & Readiness Gauge
+                let summaryMetrics = TrainingLoadCalculator().calculateTrainingMetrics(
+                    currentSessionTrimp: TrainingLoadCalculator().calculateSessionTRIMP(
+                        durationSeconds: activity.durationSeconds,
+                        averageHeartRate: activity.averageHeartRate,
+                        rpeScore: activity.rpe
+                    )
+                )
+                RecoveryGaugeView(metrics: summaryMetrics)
+                    .padding(.horizontal, 16)
+                
                 // Notes & Gear Assignment
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Catatan & Perlengkapan")

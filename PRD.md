@@ -118,6 +118,36 @@ graph TD
 
 ---
 
+### 3.6 Modul 6: Athletic Intelligence & Analisis Fisiologis (v2.0)
+* **FR-6.1 Training Load & Recovery Advisor:** Perhitungan skor kelelahan berbasis Banister TRIMP & rekomendasi jam waktu istirahat tubuh.
+* **FR-6.2 AI Voice Pacing Coach:** Pemandu audio real-time berdasarkan target pace split yang ditetapkan atlet sebelum latihan.
+* **FR-6.3 Structured Interval Workout Builder:** Pembuat menu latihan interval bertingkat (Warm-up, Interval repetitions, Cool-down) dengan HUD transisi getar.
+* **FR-6.4 Cadence Metronome & Running Dynamics:** Metronom audio-haptic (160–190 SPM) serta metrik panjang langkah dan waktu kontak tanah via `CoreMotion`.
+
+---
+
+### 3.7 Modul 7: Live Safety Beacon & GPX Course Navigation (v2.0)
+* **FR-7.1 Live Safety Beacon:** Berbagi link peta live web terenkripsi ke kontak darurat via WhatsApp/SMS dengan status baterai dan ETA.
+* **FR-7.2 Turn-by-Turn GPX Navigation:** Navigasi arah jalur rute dan peringatan haptic saat atlet keluar dari jalur (> 30 meter).
+* **FR-7.3 Ghost Pacer:** Visual avatar lawan virtual di HUD melawan rekor pribadi (PR) atau waktu mahkota KOM secara live.
+* **FR-7.4 Fall & Incident Detection:** Deteksi tabrakan/jatuh mendadak via `CoreMotion` dengan sirene hitung mundur 30 detik sebelum SMS darurat otomatis.
+
+---
+
+### 3.8 Modul 8: Hardware Ekosistem BLE & Apple Modern APIs (v2.0)
+* **FR-8.1 Sensor Bluetooth Eksternal (`CoreBluetooth`):** Integrasi chest-strap Heart Rate monitor (`0x180D`), sensor cadence sepeda (`0x1816`), dan Power Meter / Wattage FTP (`0x1818`).
+* **FR-8.2 iOS 18 Control Center & Action Button:** Pintasan cepat mulai latihan via `ControlWidget` dan tombol Action Button (`AppIntents`).
+* **FR-8.3 Interactive Live Activity:** Tombol Pause/Resume dan Lap marker langsung di layar Dynamic Island / Lock Screen.
+
+---
+
+### 3.9 Modul 9: Visual Media & Personal Spatial Heatmap (v2.0)
+* **FR-9.1 3D Animated Route Video Flyover:** Generator video 3D rute vertikal 9:16 untuk Instagram Reels & TikTok.
+* **FR-9.2 Personal Global Heatmap ("Tile Hunter"):** Peta satelit eksplorasi yang menampilkan akumulasi seluruh rute seumur hidup atlet.
+* **FR-9.3 Live Group Run Buddy Radar:** Menampilkan titik lokasi teman satu komunitas secara live di peta HUD saat latihan bersama.
+
+---
+
 ## 4. Arsitektur Teknis & Tech Stack (Swift iOS)
 
 ### 4.1 Technology Stack
@@ -362,6 +392,32 @@ Aplikasi menggunakan struktur **Bottom Tab Bar 5-Menu**:
 - [x] Dynamic i18n Localization Engine ([`LocalizationManager.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/LocalizationManager.swift)).
 - [x] Telemetry Analytics & Background Offline Sync Queue ([`AnalyticsService.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/AnalyticsService.swift), [`BackgroundSyncManager.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/BackgroundSyncManager.swift)).
 
+### Phase 6: Athletic Intelligence & Coaching (v2.0 - Next)
+- [ ] Training Load TRIMP & Recovery Gauge Advisor.
+- [ ] AI Adaptive Voice Coach & Target Pace Split Engine.
+- [ ] Structured Interval Workout Builder & Custom Repetitions.
+- [ ] Running Cadence Metronome & CoreMotion Dynamics.
+
+### Phase 7: Live Safety, Navigation & Standalone watchOS (v2.1)
+- [ ] Live Safety Beacon (Web/SMS Emergency LiveTrack with battery & ETA).
+- [ ] GPX Course Following & Turn-by-Turn Waypoint Guidance.
+- [ ] Ghost Pacer (Real-time HUD avatar vs Personal Record / KOM).
+- [ ] Incident & Crash Fall Detection (`CoreMotion`).
+- [ ] Standalone Apple Watch Workout App (`HKWorkoutSession`).
+
+### Phase 8: BLE Hardware Sensors & Modern Apple APIs (v2.2)
+- [ ] Bluetooth LE Heart Rate Straps & Cycling Power Meters (`CoreBluetooth`).
+- [ ] iOS 18 Control Center Widgets & Action Button Shortcuts (`AppIntents`).
+- [ ] Interactive Lock Screen Live Activity Controls (Pause/Resume & Lap).
+
+### Phase 9: Viral Visual Media & Spatial Heatmaps (v2.3)
+- [ ] 3D Animated Route Video Generator (MP4 Flyover Reels).
+- [ ] Personal Global Heatmap ("Tile Hunter / Fog of War").
+- [ ] Live Group Run Radar on HUD Map.
+- [ ] In-App Interactive Segment Trimming Tool.
+
+*(Rincian lengkap dan arsitektur teknis spesifik dapat dilihat pada dokumen [ROADMAP.md](file:///Users/mac/Downloads/swift-library/ROADMAP.md)).*
+
 ---
 
 ## 9. Key Performance Indicators (KPIs)
@@ -369,4 +425,5 @@ Aplikasi menggunakan struktur **Bottom Tab Bar 5-Menu**:
 * **GPS tracking reliability:** 0% data hilang saat aplikasi berjalan di background atau ada panggilan telepon masuk.
 * **Daily Active Users (DAU) / Monthly Active Users (MAU) Ratio:** Target > 35%.
 * **Activity Completion Rate:** > 85% aktivitas yang dimulai diselesaikan dan disimpan.
+
 

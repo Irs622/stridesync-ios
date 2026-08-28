@@ -24,6 +24,18 @@ public final class RecordViewModel {
     public var autoPauseEnabled: Bool = true
     public var isAudioCueEnabled: Bool = true
     
+    // MARK: - v2.0 Extensions (Pacing Coach & Route Navigation)
+    public var pacingTarget: PacingTarget? {
+        didSet {
+            pacingCoachService.target = pacingTarget
+        }
+    }
+    public var pacingFeedback: PacingCoachFeedback?
+    public var pacingCoachService: PacingCoachService = PacingCoachService()
+    
+    public var activeNavigationEngine: RouteNavigationEngine?
+    public var activeNavigationGuidance: NavigationGuidance?
+    
     public let liveLocationManager: LiveLocationManager
     private var locationEngine: LocationEngine?
     private var timerTask: Task<Void, Never>?
@@ -42,6 +54,11 @@ public final class RecordViewModel {
         
         self.liveLocationManager.onLocationUpdate = { [weak self] location in
             self?.ingestLocation(location)
+        }
+        
+        // Connect to external Bluetooth BLE Heart Rate updates
+        BLEHeartRateAndSensorManager.shared.onHeartRateUpdate = { [weak self] hr in
+            self?.updateHeartRate(hr)
         }
     }
     
@@ -169,6 +186,27 @@ public final class RecordViewModel {
         self.routeCoordinates = metrics.coordinates
         
         self.updateLiveActivity()
+        
+        // Evaluate Pacing Coach
+        if let feedback = pacingCoachService.evaluate(
+            distanceMeters: metrics.distanceMeters,
+            elapsedTimeSeconds: metrics.elapsedTimeSeconds,
+            currentPaceSecondsPerKm: metrics.currentPaceSecondsPerKm
+        ) {
+            self.pacingFeedback = feedback
+            if pacingCoachService.shouldTriggerVoiceAnnouncement(currentDistanceMeters: metrics.distanceMeters) && self.isAudioCueEnabled {
+                AudioCueService.shared.speakWorkoutStatus(text: feedback.localizedAnnouncement)
+            }
+        }
+        
+        // Evaluate Turn-by-Turn Course Navigation
+        if let navEngine = activeNavigationEngine {
+            let guidance = navEngine.processLocation(location)
+            self.activeNavigationGuidance = guidance
+            if guidance.isOffCourse && self.isAudioCueEnabled {
+                HapticFeedbackService.shared.playNotification(.warning)
+            }
+        }
         
         // Check for 1km audio announcement
         let currentKm = Int(metrics.distanceMeters / 1000.0)

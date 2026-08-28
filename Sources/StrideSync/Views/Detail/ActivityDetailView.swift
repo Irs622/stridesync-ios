@@ -48,6 +48,17 @@ public struct ActivityDetailView: View {
                 metricsGrid
                     .padding(.horizontal, 16)
                 
+                // Physiological Recovery & Training Load Gauge
+                let trainingMetrics = TrainingLoadCalculator().calculateTrainingMetrics(
+                    currentSessionTrimp: TrainingLoadCalculator().calculateSessionTRIMP(
+                        durationSeconds: activity.durationSeconds,
+                        averageHeartRate: activity.averageHeartRate,
+                        rpeScore: activity.rpe
+                    )
+                )
+                RecoveryGaugeView(metrics: trainingMetrics)
+                    .padding(.horizontal, 16)
+                
                 // Interactive Elevation & Pace Chart
                 ElevationPaceChartView(telemetryPoints: telemetryPoints)
                     .padding(.horizontal, 16)

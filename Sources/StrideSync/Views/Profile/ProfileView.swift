@@ -115,8 +115,66 @@ public struct ProfileView: View {
             }
             .padding(.horizontal, 16)
             
+            // Physiological Recovery & Readiness Gauge
+            RecoveryGaugeView()
+                .padding(.horizontal, 16)
+            
             // Annual 52-Week Activity Heatmap Matrix
             annualHeatmapCard
+            
+            // Feature Shortcuts (Personal Global Heatmap & BLE Sensors)
+            VStack(spacing: 10) {
+                NavigationLink {
+                    PersonalGlobalHeatmapView()
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "map.fill")
+                            .foregroundStyle(StrideTheme.primaryOrange)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Heatmap Global Pribadi")
+                                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                                .foregroundStyle(Color.primary)
+                            Text("Lihat jejak rute seumur hidup di peta satelit")
+                                .font(.caption2)
+                                .foregroundStyle(Color.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption.bold())
+                            .foregroundStyle(Color.secondary)
+                    }
+                    .padding(14)
+                    .background(StrideTheme.cardBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                
+                NavigationLink {
+                    BLESensorsSettingsView()
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "sensor.fill")
+                            .foregroundStyle(StrideTheme.athleticGreen)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Sensor Eksternal (Bluetooth BLE)")
+                                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                                .foregroundStyle(Color.primary)
+                            Text("Hubungkan Garmin HRM, Polar, Power Meter")
+                                .font(.caption2)
+                                .foregroundStyle(Color.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption.bold())
+                            .foregroundStyle(Color.secondary)
+                    }
+                    .padding(14)
+                    .background(StrideTheme.cardBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 16)
             
             // Weekly Progress Bar Chart Simulation
             VStack(alignment: .leading, spacing: 12) {

@@ -7,7 +7,7 @@
 [![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-007AFF.svg?style=flat-square)](https://developer.apple.com/xcode/swiftui/)
 [![SwiftData](https://img.shields.io/badge/Persistence-SwiftData-green.svg?style=flat-square)](https://developer.apple.com/documentation/swiftdata)
 [![CI](https://github.com/Irs622/stridesync-ios/actions/workflows/ci.yml/badge.svg)](https://github.com/Irs622/stridesync-ios/actions)
-[![Tests](https://img.shields.io/badge/Tests-29%2F29%20Passing%20(100%25)-brightgreen.svg?style=flat-square)]()
+[![Tests](https://img.shields.io/badge/Tests-48%2F48%20Passing%20(100%25)-brightgreen.svg?style=flat-square)]()
 [![SwiftLint](https://img.shields.io/badge/SwiftLint-Compliant-brightgreen.svg?style=flat-square)](.swiftlint.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
@@ -345,6 +345,7 @@ Script ini akan:
 ## 📖 Dokumentasi Lengkap (Technical References)
 
 - 📘 [**Product Requirements Document (PRD.md)**](PRD.md) — Dokumen spesifikasi fungsional, persona pengguna, dan roadmap produk.
+- 🚀 [**Next-Gen Roadmap v2.0+ (ROADMAP.md)**](ROADMAP.md) — Spesifikasi teknis fitur AI Coach, Live Safety Beacon, BLE Sensors & 3D Flyover.
 - 🏛️ [**Architecture Deep Dive (ARCHITECTURE.md)**](ARCHITECTURE.md) — Penjelasan mendalam arsitektur sistem, Actor isolation, dan memory management.
 - 🤝 [**Contributing Guide (CONTRIBUTING.md)**](CONTRIBUTING.md) — Panduan kontribusi, standard kode, dan alur Pull Request.
 - 🔒 [**Security Policy (SECURITY.md)**](SECURITY.md) — Kebijakan keamanan, enkripsi Keychain, dan pelaporan kerentanan.

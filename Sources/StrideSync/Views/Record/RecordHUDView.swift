@@ -12,6 +12,7 @@ public struct RecordHUDView: View {
     
     @State private var showingFinishConfirmation: Bool = false
     @State private var showingDiscardConfirmation: Bool = false
+    @State private var showingPacingTargetSheet: Bool = false
     
     public init(
         viewModel: RecordViewModel = RecordViewModel(),
@@ -35,18 +36,28 @@ public struct RecordHUDView: View {
                     .padding(.horizontal, 20)
                     .padding(.top, 14)
                 
+                // Active Turn-by-Turn Navigation Banner (if route navigation active)
+                if let guidance = viewModel.activeNavigationGuidance {
+                    NavigationHUDCardView(guidance: guidance) {
+                        viewModel.activeNavigationEngine = nil
+                        viewModel.activeNavigationGuidance = nil
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 6)
+                }
+                
                 // Live Route Map Preview
                 liveMapPreview
-                    .frame(height: 190)
+                    .frame(height: viewModel.activeNavigationGuidance != nil ? 150 : 190)
                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 20, style: .continuous)
                             .strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
                     )
                     .padding(.horizontal, 16)
-                    .padding(.vertical, 14)
+                    .padding(.vertical, 10)
                 
-                // Primary Hero Metric: Distance
+                // Primary Hero Metric: Distance & Pacing Coach Delta
                 VStack(spacing: 2) {
                     Text(viewModel.formattedDistance)
                         .font(.system(size: 68, weight: .heavy, design: .rounded))
@@ -54,10 +65,22 @@ public struct RecordHUDView: View {
                         .foregroundStyle(Color.white)
                         .accessibilityIdentifier("hud_distance_text")
                     
-                    Text("KILOMETERS")
-                        .font(.system(size: 13, weight: .black, design: .rounded))
-                        .foregroundStyle(StrideTheme.primaryOrange)
-                        .tracking(3.0)
+                    HStack(spacing: 8) {
+                        Text("KILOMETERS")
+                            .font(.system(size: 13, weight: .black, design: .rounded))
+                            .foregroundStyle(StrideTheme.primaryOrange)
+                            .tracking(3.0)
+                        
+                        if let feedback = viewModel.pacingFeedback, viewModel.trackingState == .recording {
+                            Text(feedback.formattedDelta)
+                                .font(.system(size: 11, weight: .black, design: .rounded))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(feedback.isAhead ? StrideTheme.athleticGreen.opacity(0.25) : StrideTheme.primaryOrange.opacity(0.25))
+                                .foregroundStyle(feedback.isAhead ? StrideTheme.athleticGreen : StrideTheme.primaryOrange)
+                                .clipShape(Capsule())
+                        }
+                    }
                 }
                 .padding(.vertical, 4)
                 .accessibilityElement(children: .combine)
@@ -119,6 +142,9 @@ public struct RecordHUDView: View {
             }
             Button("Lanjutkan Latihan", role: .cancel) {}
         }
+        .sheet(isPresented: $showingPacingTargetSheet) {
+            SetPacingTargetSheet(pacingTarget: $viewModel.pacingTarget)
+        }
     }
     
     // MARK: - Subviews
@@ -126,27 +152,49 @@ public struct RecordHUDView: View {
     private var topHeaderView: some View {
         HStack {
             if viewModel.trackingState == .idle {
-                Menu {
-                    Picker("Pilih Aktivitas", selection: $viewModel.selectedActivityType) {
-                        ForEach(ActivityType.allCases) { type in
-                            Label(type.rawValue, systemImage: type.iconName).tag(type)
+                HStack(spacing: 8) {
+                    Menu {
+                        Picker("Pilih Aktivitas", selection: $viewModel.selectedActivityType) {
+                            ForEach(ActivityType.allCases) { type in
+                                Label(type.rawValue, systemImage: type.iconName).tag(type)
+                            }
                         }
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: viewModel.selectedActivityType.iconName)
+                                .foregroundStyle(StrideTheme.primaryOrange)
+                            Text(viewModel.selectedActivityType.rawValue)
+                                .font(.system(.headline, design: .rounded, weight: .bold))
+                                .foregroundStyle(Color.white)
+                            Image(systemName: "chevron.down")
+                                .font(.caption.bold())
+                                .foregroundStyle(Color.gray)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color.white.opacity(0.1))
+                        .clipShape(Capsule())
                     }
-                } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: viewModel.selectedActivityType.iconName)
-                            .foregroundStyle(StrideTheme.primaryOrange)
-                        Text(viewModel.selectedActivityType.rawValue)
-                            .font(.system(.headline, design: .rounded, weight: .bold))
-                            .foregroundStyle(Color.white)
-                        Image(systemName: "chevron.down")
-                            .font(.caption.bold())
-                            .foregroundStyle(Color.gray)
+                    
+                    Button {
+                        showingPacingTargetSheet = true
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "target")
+                                .font(.caption.bold())
+                                .foregroundStyle(viewModel.pacingTarget != nil ? StrideTheme.athleticGreen : Color.gray)
+                            if let target = viewModel.pacingTarget {
+                                Text(target.formattedTargetPace)
+                                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                                    .foregroundStyle(StrideTheme.athleticGreen)
+                            }
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color.white.opacity(0.08))
+                        .clipShape(Capsule())
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.white.opacity(0.1))
-                    .clipShape(Capsule())
+                    .buttonStyle(.plain)
                 }
             } else {
                 HStack(spacing: 8) {
