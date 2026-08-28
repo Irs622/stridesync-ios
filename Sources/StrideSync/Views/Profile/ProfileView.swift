@@ -147,6 +147,54 @@ public struct ProfileView: View {
                     .background(StrideTheme.cardBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 }
+                NavigationLink {
+                    VO2MaxPredictorView()
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "lungs.fill")
+                            .foregroundStyle(StrideTheme.primaryOrange)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("VO2 Max & Prediksi Lomba")
+                                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                                .foregroundStyle(Color.primary)
+                            Text("Kapasitas aerobik & estimasi waktu finish 5K, 10K, 21K, 42K")
+                                .font(.caption2)
+                                .foregroundStyle(Color.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption.bold())
+                            .foregroundStyle(Color.secondary)
+                    }
+                    .padding(14)
+                    .background(StrideTheme.cardBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                
+                NavigationLink {
+                    SafetyBeaconSettingsView()
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "antenna.radiowaves.left.and.right")
+                            .foregroundStyle(Color.blue)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Live Safety Beacon & Kontak Darurat")
+                                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                                .foregroundStyle(Color.primary)
+                            Text("Bagikan link live tracking & deteksi jatuh keras")
+                                .font(.caption2)
+                                .foregroundStyle(Color.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption.bold())
+                            .foregroundStyle(Color.secondary)
+                    }
+                    .padding(14)
+                    .background(StrideTheme.cardBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                }
                 .buttonStyle(.plain)
                 
                 NavigationLink {

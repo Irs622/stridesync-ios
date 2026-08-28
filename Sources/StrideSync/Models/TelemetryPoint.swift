@@ -76,5 +76,21 @@ public struct TelemetrySnapshot: Codable, Sendable, Identifiable {
     public var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
+    
+    public var altitudeMeters: Double {
+        altitude
+    }
+    
+    public var clLocation: CLLocation {
+        CLLocation(
+            coordinate: coordinate,
+            altitude: altitude,
+            horizontalAccuracy: horizontalAccuracy,
+            verticalAccuracy: 5.0,
+            course: 0.0,
+            speed: speedMps,
+            timestamp: timestamp
+        )
+    }
 }
 

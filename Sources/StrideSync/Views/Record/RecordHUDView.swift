@@ -46,6 +46,13 @@ public struct RecordHUDView: View {
                     .padding(.top, 6)
                 }
                 
+                // Active Virtual Ghost Runner Banner (if ghost runner active)
+                if let ghostDelta = viewModel.ghostRunnerDelta, viewModel.trackingState == .recording {
+                    GhostRunnerHUDCardView(delta: ghostDelta)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 4)
+                }
+                
                 // Live Route Map Preview
                 liveMapPreview
                     .frame(height: viewModel.activeNavigationGuidance != nil ? 150 : 190)
@@ -144,6 +151,12 @@ public struct RecordHUDView: View {
         }
         .sheet(isPresented: $showingPacingTargetSheet) {
             SetPacingTargetSheet(pacingTarget: $viewModel.pacingTarget)
+        }
+        .overlay {
+            if FallDetectionEngine.shared.isCountdownActive {
+                EmergencyAlertOverlayView()
+                    .transition(.opacity)
+            }
         }
     }
     

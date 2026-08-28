@@ -268,6 +268,10 @@ public struct ActivitySummaryView: View {
                 RecoveryGaugeView(metrics: summaryMetrics)
                     .padding(.horizontal, 16)
                 
+                // On-Device AI Workout Storyteller Narrative
+                AIWorkoutNarrativeView(activity: activity)
+                    .padding(.horizontal, 16)
+                
                 // Notes & Gear Assignment
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Catatan & Perlengkapan")

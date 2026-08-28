@@ -10,6 +10,7 @@ public struct ActivityDetailView: View {
     @State private var showingShareSheet: Bool = false
     @State private var showingCreateSegmentSheet: Bool = false
     @State private var showingGPXExportedAlert: Bool = false
+    @State private var showingFlyoverSheet: Bool = false
     @State private var exportedGPXString: String = ""
     
     public init(
@@ -30,15 +31,39 @@ public struct ActivityDetailView: View {
                     .padding(.horizontal, 20)
                     .padding(.top, 8)
                 
-                // Multi-color Speed Gradient Map
-                GradientRouteMapView(telemetryPoints: telemetryPoints)
-                    .frame(height: 240)
-                    .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .strokeBorder(Color.primary.opacity(0.06), lineWidth: 1)
-                    )
-                    .padding(.horizontal, 16)
+                // Multi-color Speed Gradient Map with 3D Flyover Action
+                ZStack(alignment: .bottomTrailing) {
+                    GradientRouteMapView(telemetryPoints: telemetryPoints)
+                        .frame(height: 240)
+                        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                                .strokeBorder(Color.primary.opacity(0.06), lineWidth: 1)
+                        )
+                    
+                    Button {
+                        showingFlyoverSheet = true
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "video.fill")
+                                .font(.caption.bold())
+                            Text("3D Flyover")
+                                .font(.system(size: 12, weight: .black, design: .rounded))
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Color.black.opacity(0.85))
+                        .foregroundStyle(StrideTheme.primaryOrange)
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule()
+                                .strokeBorder(StrideTheme.primaryOrange.opacity(0.5), lineWidth: 1)
+                        )
+                        .shadow(color: Color.black.opacity(0.3), radius: 6, y: 2)
+                    }
+                    .padding(14)
+                }
+                .padding(.horizontal, 16)
                 
                 // Weather Conditions Widget
                 weatherCard
@@ -59,6 +84,10 @@ public struct ActivityDetailView: View {
                 RecoveryGaugeView(metrics: trainingMetrics)
                     .padding(.horizontal, 16)
                 
+                // Running Dynamics & Biomechanics Card
+                RunningDynamicsCardView(metrics: RunningDynamicsCalculator().estimateDynamics(averageSpeedMps: activity.averageSpeedMps))
+                    .padding(.horizontal, 16)
+                
                 // Interactive Elevation & Pace Chart
                 ElevationPaceChartView(telemetryPoints: telemetryPoints)
                     .padding(.horizontal, 16)
@@ -69,6 +98,10 @@ public struct ActivityDetailView: View {
                 
                 // Splits Table
                 splitsSection
+                    .padding(.horizontal, 16)
+                
+                // On-Device AI Workout Storyteller Narrative
+                AIWorkoutNarrativeView(activity: activity)
                     .padding(.horizontal, 16)
                 
                 // Action Buttons (Create Segment, GPX, Share)
@@ -93,6 +126,13 @@ public struct ActivityDetailView: View {
                         .foregroundStyle(StrideTheme.primaryOrange)
                 }
             }
+        }
+        .sheet(isPresented: $showingFlyoverSheet) {
+            FlyoverVideoPlayerView(
+                telemetryPoints: telemetryPoints,
+                activityTitle: activity.title,
+                totalDistanceMeters: activity.distanceMeters
+            )
         }
         .sheet(isPresented: $showingShareSheet) {
             NavigationStack {

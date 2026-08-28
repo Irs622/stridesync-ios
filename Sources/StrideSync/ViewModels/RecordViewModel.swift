@@ -36,6 +36,12 @@ public final class RecordViewModel {
     public var activeNavigationEngine: RouteNavigationEngine?
     public var activeNavigationGuidance: NavigationGuidance?
     
+    // MARK: - v2.1/v3.0 Extensions (Ghost Runner & Biomechanics)
+    public var ghostRunnerEngine: GhostRunnerEngine?
+    public var ghostRunnerDelta: GhostRunnerDelta?
+    public var runningDynamicsMetrics: RunningDynamicsMetrics = RunningDynamicsMetrics()
+    public var runningDynamicsCalculator: RunningDynamicsCalculator = RunningDynamicsCalculator()
+    
     public let liveLocationManager: LiveLocationManager
     private var locationEngine: LocationEngine?
     private var timerTask: Task<Void, Never>?
@@ -84,6 +90,13 @@ public final class RecordViewModel {
         self.startTimer()
         self.startLiveActivity()
         
+        // Start Safety Monitoring
+        FallDetectionEngine.shared.startMonitoring()
+        _ = LiveSafetyBeaconService.shared.startBeacon(
+            athleteName: "Budi Santoso (You)",
+            activityType: selectedActivityType
+        )
+        
         Task {
             // Request HealthKit if enabled
             if UserSettingsManager.shared.healthKitSyncEnabled {
@@ -127,6 +140,8 @@ public final class RecordViewModel {
         stopTimer()
         liveLocationManager.stopUpdatingLocation()
         endLiveActivity()
+        FallDetectionEngine.shared.stopMonitoring()
+        LiveSafetyBeaconService.shared.stopBeacon()
         
         let (summary, points) = await engine.finish()
         self.trackingState = .finished
@@ -155,6 +170,8 @@ public final class RecordViewModel {
         stopTimer()
         liveLocationManager.stopUpdatingLocation()
         endLiveActivity()
+        FallDetectionEngine.shared.stopMonitoring()
+        LiveSafetyBeaconService.shared.stopBeacon()
         
         trackingState = .idle
         distanceMeters = 0.0
@@ -207,6 +224,27 @@ public final class RecordViewModel {
                 HapticFeedbackService.shared.playNotification(.warning)
             }
         }
+        
+        // Evaluate Virtual Ghost Runner
+        if let ghostEngine = ghostRunnerEngine {
+            self.ghostRunnerDelta = ghostEngine.evaluate(
+                athleteDistanceMeters: metrics.distanceMeters,
+                athleteElapsedTimeSeconds: metrics.elapsedTimeSeconds,
+                athleteCurrentPaceSecondsPerKm: metrics.currentPaceSecondsPerKm
+            )
+        }
+        
+        // Evaluate Running Dynamics & Biomechanics
+        self.runningDynamicsMetrics = runningDynamicsCalculator.estimateDynamics(
+            averageSpeedMps: metrics.currentSpeedMps
+        )
+        
+        // Update Live Safety Beacon
+        LiveSafetyBeaconService.shared.updateTelemetry(
+            coordinate: location.coordinate,
+            distanceMeters: metrics.distanceMeters,
+            heartRateBpm: self.currentHeartRate
+        )
         
         // Check for 1km audio announcement
         let currentKm = Int(metrics.distanceMeters / 1000.0)
