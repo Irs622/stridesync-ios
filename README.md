@@ -137,7 +137,23 @@ Proyek ini dirancang dari awal dengan prinsip **Local-First, Security-First & Pr
 - **9:16 Story Card Generator**: Penghasil kartu grafis estetik untuk dibagikan langsung ke Instagram Story.
 
 ### 7. 👟 Gear Tracker (Umur Sepatu & Sepeda)
-- Memantau akumulasi jarak pemakaian sepatu lari dan sepeda dengan peringatan visual saat mencapai batas umur optimal (500-800 km).
+### 8. 🎯 Live Audio Pacing Coach & Target Splits
+- Mengatur target waktu tempuh balapan (*Sub-20m 5K, Sub-50m 10K, Sub-4h Marathon*) dengan evaluasi delta waktu real-time (*ahead/behind status*) dan panduan suara taktis bilingual via `AVSpeechSynthesizer`.
+
+### 9. 🧭 GPX Turn-by-Turn Navigation & Vector Steering
+- Panduan rute interaktif dari file GPX dengan deteksi sudut belokan (*bearing delta*), estimasi jarak manuver, dan peringatan getar haptik otomatis saat atlet keluar jalur (*cross-track error > 30m*).
+
+### 10. 📊 Training Load (Banister TRIMP) & Recovery Gauge
+- Kalkulasi beban fisiologis latihan berbasis formula matematis **Banister TRIMP**, pemodelan kelelahan sesaat (*Acute Load ATL* 7 hari), kebugaran dasar (*Chronic Load CTL* 28 hari), dan estimasi jam pemulihan otot.
+
+### 11. 📶 External Bluetooth BLE Sensors (CoreBluetooth)
+- Pemindaian dan pembacaan paket biner standar Bluetooth SIG GATT untuk sensor dada detak jantung (`0x180D`/`0x2A37`) dan sensor daya kayuh sepeda (*Cycling Power* `0x1818`/`0x2A63`).
+
+### 12. 🗺️ Personal Global Heatmap & Spatial Tile Hunter
+- Agregasi seluruh koordinat GPS seumur hidup ke dalam petak peta satelit Web Mercator (*Zoom 14*) dengan pendaran neon oranye dan sistem lencana eksplorasi kota.
+
+### 13. ⌚️ Standalone watchOS Companion App
+- Arsitektur perekaman otonom di pergelangan tangan dengan sensor internal Apple Watch dan antarmuka HUD OLED kontras tinggi.
 
 ---
 
@@ -155,7 +171,11 @@ graph TD
         A --> F[ProfileView]
         B --> B1[GlobalSearchView]
         B --> B2[NotificationsView]
+        C --> C1[PersonalGlobalHeatmapView]
         F --> F1[ProfileSettingsView]
+        F --> F2[BLESensorsSettingsView]
+        D --> D1[SetPacingTargetSheet]
+        D --> D2[NavigationHUDCardView]
     end
 
     subgraph ViewModel_Layer [State & Presentation Logic]
@@ -171,6 +191,11 @@ graph TD
         LM[LiveLocationManager - CLLocationManager]
         SM[SegmentMatcher]
         SC[SplitCalculator]
+        PC[PacingCoachService]
+        RN[RouteNavigationEngine]
+        TL[TrainingLoadCalculator]
+        BLE[BLEHeartRateAndSensorManager]
+        HM[HeatmapTileEngine]
         AC[AudioCueService - AVSpeechSynthesizer]
         GPX[GPXService - XML 1.1]
         FIT[FITService - Garmin FIT 2.0]
@@ -196,6 +221,9 @@ graph TD
     VM1 <--> LE
     LE <--> LM
     LM <--> CL
+    VM1 --> PC
+    VM1 --> RN
+    VM1 --> BLE
     VM1 --> SM
     VM1 --> SC
     VM1 --> AC
@@ -228,12 +256,23 @@ Sources/
 │   │   ├── SocialModels.swift           # AthleteProfile, Kudos, Comment, Challenge, GearItem
 │   │   ├── UserSettings.swift           # UserSettingsManager dengan Keychain & UserDefaults sync
 │   │   ├── StrideSyncSchema.swift       # SwiftData VersionedSchema V1 & SchemaMigrationPlan
-│   │   └── NotificationItem.swift       # Model pesan & notifikasi sosial
+│   │   ├── NotificationItem.swift       # Model pesan & notifikasi sosial
+│   │   ├── PacingTarget.swift           # Model target split, presets & delta feedback
+│   │   ├── NavigationModels.swift       # Model manuver navigasi GPX turn-by-turn
+│   │   ├── TrainingLoadModels.swift     # Model Banister TRIMP, ATL/CTL & recovery readiness
+│   │   ├── BLESensorModels.swift        # Model sensor eksternal CoreBluetooth & telemetri
+│   │   └── HeatmapModels.swift          # Model petak Web Mercator Slippy Tile & badge
 │   ├── Services/
 │   │   ├── LocationEngine.swift         # Actor pengolah GPS real-time & filter noise
 │   │   ├── LiveLocationManager.swift    # Bridge CLLocationManager hardware iPhone
 │   │   ├── SplitCalculator.swift        # Kalkulator split 1km/mil
 │   │   ├── SegmentMatcher.swift         # Algoritma pencocokan segmen jalanan
+│   │   ├── PacingCoachService.swift     # Evaluator pacing real-time & audio feedback
+│   │   ├── RouteNavigationEngine.swift  # Engine navigasi GPX & kalkulasi cross-track error
+│   │   ├── TrainingLoadCalculator.swift # Kalkulator Banister TRIMP & recovery gauge
+│   │   ├── BLEHeartRateAndSensorManager.swift # Manager sensor eksternal Bluetooth SIG
+│   │   ├── HeatmapTileEngine.swift      # Engine konversi WGS84 ke Slippy Tiles Zoom 14
+│   │   ├── WatchWorkoutEngine.swift     # Engine mandiri workout Apple Watch
 │   │   ├── AudioCueService.swift        # Voice feedback AVSpeechSynthesizer
 │   │   ├── GPXService.swift             # Ekspor/Impor format GPX 1.1 XML
 │   │   ├── FITService.swift             # Encoder/Decoder format biner Garmin FIT 2.0
@@ -257,19 +296,27 @@ Sources/
 │   │   ├── Navigation/
 │   │   │   └── MainTabView.swift        # 5-Menu Root TabBar (Feed, Maps, Record, Challenges, You)
 │   │   ├── Record/
-│   │   │   └── RecordHUDView.swift      # Layar HUD live tracking OLED dark mode
+│   │   │   ├── RecordHUDView.swift      # Layar HUD live tracking OLED dark mode
+│   │   │   ├── SetPacingTargetSheet.swift # Modal pemilihan target pace lari kustom
+│   │   │   ├── NavigationHUDCardView.swift# Banner navigasi turn-by-turn mengambang
+│   │   │   └── WatchWorkoutHUDView.swift  # Antarmuka HUD Apple Watch OLED
 │   │   ├── Summary/
-│   │   │   └── ActivitySummaryView.swift# Post-workout breakdown, rute MapKit & matched segments
+│   │   │   └── ActivitySummaryView.swift# Post-workout breakdown, rute MapKit & recovery gauge
+│   │   ├── Detail/
+│   │   │   └── ActivityDetailView.swift # Analisis mendalam, grafik elevasi & TRIMP load
 │   │   ├── Feed/
 │   │   │   ├── ActivityCardView.swift   # Kartu linimasa sosial dengan animasi Kudos
 │   │   │   └── FeedView.swift           # Timeline komunitas dengan SwiftData auto-refresh
 │   │   ├── Explore/
-│   │   │   └── ExploreView.swift        # Peta eksplorasi rute & segmen jalanan terdekat
+│   │   │   ├── ExploreView.swift        # Peta eksplorasi rute & segmen jalanan terdekat
+│   │   │   └── PersonalGlobalHeatmapView.swift # Peta satelit heatmap jejak rute seumur hidup
 │   │   ├── Challenges/
 │   │   │   └── ChallengesView.swift     # Tantangan bulanan dengan progress bar & lencana
 │   │   ├── Profile/
-│   │   │   ├── ProfileView.swift        # Profil atlet, trophy case & gear tracker
+│   │   │   ├── ProfileView.swift        # Profil atlet, trophy case & recovery gauge
 │   │   │   ├── ProfileSettingsView.swift# Master pengaturan akun & GPX/FIT backup
+│   │   │   ├── RecoveryGaugeView.swift  # Kartu visual circular gauge kesiapan tubuh
+│   │   │   ├── BLESensorsSettingsView.swift # Pemindai dan penyambung sensor Bluetooth
 │   │   │   ├── EditProfileView.swift    # Form edit biodata & metrik fisik
 │   │   │   ├── PrivacyZonesSettingsView.swift # Pengaturan radius privasi rumah
 │   │   │   ├── AudioCuesSettingsView.swift    # Pengaturan bahasa suara
@@ -279,7 +326,7 @@ Sources/
 │   │   ├── Notifications/
 │   │   │   └── NotificationsView.swift  # Layar pusat notifikasi interaktif
 │   │   ├── Share/
-│   │   │   └── SocialShareCardView.swift# Generator kartu cerita 9:16 untuk Instagram Story (ImageRenderer)
+│   │   │   └── SocialShareCardView.swift# Generator kartu cerita 9:16 untuk Instagram Story
 │   │   └── Segments/
 │   │       ├── SegmentLeaderboardView.swift # Papan peringkat segmen & mahkota KOM
 │   │       └── CreateSegmentView.swift      # Pembuat segmen kustom dari rute
@@ -306,7 +353,13 @@ Tests/
     ├── AnalyticsAndBackgroundSyncTests.swift # Telemetry logging & offline upload queue
     ├── LiveLocationManagerTests.swift   # Hardware delegate bridge, gear & challenges
     ├── UserSettingsTests.swift          # Settings state & privacy zones
-    └── SearchAndNotificationTests.swift # Search scope filtering & notifications
+    ├── SearchAndNotificationTests.swift # Search scope filtering & notifications
+    ├── PacingCoachTests.swift           # Pengujian ahead/behind delta pacing coach
+    ├── RouteNavigationTests.swift       # Pengujian deteksi belokan & cross-track error GPX
+    ├── TrainingLoadTests.swift          # Pengujian Banister TRIMP & recovery hours
+    ├── BLESensorTests.swift             # Pengujian decoding paket biner BLE GATT
+    ├── HeatmapTileTests.swift           # Pengujian konversi Slippy Tile Web Mercator
+    └── WatchWorkoutEngineTests.swift    # Pengujian standalone watchOS workout engine
 ```
 
 ---
@@ -322,13 +375,13 @@ Tests/
 ```bash
 swift test
 ```
-*Output: 29 tests across 17 suites passed (100% Passed).*
+*Output: 48 tests across 23 suites passed (100% Passed).*
 
 ### 2. Menjalankan Simulasi Live GPS di Terminal
 ```bash
 swift run StrideSyncDemo
 ```
-*Simulasi ini akan mendemokan perekaman 5K lari, filter auto-pause, kalkulasi splits, pencocokan segmen KOM, ekspor GPX/FIT, dan feed komunitas.*
+*Simulasi ini akan mendemokan perekaman 5K lari, filter auto-pause, kalkulasi splits, target pacing delta, pencocokan segmen KOM, formula Banister TRIMP, agregasi heatmap tiles, dan decoding paket nirkabel BLE.*
 
 ### 3. Menjalankan Aplikasi di iOS Simulator
 Cukup jalankan script otomatisasi:

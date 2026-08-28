@@ -1,6 +1,6 @@
 # 🏛️ StrideSync Architecture & Engineering Deep Dive
 
-Dokumen ini menjelaskan secara rinci keputusan desain arsitektur, pola konkurensi **Swift 6**, manajemen memori, dan algoritma matematis yang digunakan dalam pembangunan **StrideSync**.
+Dokumen ini menjelaskan secara rinci keputusan desain arsitektur, pola konkurensi **Swift 6**, manajemen memori, protokol komunikasi nirkabel, dan algoritma matematis yang digunakan dalam pembangunan **StrideSync v2.0+**.
 
 ---
 
@@ -171,4 +171,92 @@ Untuk mematuhi standar NFR 4 (Privacy & Security), kredensial sensitif atlet dan
 - **VersionedSchema V1**: [`StrideSyncSchemaV1`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Models/StrideSyncSchema.swift#L5) mengkapsulasi entitas `@Model` `ActivityRecord`, `TelemetryPoint`, `DistanceSplit`, dan `Segment`.
 - **Migration Plan**: [`StrideSyncMigrationPlan`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Models/StrideSyncSchema.swift#L19) mengatur alur migrasi database lokal secara aman untuk mendukung rilis versi skema berikutnya tanpa risiko kehilangan data atlet.
 
+---
 
+## 11. Live Audio Pacing Coach & Target Split Engine (`PacingCoachService.swift`)
+
+Layanan [`PacingCoachService.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/PacingCoachService.swift) memandu atlet mencapai target waktu tempuh atau pace tertentu (*misal: Sub-25m 5K, Sub-50m 10K, Marathon Pace*).
+
+### Formula Evaluasi Delta:
+$$\text{ExpectedTime} = \left(\frac{\text{DistanceMeters}}{1000}\right) \times \text{TargetPaceSecondsPerKm}$$
+$$\Delta \text{Seconds} = \text{ExpectedTime} - \text{ElapsedTimeSeconds}$$
+
+* $\Delta \text{Seconds} \ge +5\text{s} \implies$ **Ahead of Target** (Lebih cepat).
+* $\Delta \text{Seconds} \le -5\text{s} \implies$ **Behind Target** (Tertinggal).
+* $-5\text{s} < \Delta \text{Seconds} < +5\text{s} \implies$ **On Pace** (Tepat target).
+
+Setiap interval kilometer atau setiap 120 detik, sistem secara otomatis memicu suara sintetis bilingual (`AVSpeechSynthesizer`) untuk memberikan arahan taktis (*"Pace Anda 4:50 per km. Anda 12 detik lebih cepat dari target"*).
+
+---
+
+## 12. GPX Turn-by-Turn Navigation & Vector Steering (`RouteNavigationEngine.swift`)
+
+Layanan [`RouteNavigationEngine.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/RouteNavigationEngine.swift) mengubah urutan titik koordinat GPX menjadi instruksi manuver belokan interaktif.
+
+### Deteksi Belokan & Sudut Bearing:
+Sudut arah kompas (*Bearing*) antara dua koordinat $(lat_1, lon_1)$ dan $(lat_2, lon_2)$ dihitung dengan trigonometri bola:
+$$\theta = \text{atan2}\left(\sin(\Delta lon) \cos(lat_2), \; \cos(lat_1) \sin(lat_2) - \sin(lat_1) \cos(lat_2) \cos(\Delta lon)\right)$$
+
+Selisih arah sudut $\Delta \theta = \theta_2 - \theta_1$:
+* $\Delta \theta \in [+30^\circ, +120^\circ] \implies$ **Turn Right** (Belok Kanan).
+* $\Delta \theta \in [-120^\circ, -30^\circ] \implies$ **Turn Left** (Belok Kiri).
+* $|\Delta \theta| > 120^\circ \implies$ **U-Turn** (Putar Balik).
+
+### Cross-Track Error Distance & Off-Course Haptic:
+Jika jarak tegak lurus atlet terhadap polyline rute melebihi **30 meter**, engine memicu status `isOffCourse = true` dan menggetarkan perangkat dengan pola getar peringatan `UINotificationFeedbackGenerator.error`.
+
+---
+
+## 13. Banister TRIMP & Chronic/Acute Training Load Engine (`TrainingLoadCalculator.swift`)
+
+Layanan [`TrainingLoadCalculator.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/TrainingLoadCalculator.swift) memodelkan respon fisiologis tubuh terhadap beban latihan menggunakan formula **Banister TRIMP (Training Impulse)**:
+
+$$\text{TRIMP} = D \times \Delta\text{HR}_{\text{ratio}} \times 0.64 e^{y \cdot \Delta\text{HR}_{\text{ratio}}}$$
+
+Di mana:
+* $D$ = Durasi latihan dalam menit.
+* $\Delta\text{HR}_{\text{ratio}} = \frac{\text{HR}_{\text{avg}} - \text{HR}_{\text{rest}}}{\text{HR}_{\text{max}} - \text{HR}_{\text{rest}}}$.
+* $y = 1.92$ (atlet pria) atau $y = 1.67$ (atlet wanita).
+* *Fallback:* Jika sensor detak jantung tidak tersedia, menggunakan **Foster Session-RPE**: $\text{TRIMP} = D \times \text{RPE} \times 1.5$.
+
+### Model Kesiapan Tubuh (Fitness, Fatigue & Form):
+* **Acute Training Load (ATL, 7 hari):** Representasi kelelahan sesaat (*Fatigue*).
+* **Chronic Training Load (CTL, 28 hari):** Representasi kebugaran dasar (*Fitness*).
+* **Training Stress Balance (TSB / Form):**
+  $$\text{TSB} = \text{CTL} - \text{ATL}$$
+* **Recovery Hours:**
+  $$\text{RecoveryHours} = \min\left(72, \; 6 + \frac{\text{TRIMP}}{120} \times 42\right)$$
+
+---
+
+## 14. CoreBluetooth BLE Sports Sensor Manager (`BLEHeartRateAndSensorManager.swift`)
+
+Layanan [`BLEHeartRateAndSensorManager.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/BLEHeartRateAndSensorManager.swift) memindai dan membaca paket data nirkabel dari sensor dada detak jantung (Polar H10, Garmin HRM-Pro) dan *Power Meter* sepeda:
+
+* **Heart Rate Service (`0x180D`) & Measurement (`0x2A37`):**
+  * Bit 0 dari Flag Byte menentukan format: `0 = UINT8` (0–255 BPM), `1 = UINT16` (0–65535 BPM).
+* **Cycling Power Service (`0x1818`) & Measurement (`0x2A63`):**
+  * Byte 2–3 mewakili 16-bit signed integer *Instantaneous Power* (Watts).
+* **Swift 6 Strict Concurrency:**
+  * Memanfaatkan konstanta string `Sendable` `nonisolated static let ... UUIDString` dan antrian `.main` dengan `@preconcurrency CBCentralManagerDelegate` untuk eliminasi total data race.
+
+---
+
+## 15. Personal Global Heatmap & Slippy Tile Engine (`HeatmapTileEngine.swift`)
+
+Layanan [`HeatmapTileEngine.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/HeatmapTileEngine.swift) mengagregasikan seluruh koordinat rute GPS seumur hidup ke dalam petak peta Web Mercator (*Zoom 14*):
+
+$$X = \left\lfloor \frac{lon + 180}{360} \times 2^Z \right\rfloor$$
+$$Y = \left\lfloor \left(1 - \frac{\ln(\tan(lat \times \frac{\pi}{180}) + \sec(lat \times \frac{\pi}{180}))}{\pi}\right) \times 2^{Z-1} \right\rfloor$$
+
+* **Luas Area Terjelajah:** $1 \text{ Tile} \approx 2.40 \text{ km}^2$ pada ekuator.
+* **Gamifikasi Lencana:** Menghitung total petak unik untuk memberikan badge (*Backyard Explorer, City Roamer, Globe Trotter*).
+
+---
+
+## 16. Standalone watchOS Workout Architecture (`WatchWorkoutEngine.swift`)
+
+Layanan [`WatchWorkoutEngine.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/WatchWorkoutEngine.swift) dan [`WatchWorkoutHUDView.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Views/Record/WatchWorkoutHUDView.swift) memungkinkan perekaman latihan mandiri di Apple Watch tanpa membawa iPhone:
+* Membaca sensor optik detak jantung pergelangan tangan secara real-time.
+* Menampilkan antarmuka OLED hitam kontras tinggi untuk efisiensi baterai maksimal.
+* Mengalkulasi metrik jarak, waktu bergerak, pace, dan kalori secara otonom di watchOS.
