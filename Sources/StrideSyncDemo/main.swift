@@ -1,3 +1,4 @@
+#if os(macOS)
 import Foundation
 import CoreLocation
 import StrideSync
@@ -220,3 +221,4 @@ struct StrideSyncDemoRunner {
         """)
     }
 }
+#endif

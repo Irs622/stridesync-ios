@@ -1,9 +1,7 @@
 import SwiftUI
 import SwiftData
 
-#if os(iOS)
-/// SwiftUI App Entry Point for the iOS application.
-@main
+/// SwiftUI App Scene Structure for the application.
 public struct StrideSyncApp: App {
     public init() {}
     
@@ -13,5 +11,4 @@ public struct StrideSyncApp: App {
         }
     }
 }
-#endif
 
