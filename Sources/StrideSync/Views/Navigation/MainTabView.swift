@@ -4,7 +4,7 @@ import SwiftData
 /// Root Tab Navigation container connecting the 5 primary pillars of the StrideSync application.
 public struct MainTabView: View {
     public var modelContext: ModelContext?
-    @State private var selectedTab: Int = 1
+    @State private var selectedTab: Int = 0
     @State private var isShowingRecordSheet: Bool = false
     @State private var finishedWorkoutData: (ActivityRecord, [TelemetrySnapshot], [SplitSnapshot], [SegmentEffort])? = nil
     @State private var isShowingSummarySheet: Bool = false

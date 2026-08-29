@@ -86,7 +86,14 @@ public struct ProfileView: View {
             }
             .background(StrideTheme.groupedBackground)
             .navigationTitle("Profil")
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Profil")
+                        .font(.system(.headline, design: .rounded, weight: .bold))
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
                         showingSettingsSheet = true
