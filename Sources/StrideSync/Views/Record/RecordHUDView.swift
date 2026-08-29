@@ -4,7 +4,7 @@ import MapKit
 import _MapKit_SwiftUI
 #endif
 
-/// Pro-grade live workout HUD recording screen with OLED dark theme, neon accents, and MapKit route view.
+/// Pro-grade live workout HUD recording screen with OLED dark theme, neon accents, MapKit route view, and Athletic Intelligence cards.
 public struct RecordHUDView: View {
     @State public var viewModel: RecordViewModel
     public var onFinish: ((ActivityRecord, [TelemetrySnapshot], [SplitSnapshot], [SegmentEffort]) -> Void)?
@@ -13,6 +13,8 @@ public struct RecordHUDView: View {
     @State private var showingFinishConfirmation: Bool = false
     @State private var showingDiscardConfirmation: Bool = false
     @State private var showingPacingTargetSheet: Bool = false
+    @State private var showingIntervalWorkoutSheet: Bool = false
+    @State private var showingMetronomeSettings: Bool = false
     
     public init(
         viewModel: RecordViewModel = RecordViewModel(),
@@ -36,6 +38,15 @@ public struct RecordHUDView: View {
                     .padding(.horizontal, 20)
                     .padding(.top, 14)
                 
+                // Active Structured Interval HUD Card (if interval program active)
+                if let progress = viewModel.intervalStepProgress, viewModel.trackingState == .recording {
+                    IntervalHUDCardView(progress: progress) {
+                        viewModel.advanceIntervalStep()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 6)
+                }
+                
                 // Active Turn-by-Turn Navigation Banner (if route navigation active)
                 if let guidance = viewModel.activeNavigationGuidance {
                     NavigationHUDCardView(guidance: guidance) {
@@ -53,21 +64,28 @@ public struct RecordHUDView: View {
                         .padding(.top, 4)
                 }
                 
+                // Active Nearby Buddy Radar (if group run active)
+                if !viewModel.nearbyBuddyPings.isEmpty && viewModel.trackingState == .recording {
+                    BuddyRadarHUDCardView(pings: viewModel.nearbyBuddyPings)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 4)
+                }
+                
                 // Live Route Map Preview
                 liveMapPreview
-                    .frame(height: viewModel.activeNavigationGuidance != nil ? 150 : 190)
+                    .frame(height: viewModel.activeNavigationGuidance != nil || viewModel.intervalStepProgress != nil ? 130 : 180)
                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 20, style: .continuous)
                             .strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
                     )
                     .padding(.horizontal, 16)
-                    .padding(.vertical, 10)
+                    .padding(.vertical, 8)
                 
                 // Primary Hero Metric: Distance & Pacing Coach Delta
                 VStack(spacing: 2) {
                     Text(viewModel.formattedDistance)
-                        .font(.system(size: 68, weight: .heavy, design: .rounded))
+                        .font(.system(size: 64, weight: .heavy, design: .rounded))
                         .monospacedDigit()
                         .foregroundStyle(Color.white)
                         .accessibilityIdentifier("hud_distance_text")
@@ -89,12 +107,12 @@ public struct RecordHUDView: View {
                         }
                     }
                 }
-                .padding(.vertical, 4)
+                .padding(.vertical, 2)
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel("Distance: \(viewModel.formattedDistance) kilometers")
                 
                 // Secondary Metrics 2x2 Grid
-                LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 10) {
                     metricCard(
                         title: "TIME",
                         value: viewModel.formattedDuration,
@@ -122,14 +140,14 @@ public struct RecordHUDView: View {
                     )
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+                .padding(.vertical, 8)
                 
                 Spacer()
                 
                 // Bottom Interactive Controls
                 bottomControlsView
                     .padding(.horizontal, 24)
-                    .padding(.bottom, 28)
+                    .padding(.bottom, 24)
             }
         }
         .confirmationDialog("Selesaikan Latihan?", isPresented: $showingFinishConfirmation, titleVisibility: .visible) {
@@ -152,6 +170,11 @@ public struct RecordHUDView: View {
         .sheet(isPresented: $showingPacingTargetSheet) {
             SetPacingTargetSheet(pacingTarget: $viewModel.pacingTarget)
         }
+        .sheet(isPresented: $showingIntervalWorkoutSheet) {
+            StructuredWorkoutBuilderView { plan in
+                viewModel.activeIntervalPlan = plan
+            }
+        }
         .overlay {
             if FallDetectionEngine.shared.isCountdownActive {
                 EmergencyAlertOverlayView()
@@ -173,7 +196,7 @@ public struct RecordHUDView: View {
                             }
                         }
                     } label: {
-                        HStack(spacing: 8) {
+                        HStack(spacing: 6) {
                             Image(systemName: viewModel.selectedActivityType.iconName)
                                 .foregroundStyle(StrideTheme.primaryOrange)
                             Text(viewModel.selectedActivityType.rawValue)
@@ -183,29 +206,44 @@ public struct RecordHUDView: View {
                                 .font(.caption.bold())
                                 .foregroundStyle(Color.gray)
                         }
-                        .padding(.horizontal, 12)
+                        .padding(.horizontal, 10)
                         .padding(.vertical, 6)
                         .background(Color.white.opacity(0.1))
                         .clipShape(Capsule())
                     }
                     
+                    // Interval Plan Selector Button
                     Button {
-                        showingPacingTargetSheet = true
+                        showingIntervalWorkoutSheet = true
                     } label: {
                         HStack(spacing: 4) {
-                            Image(systemName: "target")
+                            Image(systemName: "flame.fill")
                                 .font(.caption.bold())
-                                .foregroundStyle(viewModel.pacingTarget != nil ? StrideTheme.athleticGreen : Color.gray)
-                            if let target = viewModel.pacingTarget {
-                                Text(target.formattedTargetPace)
+                                .foregroundStyle(viewModel.activeIntervalPlan != nil ? StrideTheme.primaryOrange : Color.gray)
+                            if let plan = viewModel.activeIntervalPlan {
+                                Text(plan.title)
                                     .font(.system(size: 11, weight: .bold, design: .rounded))
-                                    .foregroundStyle(StrideTheme.athleticGreen)
+                                    .foregroundStyle(StrideTheme.primaryOrange)
+                                    .lineLimit(1)
                             }
                         }
-                        .padding(.horizontal, 10)
+                        .padding(.horizontal, 8)
                         .padding(.vertical, 6)
                         .background(Color.white.opacity(0.08))
                         .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    
+                    // Metronome Toggle Button
+                    Button {
+                        viewModel.isMetronomeEnabled.toggle()
+                    } label: {
+                        Image(systemName: "metronome.fill")
+                            .font(.caption.bold())
+                            .foregroundStyle(viewModel.isMetronomeEnabled ? StrideTheme.athleticGreen : Color.gray)
+                            .padding(6)
+                            .background(Color.white.opacity(0.08))
+                            .clipShape(Circle())
                     }
                     .buttonStyle(.plain)
                 }
@@ -216,6 +254,20 @@ public struct RecordHUDView: View {
                     Text(viewModel.selectedActivityType.rawValue)
                         .font(.system(.headline, design: .rounded, weight: .bold))
                         .foregroundStyle(Color.white)
+                    
+                    if viewModel.isMetronomeEnabled {
+                        HStack(spacing: 3) {
+                            Image(systemName: "metronome.fill")
+                                .font(.caption2)
+                            Text("\(viewModel.cadenceMetronomeEngine.targetCadenceSPM) SPM")
+                                .font(.caption2.bold())
+                        }
+                        .foregroundStyle(StrideTheme.athleticGreen)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(StrideTheme.athleticGreen.opacity(0.2))
+                        .clipShape(Capsule())
+                    }
                 }
             }
             
@@ -258,11 +310,16 @@ public struct RecordHUDView: View {
                 Marker("Posisi", coordinate: latest)
                     .tint(StrideTheme.primaryOrange)
             }
+            // Overlay nearby buddies
+            ForEach(viewModel.nearbyBuddyPings) { ping in
+                Marker(ping.buddy.name, coordinate: ping.buddy.coordinate)
+                    .tint(Color.blue)
+            }
         }
     }
     
     private func metricCard(title: String, value: String, unit: String, icon: String, iconColor: Color = .gray) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 5) {
             HStack(spacing: 4) {
                 Image(systemName: icon)
                     .font(.caption2.bold())
@@ -275,7 +332,7 @@ public struct RecordHUDView: View {
             
             HStack(alignment: .lastTextBaseline, spacing: 3) {
                 Text(value)
-                    .font(.system(size: 26, weight: .heavy, design: .rounded))
+                    .font(.system(size: 24, weight: .heavy, design: .rounded))
                     .monospacedDigit()
                     .foregroundStyle(Color.white)
                 
@@ -287,7 +344,7 @@ public struct RecordHUDView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(14)
+        .padding(12)
         .background(StrideTheme.hudCard)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .overlay(
@@ -312,7 +369,7 @@ public struct RecordHUDView: View {
                     }
                     .foregroundStyle(Color.white)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 64)
+                    .frame(height: 62)
                     .background(StrideTheme.primaryGradient)
                     .clipShape(Capsule())
                     .shadow(color: StrideTheme.primaryOrange.opacity(0.4), radius: 14, y: 6)

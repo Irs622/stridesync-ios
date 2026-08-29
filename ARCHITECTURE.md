@@ -319,3 +319,52 @@ Layanan [`AIWorkoutStoryteller.swift`](file:///Users/mac/Downloads/swift-library
 * **Persona & Nada Bicara:** *Pelatih Penuh Semangat 🔥, Analis Taktis 📊, Santai & Menyenangkan ☕️, Juara Epik 🏆*.
 * **Ekstraksi Kontekstual:** Otomatis merangkum pencapaian tanjakan elevasi, kestabilan pace, zona detak jantung, dan memberikan saran nutrisi serta pemulihan yang tepat sasaran.
 
+---
+
+## 23. Structured Interval Workout Programming & Execution (`IntervalExecutionEngine.swift`)
+
+Layanan [`IntervalExecutionEngine.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/IntervalExecutionEngine.swift) dan [`IntervalHUDCardView.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Views/Record/IntervalHUDCardView.swift) mengelola eksekusi sesi interval atletik bertingkat:
+* **State Machine Fase:** Otomatis berpindah dari *Warm-up* $\to$ *Interval/Sprint* $\to$ *Recovery/Rest* $\to$ *Cool-down* berdasarkan target jarak (meter) atau durasi waktu (detik).
+* **Live Circular Progress HUD:** Menampilkan sisa jarak atau waktu dalam animasi cincin lingkar dinamis.
+* **Audio-Haptic Transitions:** Memicu getaran haptic kuat dan panduan suara taktis bilingual saat pergantian fase interval.
+
+---
+
+## 24. Cadence Metronome & Biomechanics Lock (`CadenceMetronomeEngine.swift`)
+
+Layanan [`CadenceMetronomeEngine.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/CadenceMetronomeEngine.swift) membantu pelari mengunci frekuensi langkah optimal (150–210 SPM):
+* **Timer Siklus Presisi:** Interval $T = \frac{60}{\text{SPM}}$ menghasilkan audio click dan haptic tap ritmik.
+* **Evaluasi Deviasi Langkah:** Membandingkan cadence aktual terhadap target dan memberikan koreksi taktis jika atlet mengalami *overstriding*.
+
+---
+
+## 25. Live Group Run & Buddy Radar Engine (`GroupRunRadarEngine.swift`)
+
+Layanan [`GroupRunRadarEngine.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/GroupRunRadarEngine.swift) dan [`BuddyRadarHUDCardView.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Views/Record/BuddyRadarHUDCardView.swift) memindai posisi spasial sesama pelari:
+* **Kalkulasi Bearing Spasial:** Menghitung sudut arah kompas (N, NE, E, SE, S, SW, W, NW) dan jarak relatif dalam radius 1.2 km.
+* **Pace Delta Comparison:** Menampilkan selisih kecepatan sesaat antara atlet dan rekan komunitas.
+
+---
+
+## 26. UCI / Strava Climb Classification Engine (`ClimbClassifier.swift`)
+
+Layanan [`ClimbClassifier.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/ClimbClassifier.swift) mengevaluasi kemiringan jalan (*grade %*) dan mengelompokkan tanjakan berdasarkan formula resmi:
+$$\text{Score} = \text{Distance (m)} \times \left(\frac{\text{Grade \%}}{100}\right)^2 \times 100$$
+* **Hors Catégorie (HC):** Skor $\ge 80.000$ atau tanjakan pegunungan ekstrem ($>1000\text{m gain}$).
+* **Kategori 1 s.d. 4:** Pengelompokan berjenjang (*Cat 1: $\ge 64.000$, Cat 2: $\ge 32.000$, Cat 3: $\ge 16.000$, Cat 4: $\ge 8.000$*).
+
+---
+
+## 27. Environmental Weather Intelligence & NOAA Heat Index (`WeatherIntelligenceService.swift`)
+
+Layanan [`WeatherIntelligenceService.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/WeatherIntelligenceService.swift) memodelkan kondisi lingkungan dan stres termal atlet:
+* **NOAA Heat Index Formula:** Mengalkulasi suhu semu (*apparent temperature*) dari kombinasi temperatur udara ($^\circ\text{C}$) dan kelembaban relatif ($\%$).
+* **Dynamic Pacing Adjustment:** Memberikan rekomendasi perlambatan pace $+4\text{s}$ hingga $+18\text{s/km}$ pada cuaca panas untuk mencegah kenaikan suhu tubuh berlebih (*cardiac drift* dan *heat exhaustion*).
+
+---
+
+## 28. All-Time Personal Records (PR) Detector (`PersonalRecordDetector.swift`)
+
+Layanan [`PersonalRecordDetector.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/PersonalRecordDetector.swift) menjalankan algoritma *rolling-window search* pada telemetri GPS untuk mendeteksi rekor tercepat pada jarak standar (*400m, 1K, 1 Mile, 5K, 10K, Half Marathon, Marathon*).
+
+

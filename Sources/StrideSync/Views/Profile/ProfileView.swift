@@ -310,29 +310,83 @@ public struct ProfileView: View {
     }
     
     private var trophyCaseSection: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-            ForEach(athlete.trophyBadges, id: \.self) { badge in
-                VStack(spacing: 8) {
-                    Circle()
-                        .fill(Color.yellow.opacity(0.15))
-                        .frame(width: 70, height: 70)
-                        .overlay {
-                            Image(systemName: "trophy.fill")
-                                .font(.title2)
-                                .foregroundStyle(Color.yellow)
-                        }
-                    Text(badge)
-                        .font(.caption2.bold())
-                        .multilineTextAlignment(.center)
-                        .lineLimit(2)
+        VStack(spacing: 20) {
+            // All-Time Personal Best Records
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "crown.fill")
+                        .foregroundStyle(Color.yellow)
+                    Text("Rekor Pribadi Sepanjang Masa (PR)")
+                        .font(.system(.headline, design: .rounded, weight: .bold))
                 }
-                .padding(.vertical, 8)
+                
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    prCard(title: "1 KM", time: "3:42", pace: "3:42 /km", icon: "1.circle.fill")
+                    prCard(title: "5 KM", time: "19:48", pace: "3:57 /km", icon: "5.circle.fill")
+                    prCard(title: "10 KM", time: "41:15", pace: "4:07 /km", icon: "10.circle.fill")
+                    prCard(title: "HALF MARATHON", time: "1:32:10", pace: "4:22 /km", icon: "medal.fill")
+                }
             }
+            .padding(16)
+            .background(StrideTheme.cardBackground)
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            
+            // Achievement Badges
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "trophy.fill")
+                        .foregroundStyle(Color.yellow)
+                    Text("Lencana Prestasi Komunitas")
+                        .font(.system(.headline, design: .rounded, weight: .bold))
+                }
+                
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                    ForEach(athlete.trophyBadges, id: \.self) { badge in
+                        VStack(spacing: 8) {
+                            Circle()
+                                .fill(Color.yellow.opacity(0.15))
+                                .frame(width: 70, height: 70)
+                                .overlay {
+                                    Image(systemName: "trophy.fill")
+                                        .font(.title2)
+                                        .foregroundStyle(Color.yellow)
+                                }
+                            Text(badge)
+                                .font(.caption2.bold())
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                        }
+                        .padding(.vertical, 8)
+                    }
+                }
+            }
+            .padding(16)
+            .background(StrideTheme.cardBackground)
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         }
-        .padding(16)
-        .background(StrideTheme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         .padding(.horizontal, 16)
+    }
+    
+    private func prCard(title: String, time: String, pace: String, icon: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundStyle(StrideTheme.primaryOrange)
+                Text(title)
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.secondary)
+            }
+            Text(time)
+                .font(.system(size: 20, weight: .heavy, design: .rounded))
+                .monospacedDigit()
+            Text("Pace: \(pace)")
+                .font(.caption2)
+                .foregroundStyle(Color.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(Color.primary.opacity(0.04))
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
     
     private func statFollow(title: String, count: Int) -> some View {
