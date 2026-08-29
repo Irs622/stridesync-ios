@@ -6,7 +6,7 @@ import SwiftUI
 @preconcurrency import ActivityKit
 #endif
 
-/// Observable ViewModel managing active workout recording, HUD telemetry streams, Live Activities, and hardware GPS.
+/// Observable ViewModel managing active workout recording, HUD telemetry streams, Live Activities, hardware GPS, and athletic intelligence.
 @Observable
 @MainActor
 public final class RecordViewModel {
@@ -24,7 +24,7 @@ public final class RecordViewModel {
     public var autoPauseEnabled: Bool = true
     public var isAudioCueEnabled: Bool = true
     
-    // MARK: - v2.0 Extensions (Pacing Coach & Route Navigation)
+    // MARK: - Pacing Coach & Route Navigation
     public var pacingTarget: PacingTarget? {
         didSet {
             pacingCoachService.target = pacingTarget
@@ -36,11 +36,35 @@ public final class RecordViewModel {
     public var activeNavigationEngine: RouteNavigationEngine?
     public var activeNavigationGuidance: NavigationGuidance?
     
-    // MARK: - v2.1/v3.0 Extensions (Ghost Runner & Biomechanics)
+    // MARK: - Ghost Runner & Biomechanics
     public var ghostRunnerEngine: GhostRunnerEngine?
     public var ghostRunnerDelta: GhostRunnerDelta?
     public var runningDynamicsMetrics: RunningDynamicsMetrics = RunningDynamicsMetrics()
     public var runningDynamicsCalculator: RunningDynamicsCalculator = RunningDynamicsCalculator()
+    
+    // MARK: - Structured Interval Workout Engine
+    public var activeIntervalPlan: StructuredWorkoutPlan?
+    public var intervalExecutionEngine: IntervalExecutionEngine?
+    public var intervalStepProgress: IntervalStepProgress?
+    
+    // MARK: - Cadence Metronome
+    public var cadenceMetronomeEngine: CadenceMetronomeEngine = CadenceMetronomeEngine()
+    public var isMetronomeEnabled: Bool = false {
+        didSet {
+            if isMetronomeEnabled {
+                cadenceMetronomeEngine.start()
+            } else {
+                cadenceMetronomeEngine.stop()
+            }
+        }
+    }
+    
+    // MARK: - Live Group Run & Buddy Radar
+    public var groupRunRadarEngine: GroupRunRadarEngine = GroupRunRadarEngine()
+    public var nearbyBuddyPings: [RadarTargetPing] = []
+    
+    // MARK: - Weather Conditions
+    public var currentWeather: WeatherConditions?
     
     public let liveLocationManager: LiveLocationManager
     private var locationEngine: LocationEngine?
@@ -81,6 +105,26 @@ public final class RecordViewModel {
         self.locationEngine = engine
         self.trackingState = .recording
         
+        // Setup Interval Engine if plan selected
+        if let plan = activeIntervalPlan {
+            let intervalEngine = IntervalExecutionEngine(plan: plan)
+            intervalEngine.onStepTransition = { step, index, total in
+                Task { @MainActor in
+                    HapticFeedbackService.shared.playImpact(.heavy)
+                    let text = "Fase \(index + 1) dari \(total): \(step.stepType.rawValue), target \(step.formattedTarget)"
+                    AudioCueService.shared.speakWorkoutStatus(text: text)
+                }
+            }
+            intervalEngine.onWorkoutComplete = {
+                Task { @MainActor in
+                    HapticFeedbackService.shared.playNotification(.success)
+                    AudioCueService.shared.speakWorkoutStatus(text: "Program interval selesai! Kerja luar biasa!")
+                }
+            }
+            intervalEngine.start(initialDistanceMeters: 0.0, startTime: Date())
+            self.intervalExecutionEngine = intervalEngine
+        }
+        
         // Request GPS authorization and start hardware updates
         liveLocationManager.requestAuthorization()
         liveLocationManager.startUpdatingLocation()
@@ -113,6 +157,10 @@ public final class RecordViewModel {
         AudioCueService.shared.speakWorkoutStatus(text: "Latihan dijeda")
         self.updateLiveActivity()
         
+        if isMetronomeEnabled {
+            cadenceMetronomeEngine.stop()
+        }
+        
         Task {
             await locationEngine?.pause()
         }
@@ -125,9 +173,21 @@ public final class RecordViewModel {
         AudioCueService.shared.speakWorkoutStatus(text: "Latihan dilanjutkan")
         self.updateLiveActivity()
         
+        if isMetronomeEnabled {
+            cadenceMetronomeEngine.start()
+        }
+        
         Task {
             await locationEngine?.resume()
         }
+    }
+    
+    public func advanceIntervalStep() {
+        guard let intervalEngine = intervalExecutionEngine else { return }
+        _ = intervalEngine.advanceToNextStep(
+            currentDistanceMeters: self.distanceMeters,
+            currentTimestamp: Date()
+        )
     }
     
     public func finishWorkout(
@@ -142,6 +202,7 @@ public final class RecordViewModel {
         endLiveActivity()
         FallDetectionEngine.shared.stopMonitoring()
         LiveSafetyBeaconService.shared.stopBeacon()
+        cadenceMetronomeEngine.stop()
         
         let (summary, points) = await engine.finish()
         self.trackingState = .finished
@@ -172,6 +233,7 @@ public final class RecordViewModel {
         endLiveActivity()
         FallDetectionEngine.shared.stopMonitoring()
         LiveSafetyBeaconService.shared.stopBeacon()
+        cadenceMetronomeEngine.stop()
         
         trackingState = .idle
         distanceMeters = 0.0
@@ -179,6 +241,8 @@ public final class RecordViewModel {
         movingTimeSeconds = 0.0
         routeCoordinates.removeAll()
         locationEngine = nil
+        intervalExecutionEngine = nil
+        intervalStepProgress = nil
     }
     
     // MARK: - Ingestion of Coordinates
@@ -203,6 +267,14 @@ public final class RecordViewModel {
         self.routeCoordinates = metrics.coordinates
         
         self.updateLiveActivity()
+        
+        // Update Interval Engine Progress
+        if let intervalEngine = intervalExecutionEngine {
+            self.intervalStepProgress = intervalEngine.update(
+                currentDistanceMeters: metrics.distanceMeters,
+                currentTimestamp: location.timestamp
+            )
+        }
         
         // Evaluate Pacing Coach
         if let feedback = pacingCoachService.evaluate(
@@ -237,6 +309,13 @@ public final class RecordViewModel {
         // Evaluate Running Dynamics & Biomechanics
         self.runningDynamicsMetrics = runningDynamicsCalculator.estimateDynamics(
             averageSpeedMps: metrics.currentSpeedMps
+        )
+        
+        // Scan Group Run Radar
+        self.nearbyBuddyPings = groupRunRadarEngine.scanRadar(
+            currentCoordinate: location.coordinate,
+            currentPaceSecondsPerKm: metrics.currentPaceSecondsPerKm,
+            activityType: selectedActivityType
         )
         
         // Update Live Safety Beacon
@@ -395,4 +474,3 @@ public final class RecordViewModel {
         selectedActivityType.prefersPaceFormat ? "/km" : "km/h"
     }
 }
-

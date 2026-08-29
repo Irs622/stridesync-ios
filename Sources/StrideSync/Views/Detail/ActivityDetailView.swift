@@ -1,7 +1,7 @@
 import SwiftUI
 import MapKit
 
-/// Full comprehensive post-activity deep-dive screen featuring interactive charts, gradient maps, splits, and weather.
+/// Full comprehensive post-activity deep-dive screen featuring interactive charts, gradient maps, climbs, PR medals, splits, and weather.
 public struct ActivityDetailView: View {
     public let activity: ActivityRecord
     public let telemetryPoints: [TelemetrySnapshot]
@@ -13,14 +13,24 @@ public struct ActivityDetailView: View {
     @State private var showingFlyoverSheet: Bool = false
     @State private var exportedGPXString: String = ""
     
+    private let weatherConditions: WeatherConditions
+    private let detectedClimbs: [ClimbSegment]
+    private let bestEfforts: [PersonalRecordEffort]
+    
     public init(
         activity: ActivityRecord,
         telemetryPoints: [TelemetrySnapshot] = [],
         splits: [SplitSnapshot] = []
     ) {
         self.activity = activity
-        self.telemetryPoints = telemetryPoints.isEmpty ? Self.sampleTelemetry() : telemetryPoints
-        self.splits = splits.isEmpty ? SplitCalculator().calculateSplits(from: self.telemetryPoints) : splits
+        let points = telemetryPoints.isEmpty ? Self.sampleTelemetry() : telemetryPoints
+        self.telemetryPoints = points
+        self.splits = splits.isEmpty ? SplitCalculator().calculateSplits(from: points) : splits
+        
+        let startCoord = points.first?.coordinate ?? CLLocationCoordinate2D(latitude: -6.175392, longitude: 106.827153)
+        self.weatherConditions = WeatherIntelligenceService.shared.fetchWeather(for: startCoord, date: activity.startTime)
+        self.detectedClimbs = ClimbClassifier().detectClimbs(from: points)
+        self.bestEfforts = PersonalRecordDetector().detectBestEfforts(from: points, activityTitle: activity.title, achievedDate: activity.startTime)
     }
     
     public var body: some View {
@@ -65,13 +75,25 @@ public struct ActivityDetailView: View {
                 }
                 .padding(.horizontal, 16)
                 
-                // Weather Conditions Widget
+                // Weather Conditions & Environmental Stress Widget
                 weatherCard
                     .padding(.horizontal, 16)
                 
                 // Hero Metrics Grid
                 metricsGrid
                     .padding(.horizontal, 16)
+                
+                // Personal Best Efforts & PR Badges (if detected)
+                if !bestEfforts.isEmpty {
+                    personalRecordsSection
+                        .padding(.horizontal, 16)
+                }
+                
+                // Detected Climbs & Mountain Gradient Section (if detected)
+                if !detectedClimbs.isEmpty {
+                    climbsBreakdownSection
+                        .padding(.horizontal, 16)
+                }
                 
                 // Physiological Recovery & Training Load Gauge
                 let trainingMetrics = TrainingLoadCalculator().calculateTrainingMetrics(
@@ -193,23 +215,119 @@ public struct ActivityDetailView: View {
     }
     
     private var weatherCard: some View {
-        HStack(spacing: 16) {
-            Image(systemName: "sun.max.fill")
-                .font(.title)
-                .foregroundStyle(Color.orange)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 14) {
+                Image(systemName: weatherConditions.iconName)
+                    .font(.title)
+                    .foregroundStyle(Color.orange)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(weatherConditions.conditionDescription) • \(weatherConditions.formattedTemperature)")
+                        .font(.system(.subheadline, design: .rounded, weight: .bold))
+                    Text("Terasa Seperti \(weatherConditions.formattedApparentTemperature) • Kelembaban \(weatherConditions.formattedHumidity) • Angin \(weatherConditions.formattedWind)")
+                        .font(.caption2)
+                        .foregroundStyle(Color.secondary)
+                }
+                Spacer()
+            }
             
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Cerah Berawan • 24°C")
-                    .font(.system(.subheadline, design: .rounded, weight: .bold))
-                Text("Kelembaban 72% • Angin 8 km/h Barat Daya")
-                    .font(.caption2)
+            let advice = WeatherIntelligenceService.shared.generateWeatherAdvice(conditions: weatherConditions)
+            HStack(spacing: 6) {
+                Image(systemName: weatherConditions.thermalStressCategory.iconName)
+                    .font(.caption.bold())
+                    .foregroundStyle(weatherConditions.thermalStressCategory == .normal ? StrideTheme.athleticGreen : StrideTheme.primaryOrange)
+                Text(advice)
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
                     .foregroundStyle(Color.secondary)
             }
-            Spacer()
+            .padding(.top, 2)
         }
         .padding(14)
         .background(StrideTheme.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+    
+    private var personalRecordsSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 6) {
+                Image(systemName: "trophy.fill")
+                    .foregroundStyle(Color.yellow)
+                Text("Rekor Terbaik (Best Efforts)")
+                    .font(.system(.headline, design: .rounded, weight: .bold))
+            }
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(bestEfforts) { effort in
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack {
+                                Image(systemName: effort.distanceCategory.iconName)
+                                    .foregroundStyle(StrideTheme.primaryOrange)
+                                Text(effort.distanceCategory.rawValue)
+                                    .font(.caption.bold())
+                                Spacer()
+                                Image(systemName: "medal.fill")
+                                    .foregroundStyle(Color.yellow)
+                            }
+                            
+                            Text(effort.formattedDuration)
+                                .font(.system(size: 18, weight: .heavy, design: .rounded))
+                                .monospacedDigit()
+                            
+                            Text("Pace: \(effort.formattedPace)")
+                                .font(.caption2)
+                                .foregroundStyle(Color.secondary)
+                        }
+                        .padding(12)
+                        .frame(width: 160)
+                        .background(StrideTheme.cardBackground)
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .strokeBorder(Color.yellow.opacity(0.3), lineWidth: 1)
+                        )
+                    }
+                }
+            }
+        }
+    }
+    
+    private var climbsBreakdownSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 6) {
+                Image(systemName: "mountain.2.fill")
+                    .foregroundStyle(Color.purple)
+                Text("Tanjakan Terdeteksi (Climb Segments)")
+                    .font(.system(.headline, design: .rounded, weight: .bold))
+            }
+            
+            VStack(spacing: 8) {
+                ForEach(detectedClimbs) { climb in
+                    HStack(spacing: 12) {
+                        Text(climb.category.shortLabel)
+                            .font(.system(size: 11, weight: .black, design: .rounded))
+                            .foregroundStyle(Color.white)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color(hex: climb.category.badgeColorHex))
+                            .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("\(climb.formattedDistance) • \(climb.formattedElevationGain)")
+                                .font(.subheadline.bold())
+                            Text("\(climb.formattedAverageGrade) (Maks: \(climb.formattedMaxGrade))")
+                                .font(.caption2)
+                                .foregroundStyle(Color.secondary)
+                        }
+                        
+                        Spacer()
+                    }
+                    .padding(12)
+                    .background(StrideTheme.cardBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                }
+            }
+        }
     }
     
     private var metricsGrid: some View {
@@ -330,3 +448,29 @@ public struct ActivityDetailView: View {
     }
 }
 
+// Extension to support Hex Colors in SwiftUI
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (1, 1, 1, 0)
+        }
+        self.init(
+            .sRGB,
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue:  Double(b) / 255,
+            opacity: Double(a) / 255
+        )
+    }
+}

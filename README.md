@@ -7,7 +7,7 @@
 [![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-007AFF.svg?style=flat-square)](https://developer.apple.com/xcode/swiftui/)
 [![SwiftData](https://img.shields.io/badge/Persistence-SwiftData-green.svg?style=flat-square)](https://developer.apple.com/documentation/swiftdata)
 [![CI](https://github.com/Irs622/stridesync-ios/actions/workflows/ci.yml/badge.svg)](https://github.com/Irs622/stridesync-ios/actions)
-[![Tests](https://img.shields.io/badge/Tests-58%2F58%20Passing%20(100%25)-brightgreen.svg?style=flat-square)]()
+[![Tests](https://img.shields.io/badge/Tests-73%2F73%20Passing%20(100%25)-brightgreen.svg?style=flat-square)]()
 [![SwiftLint](https://img.shields.io/badge/SwiftLint-Compliant-brightgreen.svg?style=flat-square)](.swiftlint.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
@@ -155,6 +155,24 @@ Proyek ini dirancang dari awal dengan prinsip **Local-First, Security-First & Pr
 ### 13. ⌚️ Standalone watchOS Companion App
 - Arsitektur perekaman otonom di pergelangan tangan dengan sensor internal Apple Watch dan antarmuka HUD OLED kontras tinggi.
 
+### 14. ⚡️ Structured Interval Workout Program & Engine
+- Penyusunan latihan interval bertingkat (*Warm-up, Interval/Sprint, Recovery/Rest, Cool-down*) dengan auto-transition, audio voice guidance, dan kartu sirkular progres real-time.
+
+### 15. ⏱️ Audio-Haptic Cadence Metronome
+- Metronom ritmik (150–210 SPM) untuk mengunci frekuensi langkah lari optimal, mengurangi osilasi vertikal (*bounce*), dan mencegah cedera lutut (*overstriding*).
+
+### 16. 📡 Live Group Run & Buddy Radar Engine
+- Radar spasial real-time yang memindai dan menampilkan atlet/teman komunitas dalam radius 1.2 km lengkap dengan arah kompas, jarak relatif, dan delta *pace*.
+
+### 17. ⛰️ Climb Categorization & UCI Grade Analysis
+- Evaluasi kemiringan gradien tanjakan rute secara presisi dan klasifikasi kesulitan tanjakan standar UCI/Strava (*Cat 4, Cat 3, Cat 2, Cat 1, Hors Catégorie / HC*).
+
+### 18. ☀️ Weather Intelligence & Physiological Heat Index
+- Perhitungan suhu semu (*Apparent Temperature / NOAA Heat Index*), evaluasi stres termal, dan rekomendasi perlambatan *pace* taktis untuk mencegah dehidrasi.
+
+### 19. 🥇 All-Time Personal Records (PR) & Best Efforts Detector
+- Algoritma *rolling-window search* yang memindai seluruh telemetri GPS untuk mendeteksi *best efforts* (*400m, 1K, 1 Mile, 5K, 10K, Half Marathon*) dan penobatan piala rekor baru.
+
 ---
 
 ## 🏗️ Arsitektur Teknis (System Architecture)
@@ -261,7 +279,12 @@ Sources/
 │   │   ├── NavigationModels.swift       # Model manuver navigasi GPX turn-by-turn
 │   │   ├── TrainingLoadModels.swift     # Model Banister TRIMP, ATL/CTL & recovery readiness
 │   │   ├── BLESensorModels.swift        # Model sensor eksternal CoreBluetooth & telemetri
-│   │   └── HeatmapModels.swift          # Model petak Web Mercator Slippy Tile & badge
+│   │   ├── HeatmapModels.swift          # Model petak Web Mercator Slippy Tile & badge
+│   │   ├── StructuredIntervalModels.swift # Model latihan interval terstruktur & preset ladder
+│   │   ├── GroupRunRadarModels.swift    # Model live buddy runner & radar target pings
+│   │   ├── ClimbModels.swift            # Model klasifikasi tanjakan standar UCI / Strava
+│   │   ├── WeatherConditions.swift      # Model cuaca, NOAA Heat Index & stres termal
+│   │   └── PersonalRecordModels.swift   # Model All-Time Personal Records (PR) & Best Efforts
 │   ├── Services/
 │   │   ├── LocationEngine.swift         # Actor pengolah GPS real-time & filter noise
 │   │   ├── LiveLocationManager.swift    # Bridge CLLocationManager hardware iPhone
@@ -273,6 +296,12 @@ Sources/
 │   │   ├── BLEHeartRateAndSensorManager.swift # Manager sensor eksternal Bluetooth SIG
 │   │   ├── HeatmapTileEngine.swift      # Engine konversi WGS84 ke Slippy Tiles Zoom 14
 │   │   ├── WatchWorkoutEngine.swift     # Engine mandiri workout Apple Watch
+│   │   ├── IntervalExecutionEngine.swift# Engine eksekusi interval live & auto-transition
+│   │   ├── CadenceMetronomeEngine.swift # Metronom ritmik audio-haptik pengunci langkah
+│   │   ├── GroupRunRadarEngine.swift    # Engine pemindai radar pelari komunitas sekitar
+│   │   ├── ClimbClassifier.swift        # Algoritma klasifikasi tanjakan (HC, Cat 1..4)
+│   │   ├── WeatherIntelligenceService.swift # Layanan analisis cuaca & rekomendasi pacing
+│   │   ├── PersonalRecordDetector.swift # Detektor rekor pribadi rolling window telemetri
 │   │   ├── AudioCueService.swift        # Voice feedback AVSpeechSynthesizer
 │   │   ├── GPXService.swift             # Ekspor/Impor format GPX 1.1 XML
 │   │   ├── FITService.swift             # Encoder/Decoder format biner Garmin FIT 2.0
@@ -298,12 +327,15 @@ Sources/
 │   │   ├── Record/
 │   │   │   ├── RecordHUDView.swift      # Layar HUD live tracking OLED dark mode
 │   │   │   ├── SetPacingTargetSheet.swift # Modal pemilihan target pace lari kustom
+│   │   │   ├── IntervalHUDCardView.swift  # Kartu live circular progress interval HUD
+│   │   │   ├── StructuredWorkoutBuilderView.swift # Builder latihan interval terstruktur
+│   │   │   ├── BuddyRadarHUDCardView.swift # Kartu radar pelari teman sekitar HUD
 │   │   │   ├── NavigationHUDCardView.swift# Banner navigasi turn-by-turn mengambang
 │   │   │   └── WatchWorkoutHUDView.swift  # Antarmuka HUD Apple Watch OLED
 │   │   ├── Summary/
 │   │   │   └── ActivitySummaryView.swift# Post-workout breakdown, rute MapKit & recovery gauge
 │   │   ├── Detail/
-│   │   │   └── ActivityDetailView.swift # Analisis mendalam, grafik elevasi & TRIMP load
+│   │   │   └── ActivityDetailView.swift # Analisis mendalam, grafik elevasi, climbs & PR load
 │   │   ├── Feed/
 │   │   │   ├── ActivityCardView.swift   # Kartu linimasa sosial dengan animasi Kudos
 │   │   │   └── FeedView.swift           # Timeline komunitas dengan SwiftData auto-refresh
@@ -313,7 +345,7 @@ Sources/
 │   │   ├── Challenges/
 │   │   │   └── ChallengesView.swift     # Tantangan bulanan dengan progress bar & lencana
 │   │   ├── Profile/
-│   │   │   ├── ProfileView.swift        # Profil atlet, trophy case & recovery gauge
+│   │   │   ├── ProfileView.swift        # Profil atlet, trophy case PR & recovery gauge
 │   │   │   ├── ProfileSettingsView.swift# Master pengaturan akun & GPX/FIT backup
 │   │   │   ├── RecoveryGaugeView.swift  # Kartu visual circular gauge kesiapan tubuh
 │   │   │   ├── BLESensorsSettingsView.swift # Pemindai dan penyambung sensor Bluetooth
@@ -359,7 +391,13 @@ Tests/
     ├── TrainingLoadTests.swift          # Pengujian Banister TRIMP & recovery hours
     ├── BLESensorTests.swift             # Pengujian decoding paket biner BLE GATT
     ├── HeatmapTileTests.swift           # Pengujian konversi Slippy Tile Web Mercator
-    └── WatchWorkoutEngineTests.swift    # Pengujian standalone watchOS workout engine
+    ├── WatchWorkoutEngineTests.swift    # Pengujian standalone watchOS workout engine
+    ├── IntervalWorkoutTests.swift       # Pengujian structured interval engine & transitions
+    ├── CadenceMetronomeTests.swift      # Pengujian cadence metronome & lock evaluation
+    ├── GroupRunRadarTests.swift         # Pengujian live buddy radar scanning & bearing
+    ├── ClimbClassifierTests.swift       # Pengujian klasifikasi tanjakan UCI/Strava standard
+    ├── WeatherIntelligenceTests.swift   # Pengujian NOAA Heat Index & stres termal
+    └── PersonalRecordDetectorTests.swift# Pengujian deteksi rekor terbaik rolling-window
 ```
 
 ---
