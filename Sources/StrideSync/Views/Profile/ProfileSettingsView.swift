@@ -12,8 +12,9 @@ public struct ProfileSettingsView: View {
     @State private var showingGPXBackupAlert: Bool = false
     @State private var showingAuthSheet: Bool = false
     
-    public init(settings: UserSettingsManager = .shared) {
-        self.settings = settings
+    @MainActor
+    public init(settings: UserSettingsManager? = nil) {
+        self.settings = settings ?? .shared
     }
     
     public var body: some View {

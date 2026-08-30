@@ -7,8 +7,9 @@ public struct PrivacyZonesSettingsView: View {
     @State private var newZoneName: String = ""
     @State private var newZoneRadius: Double = 500.0
     
-    public init(settings: UserSettingsManager = .shared) {
-        self.settings = settings
+    @MainActor
+    public init(settings: UserSettingsManager? = nil) {
+        self.settings = settings ?? .shared
     }
     
     public var body: some View {

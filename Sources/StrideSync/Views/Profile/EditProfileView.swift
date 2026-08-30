@@ -5,8 +5,9 @@ public struct EditProfileView: View {
     @Bindable public var settings: UserSettingsManager
     @Environment(\.dismiss) private var dismiss
     
-    public init(settings: UserSettingsManager = .shared) {
-        self.settings = settings
+    @MainActor
+    public init(settings: UserSettingsManager? = nil) {
+        self.settings = settings ?? .shared
     }
     
     public var body: some View {

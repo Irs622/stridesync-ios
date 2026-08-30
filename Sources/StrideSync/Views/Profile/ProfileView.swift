@@ -9,14 +9,15 @@ public struct ProfileView: View {
     @State private var selectedSection: Int = 0
     @State private var showingSettingsSheet: Bool = false
     
+    @MainActor
     public init(
         athlete: AthleteProfile = Self.sampleAthlete(),
         gearList: [GearItem] = Self.sampleGear(),
-        userSettings: UserSettingsManager = .shared
+        userSettings: UserSettingsManager? = nil
     ) {
         self.athlete = athlete
         self.gearList = gearList
-        self._userSettings = State(initialValue: userSettings)
+        self._userSettings = State(initialValue: userSettings ?? .shared)
     }
     
     public var body: some View {

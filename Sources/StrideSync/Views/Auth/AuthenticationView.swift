@@ -10,8 +10,9 @@ public struct AuthenticationView: View {
     @State private var password: String = ""
     @State private var showingEmailForm: Bool = false
     
-    public init(authManager: AuthManager = .shared) {
-        self._authManager = State(initialValue: authManager)
+    @MainActor
+    public init(authManager: AuthManager? = nil) {
+        self._authManager = State(initialValue: authManager ?? .shared)
     }
     
     public var body: some View {
@@ -71,6 +72,9 @@ public struct AuthenticationView: View {
                                     username: "apple_runner",
                                     fullName: "Atlet Apple"
                                 )
+                                if let encoded = try? JSONEncoder().encode(profile) {
+                                    UserDefaults.standard.set(encoded, forKey: "com.stridesync.auth.user_profile")
+                                }
                                 authManager.restoreSession()
                                 dismiss()
                             }

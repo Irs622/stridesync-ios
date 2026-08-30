@@ -5,8 +5,9 @@ public struct NotificationsView: View {
     @State public var viewModel: NotificationViewModel
     @Environment(\.dismiss) private var dismiss
     
-    public init(viewModel: NotificationViewModel = NotificationViewModel()) {
-        self._viewModel = State(initialValue: viewModel)
+    @MainActor
+    public init(viewModel: NotificationViewModel? = nil) {
+        self._viewModel = State(initialValue: viewModel ?? NotificationViewModel())
     }
     
     public var body: some View {

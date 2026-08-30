@@ -21,8 +21,8 @@ public final class CloudSyncEngine: Sendable {
     private let apiService: CloudAPIService
     private var pendingQueue: [UUID] = []
     
-    public init(apiService: CloudAPIService = .shared) {
-        self.apiService = apiService
+    public init(apiService: CloudAPIService? = nil) {
+        self.apiService = apiService ?? .shared
     }
     
     // MARK: - Enqueue Workout for Cloud Sync

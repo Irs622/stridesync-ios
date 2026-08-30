@@ -8,8 +8,9 @@ public struct GlobalSearchView: View {
     @State private var followedAthleteIds: Set<UUID> = []
     @State private var joinedClubIds: Set<UUID> = []
     
-    public init(viewModel: SearchViewModel = SearchViewModel()) {
-        self._viewModel = State(initialValue: viewModel)
+    @MainActor
+    public init(viewModel: SearchViewModel? = nil) {
+        self._viewModel = State(initialValue: viewModel ?? SearchViewModel())
     }
     
     public var body: some View {

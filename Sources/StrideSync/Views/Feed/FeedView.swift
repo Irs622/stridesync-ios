@@ -11,9 +11,10 @@ public struct FeedView: View {
     @State private var showingSearchSheet: Bool = false
     @State private var showingNotificationsSheet: Bool = false
     
-    public init(viewModel: FeedViewModel = FeedViewModel(), modelContext: ModelContext? = nil) {
+    @MainActor
+    public init(viewModel: FeedViewModel? = nil, modelContext: ModelContext? = nil) {
         self.modelContext = modelContext
-        self._viewModel = State(initialValue: viewModel)
+        self._viewModel = State(initialValue: viewModel ?? FeedViewModel())
     }
     
     public var body: some View {

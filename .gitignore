@@ -14,6 +14,7 @@ project.xcworkspace/xcuserdata/
 # Swift Package Manager & Builds
 .build/
 build/
+build-*/
 Packages/
 Package.pins
 Package.resolved
@@ -23,8 +24,10 @@ Package.resolved
 *.app
 *.ipa
 *.pkg
-*.png
-!assets/AppIcon-1024.png
+*.o
+*.dylib
+*.a
+simulator_*.png
 
 # Secrets & Environment Configurations
 .env

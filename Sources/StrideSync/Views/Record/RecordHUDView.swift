@@ -16,12 +16,13 @@ public struct RecordHUDView: View {
     @State private var showingIntervalWorkoutSheet: Bool = false
     @State private var showingMetronomeSettings: Bool = false
     
+    @MainActor
     public init(
-        viewModel: RecordViewModel = RecordViewModel(),
+        viewModel: RecordViewModel? = nil,
         onFinish: ((ActivityRecord, [TelemetrySnapshot], [SplitSnapshot], [SegmentEffort]) -> Void)? = nil,
         onDiscard: (() -> Void)? = nil
     ) {
-        self._viewModel = State(initialValue: viewModel)
+        self._viewModel = State(initialValue: viewModel ?? RecordViewModel())
         self.onFinish = onFinish
         self.onDiscard = onDiscard
     }

@@ -77,10 +77,11 @@ public final class RecordViewModel {
     
     public init(
         activityType: ActivityType = .run,
-        liveLocationManager: LiveLocationManager = LiveLocationManager()
+        liveLocationManager: LiveLocationManager? = nil
     ) {
         self.selectedActivityType = activityType
-        self.liveLocationManager = liveLocationManager
+        let manager = liveLocationManager ?? LiveLocationManager()
+        self.liveLocationManager = manager
         
         self.liveLocationManager.onLocationUpdate = { [weak self] location in
             self?.ingestLocation(location)
@@ -191,11 +192,12 @@ public final class RecordViewModel {
     }
     
     public func finishWorkout(
-        registeredSegments: [Segment] = ExploreView.sampleSegments(),
+        registeredSegments: [Segment]? = nil,
         athleteId: UUID = UUID(),
         athleteName: String = "Budi Santoso (You)"
     ) async -> (ActivityRecord, [TelemetrySnapshot], [SplitSnapshot], [SegmentEffort])? {
         guard let engine = locationEngine else { return nil }
+        let segments = registeredSegments ?? ExploreView.sampleSegments()
         
         stopTimer()
         liveLocationManager.stopUpdatingLocation()
@@ -218,7 +220,7 @@ public final class RecordViewModel {
         let matcher = SegmentMatcher()
         let efforts = matcher.matchSegments(
             activityPoints: points,
-            segments: registeredSegments,
+            segments: segments,
             athleteId: athleteId,
             athleteName: athleteName
         )

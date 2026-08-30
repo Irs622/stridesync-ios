@@ -4,8 +4,9 @@ import SwiftUI
 public struct AudioCuesSettingsView: View {
     @Bindable public var settings: UserSettingsManager
     
-    public init(settings: UserSettingsManager = .shared) {
-        self.settings = settings
+    @MainActor
+    public init(settings: UserSettingsManager? = nil) {
+        self.settings = settings ?? .shared
     }
     
     public var body: some View {

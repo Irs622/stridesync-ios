@@ -23,10 +23,9 @@ public final class ClimbClassifier: Sendable {
             let loc1 = CLLocation(latitude: p1.latitude, longitude: p1.longitude)
             let loc2 = CLLocation(latitude: p2.latitude, longitude: p2.longitude)
             let segDist = loc1.distance(from: loc2)
+            guard segDist > 0.1 else { continue }
             
-            guard segDist > 1.0 else { continue }
-            
-            let elevDelta = (p2.altitude ?? 0.0) - (p1.altitude ?? 0.0)
+            let elevDelta = p2.altitude - p1.altitude
             let grade = (elevDelta / segDist) * 100.0
             
             if grade >= 0.8 { // Significant uphill gradient threshold
