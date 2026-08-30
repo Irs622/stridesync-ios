@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Swift 6](https://img.shields.io/badge/Swift-6.0-FC5200.svg?style=for-the-badge&logo=swift&logoColor=white)](https://swift.org)
-[![Version](https://img.shields.io/badge/Version-Beta%200.5-orange?style=for-the-badge)](https://stridesync-web.vercel.app)
+[![Version: v0.5.0-beta](https://img.shields.io/badge/Version-v0.5.0--beta-orange.svg?style=for-the-badge&logo=github)](https://github.com/Irs622/stridesync-ios/releases/tag/v0.5.0-beta)
 [![iOS 17+](https://img.shields.io/badge/iOS-17.0%2B-007AFF.svg?style=for-the-badge&logo=apple&logoColor=white)](https://apple.com)
 [![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-007AFF.svg?style=for-the-badge)](https://developer.apple.com/xcode/swiftui/)
 [![SwiftData](https://img.shields.io/badge/Persistence-SwiftData-2ECC71.svg?style=for-the-badge)](https://developer.apple.com/documentation/swiftdata)
@@ -16,9 +16,10 @@
 
 🌐 **Live Web Preview:** [https://stridesync-web.vercel.app](https://stridesync-web.vercel.app)  
 💻 **Repositori Web:** [https://github.com/Irs622/stridesync-web](https://github.com/Irs622/stridesync-web)  
-📥 **Download .IPA Langsung:** [StrideSync.ipa (Beta 0.5)](https://stridesync-web.vercel.app/downloads/StrideSync.ipa)
+📥 **Download .IPA Langsung:** [StrideSync.ipa (v0.5.0-beta)](https://stridesync-web.vercel.app/downloads/StrideSync.ipa)  
+🏷️ **GitHub Pre-Release:** [v0.5.0-beta Release Notes](https://github.com/Irs622/stridesync-ios/releases/tag/v0.5.0-beta)
 
-[Tampilan Aplikasi](#-tampilan-antarmuka-aplikasi-visual-showcase) • [Fitur Utama](#-fitur-utama-core-features) • [Arsitektur Cloud & Keamanan](#-arsitektur-cloud--database-gratis-rp-0) • [Panduan Menjalankan Rp 0](#-cara-menjalankan-aplikasi-100-gratis-rp-0) • [Struktur Proyek](#-struktur-direktori-proyek) • [Dokumentasi Lengkap](#-dokumentasi-lengkap)
+[Tampilan Aplikasi](#-tampilan-antarmuka-aplikasi-visual-showcase) • [Fitur Unggulan](#-fitur-utama-core-features) • [Tumpukan Teknologi](#-tumpukan-teknologi-tech-stack) • [Panduan Menjalankan Rp 0](#-cara-menjalankan--memasang-aplikasi) • [Struktur Proyek](#-struktur-direktori-proyek) • [Dokumentasi Lengkap](#-dokumentasi-lengkap)
 
 </div>
 
@@ -84,7 +85,7 @@
 **StrideSync** adalah platform pelacak aktivitas atletik luar ruangan (lari, bersepeda, hiking, dan jalan santai) berbasis iOS yang memadukan keandalan **GPS Engine kelas telemetri** dengan **ekosistem sosial komunitas olahraga modern**.
 
 Proyek ini dirancang dari awal dengan prinsip **Local-First, Zero-Cost Resilience, Security-First & Privacy-First Architecture**:
-* 💸 **100% Gratis & Bebas Biaya Server (Rp 0):** Berjalan secara *Local-First* menggunakan **SwiftData** dan terhubung ke **Supabase Cloud (PostgreSQL Free Tier)** tanpa biaya bulanan sepeser pun.
+* 💸 **100% Gratis & Bebas Biaya Server (Rp 0):** Berjalan secara *Local-First* menggunakan **SwiftData** dan terhubung ke **Supabase Cloud (PostgreSQL Free Tier)** tanpa biaya server bulanan sepeser pun.
 * 🛡️ **Privasi & Enkripsi Atlet Terjamin:** Data lokasi di sekitar rumah disanitasi dengan geofence masking, Row Level Security (RLS) di database cloud, serta token sesi tersimpan aman di **Apple Keychain Security Framework**.
 * ⚡️ **Swift 6 Strict Concurrency:** Mengeliminasi seluruh potensi *data race* pada pemrosesan koordinat GPS dengan mengisolasi perhitungan pada `actor LocationEngine`.
 * 🎧 **Background Modes & Audio Ducking:** GPS tetap melacak rute di saku celana saat layar terkunci dan suara pelatih (*Audio Cues*) otomatis mengecilkan lagu Spotify / Apple Music.
@@ -126,24 +127,33 @@ Proyek ini dirancang dari awal dengan prinsip **Local-First, Zero-Cost Resilienc
 ### 3. ⛰️ Climb Classifier & UCI Grade Analysis
 - Deteksi otomatis tanjakan kategori standar UCI / Strava (*Cat 4, 3, 2, 1, dan Hors Catégorie / HC*) dengan perhitungan Climb Score dan Grade Adjusted Pace (GAP).
 
-### 4. 📊 Training Load (Banister TRIMP) & Recovery Gauge
+### 4. 🫁 VO2 Max & Race Predictor
+- Estimasi kapasitas aerobik VO2 Max dan kalkulasi waktu finish balapan untuk **5K, 10K, Half Marathon (21.1 km), dan Full Marathon (42.2 km)** berbasis model fisiologis *Jack Daniels VDOT* dan *Riegel*.
+
+### 5. 📊 Training Load (Banister TRIMP) & Recovery Gauge
 - Kalkulasi beban fisiologis latihan berbasis formula matematis **Banister TRIMP**, pemodelan kelelahan sesaat (*Acute Load ATL* 7 hari), kebugaran dasar (*Chronic Load CTL* 28 hari), dan estimasi jam pemulihan otot.
 
-### 5. 👑 Virtual Segments & KOM/QOM Leaderboard
+### 6. 👑 Virtual Segments & KOM/QOM Leaderboard
 - **Spatial Segment Matcher**: Algoritma pencocokan polylines rute terhadap segmen virtual jalanan dengan radius toleransi pintu masuk/keluar (*gate radius* 40m).
 - **Crown & Personal Record (PR)**: Penentuan gelar **King/Queen of the Mountain (KOM/QOM)** tercepat dan pemecahan rekor pribadi.
 
-### 6. 🎯 Live Audio Pacing Coach & Audio Ducking
+### 7. 🎯 Live Audio Pacing Coach & Audio Ducking
 - Mengatur target waktu tempuh balapan (*Sub-20m 5K, Sub-50m 10K, Sub-4h Marathon*) dengan evaluasi delta waktu real-time dan panduan suara taktis bilingual via `AVSpeechSynthesizer`.
 
-### 7. 📶 External Bluetooth BLE Sensors (CoreBluetooth)
+### 8. 📶 External Bluetooth BLE Sensors (CoreBluetooth)
 - Pemindaian dan pembacaan paket biner standar Bluetooth SIG GATT untuk sensor dada detak jantung (`0x180D`/`0x2A37`) dan sensor daya kayuh sepeda (*Cycling Power* `0x1818`/`0x2A63`).
+
+### 9. 📡 Live Group Run Radar & Safety Beacon
+- Pemindaian pelari komunitas sekitar dalam radius 1.5 km secara anonim, sistem deteksi benturan keras/jatuh (*Fall Detection G > 3.5g*), dan tautan live tracking darurat.
+
+### 10. 🚁 3D Aerial Flyover Replay & AI Workout Story
+- Rekonstruksi visual rute lari dengan kamera satelit 3D helikopter pitch 60° serta narasi motivasi AI yang dirangkum dari data performa sesi.
 
 ---
 
 ## 💻 Cara Menjalankan & Memasang Aplikasi
 
-### 1. Membuka di Xcode (macOS)
+### Opsi 1: Membuka di Xcode (macOS)
 ```bash
 # 1. Clone repositori
 git clone https://github.com/Irs622/stridesync-ios.git
@@ -153,18 +163,21 @@ cd stridesync-ios
 open StrideSync.xcodeproj
 ```
 
-### 2. Menjalankan via Terminal Langsung
+### Opsi 2: Menjalankan via Terminal Langsung
 ```bash
 # Build untuk iOS Simulator / Perangkat Fisik
 xcodebuild build -project StrideSync.xcodeproj -scheme StrideSync -destination 'generic/platform=iOS'
 ```
 
-### 3. Memasang ke iPhone Fisik Anda (100% Gratis / Rp 0)
+### Opsi 3: Memasang ke iPhone Fisik Anda (100% Gratis / Rp 0)
 1. Sambungkan iPhone ke Mac dengan kabel data USB.
 2. Di Xcode: Buka target **StrideSync** → tab **Signing & Capabilities**.
 3. Pilih **Personal Team (Apple ID gratis)** Anda (`PU23ZB2X47`).
 4. Pilih iPhone Anda di bagian atas, lalu klik **▶️ Play (Run)**.
 5. Pada iPhone: Buka **Settings** → **General** → **VPN & Device Management** → klik **Trust Developer**.
+
+### Opsi 4: Mengunduh File .IPA Langsung (Sideloading)
+Unduh paket [StrideSync.ipa (v0.5.0-beta)](https://stridesync-web.vercel.app/downloads/StrideSync.ipa) dan install menggunakan **AltStore**, **Sideloadly**, **TrollStore**, atau **Scarlet**.
 
 ---
 
@@ -201,4 +214,5 @@ stridesync-ios/
 
 - **Pembuat / Developer**: [Irsal Shydiq](https://github.com/Irs622)
 - **Website Promosi**: [https://stridesync-web.vercel.app](https://stridesync-web.vercel.app)
+- **Repositori Web**: [https://github.com/Irs622/stridesync-web](https://github.com/Irs622/stridesync-web)
 - Dibangun dengan dedikasi untuk komunitas pelari dan pegiat olahraga Indonesia 🇮🇩
