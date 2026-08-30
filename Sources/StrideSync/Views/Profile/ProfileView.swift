@@ -11,12 +11,12 @@ public struct ProfileView: View {
     
     @MainActor
     public init(
-        athlete: AthleteProfile = Self.sampleAthlete(),
-        gearList: [GearItem] = Self.sampleGear(),
+        athlete: AthleteProfile? = nil,
+        gearList: [GearItem]? = nil,
         userSettings: UserSettingsManager? = nil
     ) {
-        self.athlete = athlete
-        self.gearList = gearList
+        self.athlete = athlete ?? Self.sampleAthlete()
+        self.gearList = gearList ?? Self.sampleGear()
         self._userSettings = State(initialValue: userSettings ?? .shared)
     }
     
