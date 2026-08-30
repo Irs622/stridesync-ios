@@ -3,6 +3,7 @@
 <div align="center">
 
 [![Swift 6](https://img.shields.io/badge/Swift-6.0-FC5200.svg?style=for-the-badge&logo=swift&logoColor=white)](https://swift.org)
+[![Version](https://img.shields.io/badge/Version-Beta%200.5-orange?style=for-the-badge)](https://stridesync-web.vercel.app)
 [![iOS 17+](https://img.shields.io/badge/iOS-17.0%2B-007AFF.svg?style=for-the-badge&logo=apple&logoColor=white)](https://apple.com)
 [![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-007AFF.svg?style=for-the-badge)](https://developer.apple.com/xcode/swiftui/)
 [![SwiftData](https://img.shields.io/badge/Persistence-SwiftData-2ECC71.svg?style=for-the-badge)](https://developer.apple.com/documentation/swiftdata)
@@ -15,7 +16,7 @@
 
 🌐 **Live Web Preview:** [https://stridesync-web.vercel.app](https://stridesync-web.vercel.app)  
 💻 **Repositori Web:** [https://github.com/Irs622/stridesync-web](https://github.com/Irs622/stridesync-web)  
-📥 **Download .IPA Langsung:** [StrideSync.ipa (v3.5 Pro)](https://stridesync-web.vercel.app/downloads/StrideSync.ipa)
+📥 **Download .IPA Langsung:** [StrideSync.ipa (Beta 0.5)](https://stridesync-web.vercel.app/downloads/StrideSync.ipa)
 
 [Tampilan Aplikasi](#-tampilan-antarmuka-aplikasi-visual-showcase) • [Fitur Utama](#-fitur-utama-core-features) • [Arsitektur Cloud & Keamanan](#-arsitektur-cloud--database-gratis-rp-0) • [Panduan Menjalankan Rp 0](#-cara-menjalankan-aplikasi-100-gratis-rp-0) • [Struktur Proyek](#-struktur-direktori-proyek) • [Dokumentasi Lengkap](#-dokumentasi-lengkap)
 
