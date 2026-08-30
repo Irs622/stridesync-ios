@@ -3,12 +3,12 @@ import SwiftUI
 
 /// Persistent DTO representing all serializable user preferences.
 public struct UserSettingsData: Codable, Sendable {
-    public var fullName: String = "Budi Santoso"
-    public var username: String = "budisport"
-    public var bio: String = "Marathon runner in training 🏃‍♂️ | 5K PB: 19:42 | Jakarta, Indonesia"
+    public var fullName: String = "Atlet StrideSync"
+    public var username: String = "athlete"
+    public var bio: String = "Pelari pemula & antusias olahraga."
     public var location: String = "Jakarta, Indonesia"
-    public var weightKg: Double = 68.0
-    public var heightCm: Double = 175.0
+    public var weightKg: Double = 65.0
+    public var heightCm: Double = 170.0
     public var gender: String = "Pria"
     
     public var defaultActivityType: ActivityType = .run
@@ -226,4 +226,3 @@ public final class UserSettingsManager {
         save()
     }
 }
-

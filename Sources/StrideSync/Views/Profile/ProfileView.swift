@@ -4,16 +4,19 @@ import SwiftUI
 public struct ProfileView: View {
     public var athlete: AthleteProfile
     public var gearList: [GearItem]
+    @State public var userSettings: UserSettingsManager = .shared
     
     @State private var selectedSection: Int = 0
     @State private var showingSettingsSheet: Bool = false
     
     public init(
         athlete: AthleteProfile = Self.sampleAthlete(),
-        gearList: [GearItem] = Self.sampleGear()
+        gearList: [GearItem] = Self.sampleGear(),
+        userSettings: UserSettingsManager = .shared
     ) {
         self.athlete = athlete
         self.gearList = gearList
+        self._userSettings = State(initialValue: userSettings)
     }
     
     public var body: some View {
@@ -35,23 +38,34 @@ public struct ProfileView: View {
                         
                         VStack(spacing: 4) {
                             HStack(spacing: 6) {
-                                Text(athlete.fullName)
+                                Text(userSettings.fullName.isEmpty ? athlete.fullName : userSettings.fullName)
                                     .font(.system(.title2, design: .rounded, weight: .heavy))
                                 Image(systemName: "checkmark.seal.fill")
                                     .foregroundStyle(Color.blue)
                             }
                             
-                            Text("@\(athlete.username)")
+                            Text("@\(userSettings.username.isEmpty ? athlete.username : userSettings.username)")
                                 .font(.subheadline)
                                 .foregroundStyle(Color.secondary)
                             
-                            if let bio = athlete.bio {
-                                Text(bio)
+                            if !userSettings.bio.isEmpty {
+                                Text(userSettings.bio)
                                     .font(.footnote)
                                     .foregroundStyle(Color.secondary)
                                     .multilineTextAlignment(.center)
                                     .padding(.horizontal, 28)
                                     .padding(.top, 2)
+                            }
+                            
+                            if !userSettings.location.isEmpty {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "mappin.and.ellipse")
+                                        .font(.caption2)
+                                    Text(userSettings.location)
+                                        .font(.caption2)
+                                }
+                                .foregroundStyle(Color.secondary)
+                                .padding(.top, 2)
                             }
                         }
                         
@@ -105,7 +119,7 @@ public struct ProfileView: View {
                 }
             }
             .sheet(isPresented: $showingSettingsSheet) {
-                ProfileSettingsView()
+                ProfileSettingsView(settings: userSettings)
             }
         }
     }

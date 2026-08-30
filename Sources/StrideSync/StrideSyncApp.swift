@@ -1,9 +1,10 @@
 import SwiftUI
 import SwiftData
 
-/// Root application view for StrideSync with ModelContainer initialization.
+/// Root application view for StrideSync with ModelContainer initialization and onboarding gateway.
 public struct StrideSyncRootView: View {
     public let container: ModelContainer
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
     
     public init() {
         do {
@@ -25,7 +26,16 @@ public struct StrideSyncRootView: View {
     }
     
     public var body: some View {
-        MainTabView(modelContext: container.mainContext)
+        Group {
+            if hasCompletedOnboarding {
+                MainTabView(modelContext: container.mainContext)
+            } else {
+                OnboardingView {
+                    withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+                        hasCompletedOnboarding = true
+                    }
+                }
+            }
+        }
     }
 }
-
