@@ -3,17 +3,17 @@
 <div align="center">
 
 [![Swift 6](https://img.shields.io/badge/Swift-6.0-orange.svg?style=flat-square&logo=swift)](https://swift.org)
-[![iOS 18+](https://img.shields.io/badge/iOS-18.0%2B-blue.svg?style=flat-square&logo=apple)](https://apple.com)
+[![iOS 17+](https://img.shields.io/badge/iOS-17.0%2B-blue.svg?style=flat-square&logo=apple)](https://apple.com)
 [![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-007AFF.svg?style=flat-square)](https://developer.apple.com/xcode/swiftui/)
 [![SwiftData](https://img.shields.io/badge/Persistence-SwiftData-green.svg?style=flat-square)](https://developer.apple.com/documentation/swiftdata)
-[![CI](https://github.com/Irs622/stridesync-ios/actions/workflows/ci.yml/badge.svg)](https://github.com/Irs622/stridesync-ios/actions)
-[![Tests](https://img.shields.io/badge/Tests-73%2F73%20Passing%20(100%25)-brightgreen.svg?style=flat-square)]()
-[![SwiftLint](https://img.shields.io/badge/SwiftLint-Compliant-brightgreen.svg?style=flat-square)](.swiftlint.yml)
+[![Cloud Database](https://img.shields.io/badge/Backend-Supabase%20PostgreSQL-3ECF8E.svg?style=flat-square&logo=supabase)](https://supabase.com)
+[![Tests](https://img.shields.io/badge/Tests-81%2F81%20Passing%20(100%25)-brightgreen.svg?style=flat-square)]()
+[![Zero Cost](https://img.shields.io/badge/Cost-100%25%20Free%20(Rp%200)-success.svg?style=flat-square)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
-**A high-performance, modern Strava-like fitness tracking and social networking iOS platform built with Swift 6, SwiftUI, SwiftData, CoreLocation Actors, MapKit, ActivityKit (Dynamic Island), WidgetKit, HealthKit, and Garmin FIT 2.0.**
+**A high-performance, modern Strava-like fitness tracking and social networking iOS platform built with Swift 6, SwiftUI, SwiftData, CoreLocation Actors, MapKit, ActivityKit (Dynamic Island), HealthKit, Supabase PostgreSQL, and Garmin FIT 2.0.**
 
-[Tampilan Aplikasi](#-tampilan-antarmuka-aplikasi-visual-showcase) • [Fitur Utama](#-fitur-utama) • [Arsitektur Teknis](#-arsitektur-teknis) • [Algoritma & Engineering](#-algoritma--engineering) • [Struktur Proyek](#-struktur-direktori-proyek) • [Cara Menjalankan](#-cara-menjalankan-proyek) • [Dokumentasi](#-dokumentasi-lengkap)
+[Tampilan Aplikasi](#-tampilan-antarmuka-aplikasi-visual-showcase) • [Fitur Utama](#-fitur-utama-core-features) • [Arsitektur Cloud & Keamanan](#-arsitektur-cloud--database-gratis-rp-0) • [Panduan Menjalankan Rp 0](#-cara-menjalankan-aplikasi-100-gratis-rp-0) • [Struktur Proyek](#-struktur-direktori-proyek) • [Dokumentasi Lengkap](#-dokumentasi-lengkap)
 
 </div>
 
@@ -78,11 +78,12 @@
 
 **StrideSync** adalah platform pelacak aktivitas atletik luar ruangan (lari, bersepeda, hiking, dan jalan santai) berbasis iOS yang memadukan keandalan **GPS Engine kelas telemetri** dengan **ekosistem sosial komunitas olahraga modern**.
 
-Proyek ini dirancang dari awal dengan prinsip **Local-First, Security-First & Privacy-First Architecture**:
-* 🛡️ **Privasi & Enkripsi Atlet Terjamin:** Data lokasi di sekitar rumah disanitasi dengan geofence masking, serta kredensial/token pengguna tersimpan aman di **Apple Keychain Security Framework**.
+Proyek ini dirancang dari awal dengan prinsip **Local-First, Zero-Cost Resilience, Security-First & Privacy-First Architecture**:
+* 💸 **100% Gratis & Bebas Biaya Server (Rp 0):** Berjalan secara *Local-First* menggunakan **SwiftData** dan terhubung ke **Supabase Cloud (PostgreSQL Free Tier)** tanpa perlu biaya server bulanan sepeser pun.
+* 🛡️ **Privasi & Enkripsi Atlet Terjamin:** Data lokasi di sekitar rumah disanitasi dengan geofence masking, Row Level Security (RLS) di database cloud, serta token sesi tersimpan aman di **Apple Keychain Security Framework**.
 * ⚡️ **Swift 6 Strict Concurrency:** Mengeliminasi seluruh potensi *data race* pada pemrosesan koordinat GPS dengan mengisolasi perhitungan pada `actor LocationEngine`.
-* 💾 **Modern SwiftData Persistence & Versioning:** Menggunakan **SwiftData** `VersionedSchema` (`V1`) dan `SchemaMigrationPlan` untuk keamanan pembaruan struktur basis data.
-* 🍏 **Native Apple Ecosystem:** Memanfaatkan **ActivityKit (Dynamic Island & Lock Screen Live Activities)**, **WidgetKit (Home & Lock Screen Widgets)**, **HealthKit `HKWorkoutBuilder`**, dan **ImageRenderer** untuk berbagai kartu grafis Story resolusi tinggi.
+* 🎧 **Background Modes & Audio Ducking:** GPS tetap melacak rute di saku celana saat layar terkunci dan suara pelatih (*Audio Cues*) otomatis mengecilkan lagu Spotify / Apple Music.
+* ✨ **Onboarding Pengguna Baru:** Alur pembuka 3-langkah modern yang ramah untuk permohonan izin GPS dan Apple Health.
 * 📦 **Dual Export Engine:** Ekspor dan impor data rute dalam format **GPX 1.1 XML** dan format biner Garmin **FIT 2.0**.
 
 ---
@@ -93,15 +94,15 @@ Proyek ini dirancang dari awal dengan prinsip **Local-First, Security-First & Pr
 | :--- | :--- | :--- |
 | **Language** | **Swift 6.0** | Strict Concurrency Checking (`-swift-version 6`), Actor isolation, Sendable models |
 | **UI Framework** | **SwiftUI & MapKit** | Declarative modern UI, `MapPolyline` gradient styling, custom markers, haptics |
-| **Persistence** | **SwiftData & Schema Versioning** | `@Model` relational storage, `VersionedSchema` (`V1`) & `SchemaMigrationPlan` |
-| **Security** | **Keychain Security Framework** | `SecItem` API untuk enkripsi kredensial & auth token pengguna |
-| **Live Tracking** | **ActivityKit & WidgetKit** | Dynamic Island, Lock Screen Live Activities & Home Screen widgets (`WeeklyMileageWidget`) |
-| **Health Sync** | **HealthKit** | Otorisasi dan sinkronisasi workout native via modern `HKWorkoutBuilder` |
-| **Export Engines**| **GPX 1.1 & Garmin FIT 2.0** | Generator XML GPX 1.1 dan Encoder/Decoder biner Garmin FIT 2.0 dengan alignment safety |
-| **Networking** | **NetworkClient & Offline Queue** | Async HTTP REST client dengan Bearer auth injection & `BackgroundSyncManager` upload queue |
-| **Voice & i18n** | **AVFoundation & LocalizationManager** | Voice feedback `AVSpeechSynthesizer` & dynamic English/Indonesian i18n |
-| **Analytics** | **AnalyticsService** | Telemetry event logging, screen view tracking & performance metrics |
-| **CI / CD** | **GitHub Actions** | Automated macOS 14 / Xcode 16 pipeline untuk build, linting, dan test suites |
+| **Persistence** | **SwiftData** | `@Model` relational local-first storage dengan zero memory leakage |
+| **Cloud Backend** | **Supabase (PostgreSQL 15+)** | Cloud Database, Row Level Security (RLS), Multi-user Social Feed & Segments |
+| **Auth & Security** | **Sign in with Apple & Keychain** | Apple ID 1-tap auth, Email auth & `SecItem` API Keychain encryption |
+| **Background Modes**| **CoreLocation & AVFoundation** | `UIBackgroundModes: location, audio` dengan audio ducking Spotify/Apple Music |
+| **Live Tracking** | **ActivityKit & WidgetKit** | Dynamic Island, Lock Screen Live Activities & Home Screen widgets |
+| **Health Sync** | **HealthKit** | Otorisasi dan sinkronisasi workout native via `HKWorkoutBuilder` |
+| **Export Engines**| **GPX 1.1 & Garmin FIT 2.0** | Generator XML GPX 1.1 dan Encoder/Decoder biner Garmin FIT 2.0 |
+| **P2P Radar** | **CoreBluetooth (BLE)** | Pemindaian detak jantung, cycling power GATT & direct mesh Buddy Radar |
+| **Testing** | **Swift Testing Framework** | **81 Unit Tests** lulus 100% pada 37 Test Suites |
 
 ---
 
@@ -113,336 +114,98 @@ Proyek ini dirancang dari awal dengan prinsip **Local-First, Security-First & Pr
 - **Smart Auto-Pause & Resume**: Otomatis menjeda perekaman saat atlet berhenti di lampu merah (`speed < 0.8 m/s`) dan melanjutkan kembali saat bergerak.
 - **Kilometer Splits Calculator**: Menghitung *pacing split* dan akumulasi elevasi secara presisi per kilometer.
 
-### 2. 📱 Dynamic Island, Lock Screen & WidgetKit
-- **ActivityKit Integration**: Menampilkan jarak, durasi bergerak, dan *pace* langsung di Dynamic Island (tampilan *compact* & *expanded*) serta Lock Screen widget saat iPhone terkunci.
-- **WidgetKit Widgets**: Widget Home Screen & Lock Screen untuk progres jarak mingguan (`WeeklyMileageWidgetView`) dan pintasan cepat latihan (`QuickStartWorkoutWidgetView`).
+### 2. 🌐 Cloud Database Multi-User & Offline Sync (Supabase)
+- **Supabase Cloud REST Client (`CloudAPIService`)**: Linimasa komunitas global, interaksi Kudos/Likes, kolom komentar, dan profil pengguna.
+- **Offline-First Sync Engine (`CloudSyncEngine`)**: Lari tanpa sinyal tetap tersimpan rapi di SwiftData dan otomatis diunggah ke cloud saat terkoneksi internet.
+- **Row Level Security (RLS)**: Proteksi data tingkat baris di PostgreSQL sehingga atlet lain tidak dapat mengubah data latihan Anda.
 
-### 3. 👑 Virtual Segments & KOM/QOM Leaderboard
+### 3. ✨ Layar Onboarding Pengguna Baru (`OnboardingView`)
+- Alur pengenalan 3-langkah interaktif dengan permohonan izin hardware GPS dan Apple HealthKit secara transparan.
+
+### 4. 👑 Virtual Segments & KOM/QOM Leaderboard
 - **Spatial Segment Matcher**: Algoritma pencocokan polylines rute terhadap segmen virtual jalanan dengan radius toleransi pintu masuk/keluar (*gate radius* 40m).
 - **Crown & Personal Record (PR)**: Penentuan gelar **King/Queen of the Mountain (KOM/QOM)** tercepat dan pemecahan rekor pribadi.
 
-### 4. 🛡️ Geofence Privacy, Keychain & Dual Export (GPX + FIT 2.0)
-- **Privacy Geofencing**: Menyembunyikan titik awal dan akhir rute dalam radius tertentu (misal 500m di sekitar rumah atau kantor) untuk melindungi privasi atlet pada peta publik.
-- **Garmin FIT 2.0 & GPX 1.1 Support**: Ekspor dan impor data rute dalam format biner Garmin FIT 2.0 dan XML GPX 1.1 lengkap dengan timestamp ISO-8601 dan elevasi.
-- **Keychain Security**: Penyimpanan aman token autentikasi dan preferensi privasi sensitif menggunakan `Security.framework`.
+### 5. 🎯 Live Audio Pacing Coach & Audio Ducking
+- Mengatur target waktu tempuh balapan (*Sub-20m 5K, Sub-50m 10K, Sub-4h Marathon*) dengan evaluasi delta waktu real-time (*ahead/behind status*) dan panduan suara taktis bilingual via `AVSpeechSynthesizer` yang otomatis mengecilkan musik.
 
-### 5. 🗣️ Umpan Balik Suara & Lokalisasi Dinamis (i18n)
-- **Audio Voice Cues**: Sintesis suara native via `AVSpeechSynthesizer` yang mengumumkan *pace split*, total waktu latihan, dan detak jantung.
-- **Dynamic Localization**: Mendukung perpindahan bahasa antarmuka dinamis antara Bahasa Indonesia (`.id`) dan Bahasa Inggris (`.en`).
-
-### 6. 👥 Linimasa Sosial, Pencarian & Notifikasi
-- **Community Feed**: Linimasa aktivitas olahraga dengan animasi haptic **Kudos**, kolom komentar, dan *filter chip* multi-kategori.
-- **Pusat Notifikasi**: Notifikasi interaktif saat menerima Kudos, komentar, atau saat rekor KOM Anda tergeser oleh atlet lain.
-- **Pencarian Global**: Pencarian cerdas lintas 4 dimensi (*Atlet, Aktivitas, Segmen, dan Klub Komunitas*).
-- **9:16 Story Card Generator**: Penghasil kartu grafis estetik untuk dibagikan langsung ke Instagram Story.
-
-### 7. 👟 Gear Tracker (Umur Sepatu & Sepeda)
-### 8. 🎯 Live Audio Pacing Coach & Target Splits
-- Mengatur target waktu tempuh balapan (*Sub-20m 5K, Sub-50m 10K, Sub-4h Marathon*) dengan evaluasi delta waktu real-time (*ahead/behind status*) dan panduan suara taktis bilingual via `AVSpeechSynthesizer`.
-
-### 9. 🧭 GPX Turn-by-Turn Navigation & Vector Steering
+### 6. 🧭 GPX Turn-by-Turn Navigation & Vector Steering
 - Panduan rute interaktif dari file GPX dengan deteksi sudut belokan (*bearing delta*), estimasi jarak manuver, dan peringatan getar haptik otomatis saat atlet keluar jalur (*cross-track error > 30m*).
 
-### 10. 📊 Training Load (Banister TRIMP) & Recovery Gauge
+### 7. 📊 Training Load (Banister TRIMP) & Recovery Gauge
 - Kalkulasi beban fisiologis latihan berbasis formula matematis **Banister TRIMP**, pemodelan kelelahan sesaat (*Acute Load ATL* 7 hari), kebugaran dasar (*Chronic Load CTL* 28 hari), dan estimasi jam pemulihan otot.
 
-### 11. 📶 External Bluetooth BLE Sensors (CoreBluetooth)
+### 8. 📶 External Bluetooth BLE Sensors (CoreBluetooth)
 - Pemindaian dan pembacaan paket biner standar Bluetooth SIG GATT untuk sensor dada detak jantung (`0x180D`/`0x2A37`) dan sensor daya kayuh sepeda (*Cycling Power* `0x1818`/`0x2A63`).
 
-### 12. 🗺️ Personal Global Heatmap & Spatial Tile Hunter
-- Agregasi seluruh koordinat GPS seumur hidup ke dalam petak peta satelit Web Mercator (*Zoom 14*) dengan pendaran neon oranye dan sistem lencana eksplorasi kota.
+### 9. ⛰️ Climb Classifier & UCI Grade Analysis
+- Deteksi otomatis tanjakan kategori UCI (*Cat 4, 3, 2, 1, dan Hors Catégorie / HC*) dengan perhitungan Climb Score dan Grade Adjusted Pace (GAP).
 
-### 13. ⌚️ Standalone watchOS Companion App
-- Arsitektur perekaman otonom di pergelangan tangan dengan sensor internal Apple Watch dan antarmuka HUD OLED kontras tinggi.
-
-### 14. ⚡️ Structured Interval Workout Program & Engine
-- Penyusunan latihan interval bertingkat (*Warm-up, Interval/Sprint, Recovery/Rest, Cool-down*) dengan auto-transition, audio voice guidance, dan kartu sirkular progres real-time.
-
-### 15. ⏱️ Audio-Haptic Cadence Metronome
-- Metronom ritmik (150–210 SPM) untuk mengunci frekuensi langkah lari optimal, mengurangi osilasi vertikal (*bounce*), dan mencegah cedera lutut (*overstriding*).
-
-### 16. 📡 Live Group Run & Buddy Radar Engine
-- Radar spasial real-time yang memindai dan menampilkan atlet/teman komunitas dalam radius 1.2 km lengkap dengan arah kompas, jarak relatif, dan delta *pace*.
-
-### 17. ⛰️ Climb Categorization & UCI Grade Analysis
-- Evaluasi kemiringan gradien tanjakan rute secara presisi dan klasifikasi kesulitan tanjakan standar UCI/Strava (*Cat 4, Cat 3, Cat 2, Cat 1, Hors Catégorie / HC*).
-
-### 18. ☀️ Weather Intelligence & Physiological Heat Index
-- Perhitungan suhu semu (*Apparent Temperature / NOAA Heat Index*), evaluasi stres termal, dan rekomendasi perlambatan *pace* taktis untuk mencegah dehidrasi.
-
-### 19. 🥇 All-Time Personal Records (PR) & Best Efforts Detector
-- Algoritma *rolling-window search* yang memindai seluruh telemetri GPS untuk mendeteksi *best efforts* (*400m, 1K, 1 Mile, 5K, 10K, Half Marathon*) dan penobatan piala rekor baru.
+### 10. 🗺️ Personal Global Heatmap & 3D Flyover Replay
+- Representasi jejak petualangan lari seumur hidup dengan pemetaan *Slippy Map Tile* (Zoom 14) serta simulasi kamera satelit 3D flyover.
 
 ---
 
-## 🏗️ Arsitektur Teknis (System Architecture)
+## 💻 Cara Menjalankan Aplikasi (100% Gratis / Rp 0)
 
-Aplikasi mengadopsi arsitektur **Clean MVVM-C (Model-View-ViewModel-Coordinator)** dengan pembagian batas konkurensi Swift 6:
+### 1. Menjalankan di Simulator (macOS)
+```bash
+# Clone repositori
+git clone https://github.com/Irs622/stridesync-ios.git
+cd stridesync-ios
 
-```mermaid
-graph TD
-    subgraph UI_Layer [Presentation Layer - SwiftUI & MainActor]
-        A[MainTabView] --> B[FeedView]
-        A --> C[ExploreView]
-        A --> D[RecordHUDView]
-        A --> E[ChallengesView]
-        A --> F[ProfileView]
-        B --> B1[GlobalSearchView]
-        B --> B2[NotificationsView]
-        C --> C1[PersonalGlobalHeatmapView]
-        F --> F1[ProfileSettingsView]
-        F --> F2[BLESensorsSettingsView]
-        D --> D1[SetPacingTargetSheet]
-        D --> D2[NavigationHUDCardView]
-    end
+# Jalankan pengujian otomatis (81/81 Passed)
+swift test
 
-    subgraph ViewModel_Layer [State & Presentation Logic]
-        VM1[RecordViewModel]
-        VM2[FeedViewModel]
-        VM3[SearchViewModel]
-        VM4[NotificationViewModel]
-        VM5[UserSettingsManager]
-    end
-
-    subgraph Service_Layer [Isolated Actors & Core Services]
-        LE[LocationEngine - Actor]
-        LM[LiveLocationManager - CLLocationManager]
-        SM[SegmentMatcher]
-        SC[SplitCalculator]
-        PC[PacingCoachService]
-        RN[RouteNavigationEngine]
-        TL[TrainingLoadCalculator]
-        BLE[BLEHeartRateAndSensorManager]
-        HM[HeatmapTileEngine]
-        AC[AudioCueService - AVSpeechSynthesizer]
-        GPX[GPXService - XML 1.1]
-        FIT[FITService - Garmin FIT 2.0]
-        KC[KeychainManager - Security]
-        NC[NetworkClient - HTTP REST]
-        LOC[LocalizationManager - i18n]
-        PZ[PrivacyZoneService]
-        HK[HealthKitManager - HKWorkoutBuilder]
-    end
-
-    subgraph Data_Layer [Persistence & Operating System]
-        SD[(SwiftData - Schema V1 & Migration)]
-        AK[ActivityKit & WidgetKit]
-        CL[CoreLocation Hardware]
-    end
-
-    D --> VM1
-    B --> VM2
-    B1 --> VM3
-    B2 --> VM4
-    F1 --> VM5
-
-    VM1 <--> LE
-    LE <--> LM
-    LM <--> CL
-    VM1 --> PC
-    VM1 --> RN
-    VM1 --> BLE
-    VM1 --> SM
-    VM1 --> SC
-    VM1 --> AC
-    VM1 --> GPX
-    VM1 --> FIT
-    VM1 --> KC
-    VM1 --> NC
-    VM1 --> LOC
-    VM1 --> PZ
-    VM1 --> HK
-    VM1 --> AK
-    VM1 --> SD
+# Buka proyek di Xcode
+open Package.swift
 ```
+
+### 2. Memasang ke iPhone Fisik Anda Tanpa Biaya ($0)
+1. Sambungkan iPhone ke Mac dengan kabel data USB.
+2. Pada menu **Signing & Capabilities** di Xcode, pilih **Personal Team (Apple ID gratis)** Anda.
+3. Pilih perangkat iPhone Anda di device selector atas, lalu klik **▶️ Play (Run)**.
+4. Panduan lengkap: [`docs/FREE_DEPLOYMENT_GUIDE.md`](docs/FREE_DEPLOYMENT_GUIDE.md).
 
 ---
 
 ## 📁 Struktur Direktori Proyek
 
 ```
-Sources/
-├── StrideSync/
-│   ├── AppMain.swift                    # @main struct StrideSyncApp (iOS Application Entry)
-│   ├── StrideSyncApp.swift              # Root View & SwiftData Container configuration
-│   ├── Models/
-│   │   ├── ActivityType.swift           # Tipe olahraga (Run, Ride, Walk, Hike), Visibility, States
-│   │   ├── TelemetryPoint.swift         # Titik GPS SwiftData entity & TelemetrySnapshot (Sendable)
-│   │   ├── DistanceSplit.swift          # Model split kilometer + SplitSnapshot
-│   │   ├── ActivityRecord.swift         # Entitas SwiftData aktivitas utama + ActivitySummarySnapshot
-│   │   ├── Segment.swift                # Model segmen virtual jalanan & leaderboard (KOM/QOM, PR)
-│   │   ├── SocialModels.swift           # AthleteProfile, Kudos, Comment, Challenge, GearItem
-│   │   ├── UserSettings.swift           # UserSettingsManager dengan Keychain & UserDefaults sync
-│   │   ├── StrideSyncSchema.swift       # SwiftData VersionedSchema V1 & SchemaMigrationPlan
-│   │   ├── NotificationItem.swift       # Model pesan & notifikasi sosial
-│   │   ├── PacingTarget.swift           # Model target split, presets & delta feedback
-│   │   ├── NavigationModels.swift       # Model manuver navigasi GPX turn-by-turn
-│   │   ├── TrainingLoadModels.swift     # Model Banister TRIMP, ATL/CTL & recovery readiness
-│   │   ├── BLESensorModels.swift        # Model sensor eksternal CoreBluetooth & telemetri
-│   │   ├── HeatmapModels.swift          # Model petak Web Mercator Slippy Tile & badge
-│   │   ├── StructuredIntervalModels.swift # Model latihan interval terstruktur & preset ladder
-│   │   ├── GroupRunRadarModels.swift    # Model live buddy runner & radar target pings
-│   │   ├── ClimbModels.swift            # Model klasifikasi tanjakan standar UCI / Strava
-│   │   ├── WeatherConditions.swift      # Model cuaca, NOAA Heat Index & stres termal
-│   │   └── PersonalRecordModels.swift   # Model All-Time Personal Records (PR) & Best Efforts
-│   ├── Services/
-│   │   ├── LocationEngine.swift         # Actor pengolah GPS real-time & filter noise
-│   │   ├── LiveLocationManager.swift    # Bridge CLLocationManager hardware iPhone
-│   │   ├── SplitCalculator.swift        # Kalkulator split 1km/mil
-│   │   ├── SegmentMatcher.swift         # Algoritma pencocokan segmen jalanan
-│   │   ├── PacingCoachService.swift     # Evaluator pacing real-time & audio feedback
-│   │   ├── RouteNavigationEngine.swift  # Engine navigasi GPX & kalkulasi cross-track error
-│   │   ├── TrainingLoadCalculator.swift # Kalkulator Banister TRIMP & recovery gauge
-│   │   ├── BLEHeartRateAndSensorManager.swift # Manager sensor eksternal Bluetooth SIG
-│   │   ├── HeatmapTileEngine.swift      # Engine konversi WGS84 ke Slippy Tiles Zoom 14
-│   │   ├── WatchWorkoutEngine.swift     # Engine mandiri workout Apple Watch
-│   │   ├── IntervalExecutionEngine.swift# Engine eksekusi interval live & auto-transition
-│   │   ├── CadenceMetronomeEngine.swift # Metronom ritmik audio-haptik pengunci langkah
-│   │   ├── GroupRunRadarEngine.swift    # Engine pemindai radar pelari komunitas sekitar
-│   │   ├── ClimbClassifier.swift        # Algoritma klasifikasi tanjakan (HC, Cat 1..4)
-│   │   ├── WeatherIntelligenceService.swift # Layanan analisis cuaca & rekomendasi pacing
-│   │   ├── PersonalRecordDetector.swift # Detektor rekor pribadi rolling window telemetri
-│   │   ├── AudioCueService.swift        # Voice feedback AVSpeechSynthesizer
-│   │   ├── GPXService.swift             # Ekspor/Impor format GPX 1.1 XML
-│   │   ├── FITService.swift             # Encoder/Decoder format biner Garmin FIT 2.0
-│   │   ├── KeychainManager.swift        # Encrypted storage via Security.framework
-│   │   ├── NetworkClient.swift          # REST API client & Bearer token injection
-│   │   ├── LocalizationManager.swift    # Dynamic i18n localization (English & Indonesian)
-│   │   ├── AnalyticsService.swift       # Event logging & screen view telemetry
-│   │   ├── BackgroundSyncManager.swift  # Queue upload offline & BGTaskScheduler
-│   │   ├── PrivacyZoneService.swift     # Geofence masking lokasi rumah/kantor
-│   │   ├── HealthKitManager.swift       # Integrasi Apple HealthKit (HKWorkoutBuilder)
-│   │   └── WatchSessionManager.swift    # Bidirectional WatchConnectivity sync
-│   ├── ViewModels/
-│   │   ├── RecordViewModel.swift        # State machine perekaman HUD, Live Activities & GPS stream
-│   │   ├── FeedViewModel.swift          # Linimasa komunitas & SwiftData modelContext integration
-│   │   ├── SearchViewModel.swift        # Pencarian global multi-kategori
-│   │   ├── NotificationViewModel.swift  # Manajemen inbox notifikasi
-│   │   └── ActivityDetailViewModel.swift# Analisis splits & profil elevasi
-│   ├── Views/
-│   │   ├── Theme/
-│   │   │   └── StrideTheme.swift        # Design system, warna oranye atletik & background HIG
-│   │   ├── Navigation/
-│   │   │   └── MainTabView.swift        # 5-Menu Root TabBar (Feed, Maps, Record, Challenges, You)
-│   │   ├── Record/
-│   │   │   ├── RecordHUDView.swift      # Layar HUD live tracking OLED dark mode
-│   │   │   ├── SetPacingTargetSheet.swift # Modal pemilihan target pace lari kustom
-│   │   │   ├── IntervalHUDCardView.swift  # Kartu live circular progress interval HUD
-│   │   │   ├── StructuredWorkoutBuilderView.swift # Builder latihan interval terstruktur
-│   │   │   ├── BuddyRadarHUDCardView.swift # Kartu radar pelari teman sekitar HUD
-│   │   │   ├── NavigationHUDCardView.swift# Banner navigasi turn-by-turn mengambang
-│   │   │   └── WatchWorkoutHUDView.swift  # Antarmuka HUD Apple Watch OLED
-│   │   ├── Summary/
-│   │   │   └── ActivitySummaryView.swift# Post-workout breakdown, rute MapKit & recovery gauge
-│   │   ├── Detail/
-│   │   │   └── ActivityDetailView.swift # Analisis mendalam, grafik elevasi, climbs & PR load
-│   │   ├── Feed/
-│   │   │   ├── ActivityCardView.swift   # Kartu linimasa sosial dengan animasi Kudos
-│   │   │   └── FeedView.swift           # Timeline komunitas dengan SwiftData auto-refresh
-│   │   ├── Explore/
-│   │   │   ├── ExploreView.swift        # Peta eksplorasi rute & segmen jalanan terdekat
-│   │   │   └── PersonalGlobalHeatmapView.swift # Peta satelit heatmap jejak rute seumur hidup
-│   │   ├── Challenges/
-│   │   │   └── ChallengesView.swift     # Tantangan bulanan dengan progress bar & lencana
-│   │   ├── Profile/
-│   │   │   ├── ProfileView.swift        # Profil atlet, trophy case PR & recovery gauge
-│   │   │   ├── ProfileSettingsView.swift# Master pengaturan akun & GPX/FIT backup
-│   │   │   ├── RecoveryGaugeView.swift  # Kartu visual circular gauge kesiapan tubuh
-│   │   │   ├── BLESensorsSettingsView.swift # Pemindai dan penyambung sensor Bluetooth
-│   │   │   ├── EditProfileView.swift    # Form edit biodata & metrik fisik
-│   │   │   ├── PrivacyZonesSettingsView.swift # Pengaturan radius privasi rumah
-│   │   │   ├── AudioCuesSettingsView.swift    # Pengaturan bahasa suara
-│   │   │   └── ManageGearView.swift     # Manajemen sepatu lari & sepeda
-│   │   ├── Search/
-│   │   │   └── GlobalSearchView.swift   # Layar pencarian global atlet, rute & klub interaktif
-│   │   ├── Notifications/
-│   │   │   └── NotificationsView.swift  # Layar pusat notifikasi interaktif
-│   │   ├── Share/
-│   │   │   └── SocialShareCardView.swift# Generator kartu cerita 9:16 untuk Instagram Story
-│   │   └── Segments/
-│   │       ├── SegmentLeaderboardView.swift # Papan peringkat segmen & mahkota KOM
-│   │       └── CreateSegmentView.swift      # Pembuat segmen kustom dari rute
-│   └── LiveActivity/
-│       ├── WorkoutActivityAttributes.swift # ActivityKit attributes
-│       ├── WorkoutLiveActivityWidget.swift # Widget Dynamic Island & Lock Screen
-│       └── StrideSyncWidgets.swift          # Home & Lock Screen WidgetKit views (WeeklyMileageWidget)
-└── StrideSyncDemo/
-    └── main.swift                       # Terminal simulation runner
-Tests/
-└── StrideSyncTests/
-    ├── RecordViewModelTests.swift       # HUD lifecycle, state transitions & coordinate ingestion
-    ├── FeedAndSocialTests.swift         # Kudos toggle, comment additions & filtering
-    ├── PersistentSettingsTests.swift    # UserDefaults persistence & privacy zones
-    ├── LocationEngineTests.swift        # GPS noise filtering & tracking state
-    ├── SplitCalculatorTests.swift       # 1-km pace split calculation
-    ├── SegmentMatcherTests.swift        # Virtual segment matching
-    ├── PrivacyZoneTests.swift           # Geofence coordinate masking
-    ├── GPXServiceTests.swift            # GPX 1.1 XML export & parse
-    ├── FITServiceTests.swift            # Garmin FIT 2.0 binary encoding & decoding
-    ├── KeychainManagerTests.swift       # Security Keychain save, read & delete
-    ├── HealthKitAndNetworkTests.swift   # HealthKitManager, NetworkClient & LocalizationManager
-    ├── AudioAndHapticServiceTests.swift # AudioCueService speech & HapticFeedbackService
-    ├── AnalyticsAndBackgroundSyncTests.swift # Telemetry logging & offline upload queue
-    ├── LiveLocationManagerTests.swift   # Hardware delegate bridge, gear & challenges
-    ├── UserSettingsTests.swift          # Settings state & privacy zones
-    ├── SearchAndNotificationTests.swift # Search scope filtering & notifications
-    ├── PacingCoachTests.swift           # Pengujian ahead/behind delta pacing coach
-    ├── RouteNavigationTests.swift       # Pengujian deteksi belokan & cross-track error GPX
-    ├── TrainingLoadTests.swift          # Pengujian Banister TRIMP & recovery hours
-    ├── BLESensorTests.swift             # Pengujian decoding paket biner BLE GATT
-    ├── HeatmapTileTests.swift           # Pengujian konversi Slippy Tile Web Mercator
-    ├── WatchWorkoutEngineTests.swift    # Pengujian standalone watchOS workout engine
-    ├── IntervalWorkoutTests.swift       # Pengujian structured interval engine & transitions
-    ├── CadenceMetronomeTests.swift      # Pengujian cadence metronome & lock evaluation
-    ├── GroupRunRadarTests.swift         # Pengujian live buddy radar scanning & bearing
-    ├── ClimbClassifierTests.swift       # Pengujian klasifikasi tanjakan UCI/Strava standard
-    ├── WeatherIntelligenceTests.swift   # Pengujian NOAA Heat Index & stres termal
-    └── PersonalRecordDetectorTests.swift# Pengujian deteksi rekor terbaik rolling-window
+stridesync-ios/
+├── Package.swift                    # Konfigurasi Swift Package Manager (Swift 6)
+├── database/
+│   └── schema.sql                   # Skema PostgreSQL Cloud + RLS Policies
+├── docs/
+│   ├── APP_STORE_GUIDE.md           # Panduan Lengkap App Store Review & TestFlight
+│   └── FREE_DEPLOYMENT_GUIDE.md     # Panduan Instalasi Fisik Tanpa Bayar (Rp 0)
+├── scripts/
+│   ├── build_release_ipa.sh         # Skrip build distribusi produksi
+│   └── generate_app_store_icon.py   # Generator ikon 1024x1024 px resmi
+├── assets/
+│   └── AppIcon-1024.png             # Ikon App Store resmi
+├── Sources/
+│   └── StrideSync/
+│       ├── Models/                  # SwiftData Models & Codable DTOs
+│       ├── Services/                # GPS Actor, Audio, Ble, Supabase, SyncEngine
+│       ├── ViewModels/              # Observable MVVM State Managers
+│       └── Views/                   # SwiftUI Screens (HUD, Onboarding, Social, Profile)
+└── Tests/
+    └── StrideSyncTests/             # 81 Unit Tests across 37 Test Suites (100% PASS)
 ```
 
 ---
 
-## 💻 Cara Menjalankan Proyek (Getting Started)
+## 📚 Dokumentasi Lengkap
 
-### Prasyarat
-- macOS 14.0+ (Sonoma / Sequoia)
-- Xcode 16.0+ (atau Command Line Tools dengan Swift 6.0+)
-- iOS Simulator / Perangkat Fisik dengan iOS 18.0+
-
-### 1. Menjalankan Seluruh Unit Test Suite
-```bash
-swift test
-```
-*Output: 48 tests across 23 suites passed (100% Passed).*
-
-### 2. Menjalankan Simulasi Live GPS di Terminal
-```bash
-swift run StrideSyncDemo
-```
-*Simulasi ini akan mendemokan perekaman 5K lari, filter auto-pause, kalkulasi splits, target pacing delta, pencocokan segmen KOM, formula Banister TRIMP, agregasi heatmap tiles, dan decoding paket nirkabel BLE.*
-
-### 3. Menjalankan Aplikasi di iOS Simulator
-Cukup jalankan script otomatisasi:
-```bash
-bash build_sim.sh
-```
-Script ini akan:
-1. Mengompilasi aplikasi untuk target `arm64-apple-ios18.0-simulator`.
-2. Membuat bundle `StrideSync.app` lengkap dengan `Info.plist` dan izin privasi.
-3. Memasang dan meluncurkan aplikasi langsung ke **iOS Simulator** yang aktif.
+* 📋 [Product Requirement Document (PRD.md)](PRD.md)
+* 🏛️ [Arsitektur & Deep Dive Teknis (ARCHITECTURE.md)](ARCHITECTURE.md)
+* 🛣️ [Peta Jalan Pengembangan (ROADMAP.md)](ROADMAP.md)
+* 🔒 [Kebijakan Keamanan & Privasi (SECURITY.md)](SECURITY.md)
+* 🤝 [Panduan Kontribusi (CONTRIBUTING.md)](CONTRIBUTING.md)
 
 ---
 
-## 📖 Dokumentasi Lengkap (Technical References)
-
-- 📘 [**Product Requirements Document (PRD.md)**](PRD.md) — Dokumen spesifikasi fungsional, persona pengguna, dan roadmap produk.
-- 🚀 [**Next-Gen Roadmap v2.0+ (ROADMAP.md)**](ROADMAP.md) — Spesifikasi teknis fitur AI Coach, Live Safety Beacon, BLE Sensors & 3D Flyover.
-- 🏛️ [**Architecture Deep Dive (ARCHITECTURE.md)**](ARCHITECTURE.md) — Penjelasan mendalam arsitektur sistem, Actor isolation, dan memory management.
-- 🤝 [**Contributing Guide (CONTRIBUTING.md)**](CONTRIBUTING.md) — Panduan kontribusi, standard kode, dan alur Pull Request.
-- 🔒 [**Security Policy (SECURITY.md)**](SECURITY.md) — Kebijakan keamanan, enkripsi Keychain, dan pelaporan kerentanan.
-
----
-
-## 📄 Lisensi (License)
-
-Proyek ini dirilis di bawah lisensi [MIT License](LICENSE) — Copyright (c) 2026 **[Irs622](https://github.com/Irs622)**.
+<div align="center">
+<sub>Dibangun dengan dedikasi untuk komunitas pelari dan pegiat olahraga Indonesia 🇮🇩</sub>
+</div>
