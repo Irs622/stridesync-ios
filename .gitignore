@@ -23,6 +23,16 @@ Package.resolved
 *.app
 *.ipa
 *.pkg
+*.png
+!assets/AppIcon-1024.png
+
+# Secrets & Environment Configurations
+.env
+.env.*
+*.xcconfig
+!Config.xcconfig.template
+*.secret
+Secrets.swift
 
 # Temporary & Editor Cache
 *.swp
