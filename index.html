@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StrideSync — Athletic Intelligence & GPS Running App for iOS</title>
+  <meta name="description" content="Aplikasi pelacak lari dan performa atletik modern dengan Swift 6, 3D Aerial Flyover, Banister TRIMP, Ghost Runner, dan Komunitas Atlet.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #0A0C10;
+      color: #F3F4F6;
+    }
+    .neon-orange {
+      color: #FC5200;
+    }
+    .bg-neon-orange {
+      background-color: #FC5200;
+    }
+    .border-neon-orange {
+      border-color: #FC5200;
+    }
+    .glow-orange {
+      box-shadow: 0 0 40px -10px rgba(252, 82, 0, 0.45);
+    }
+    .glow-green {
+      box-shadow: 0 0 30px -10px rgba(46, 204, 113, 0.4);
+    }
+    .glass-card {
+      background: rgba(20, 24, 33, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card-hover:hover {
+      border-color: rgba(252, 82, 0, 0.4);
+      transform: translateY(-4px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #FFF 20%, #FC5200 80%, #FF8C00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gradient-orange {
+      background: linear-gradient(135deg, #FC5200 0%, #FF6E27 50%, #FF9F1C 100%);
+    }
+  </style>
+</head>
+<body class="selection:bg-[#FC5200] selection:text-white antialiased overflow-x-hidden">
+
+  <!-- Navigation Bar -->
+  <header class="fixed top-0 left-0 right-0 z-50 glass-card border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#FC5200] to-[#FFA033] p-[2px] shadow-lg shadow-[#FC5200]/20">
+          <div class="w-full h-full bg-[#0E1014] rounded-[14px] flex items-center justify-center font-black text-[#FC5200] text-xl">
+            ⚡️
+          </div>
+        </div>
+        <div>
+          <span class="text-xl font-extrabold tracking-tight text-white">Stride<span class="text-[#FC5200]">Sync</span></span>
+          <span class="hidden sm:inline-block text-[10px] uppercase font-bold tracking-widest bg-[#FC5200]/10 text-[#FC5200] px-2 py-0.5 rounded-full ml-2 border border-[#FC5200]/20">v3.5 Pro</span>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-300">
+        <a href="#fitur" class="hover:text-[#FC5200] transition">Fitur Utama</a>
+        <a href="#demo-hud" class="hover:text-[#FC5200] transition">Live HUD</a>
+        <a href="#fisiologi" class="hover:text-[#FC5200] transition">Analisis Fisiologis</a>
+        <a href="#teknologi" class="hover:text-[#FC5200] transition">Teknologi</a>
+      </nav>
+
+      <div class="flex items-center gap-4">
+        <a href="https://github.com/Irs622/stridesync-ios" target="_blank" class="hidden sm:flex items-center gap-2 text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a href="#download" class="gradient-orange text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl shadow-lg shadow-[#FC5200]/30 hover:opacity-95 transition flex items-center gap-1.5">
+          <span>Pasang App</span>
+          <span>→</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="pt-36 pb-20 px-6 relative overflow-hidden">
+    <!-- Ambient Background Glows -->
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-[#FC5200]/15 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-[#2ECC71]/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-14 items-center">
+      
+      <!-- Left Column: Copywriting -->
+      <div class="lg:col-span-7 space-y-8 text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-[#FC5200]/30 text-xs font-bold text-[#FC5200]">
+          <span class="inline-block w-2 h-2 rounded-full bg-[#FC5200] animate-ping"></span>
+          <span>SWIFT 6 & IOS 18 NATIVE ATHLETIC INTELLIGENCE</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-[1.1] text-white">
+          Tingkatkan Rekor <br>
+          <span class="gradient-text">Larimu Tanpa Batas</span>
+        </h1>
+
+        <p class="text-lg text-gray-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+          StrideSync adalah aplikasi pelacak lari generasi berikutnya yang dibangun murni dengan teknologi Apple terkini. Dilengkapi dengan simulasi <strong class="text-white">Ghost Runner</strong>, analisis tanjakan <strong class="text-white">Climb Classifier</strong>, metrik pemulihan <strong class="text-white">TRIMP Banister</strong>, dan <strong class="text-white">3D Aerial Flyover</strong>.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+          <a href="#demo-hud" class="w-full sm:w-auto px-8 py-4 rounded-2xl gradient-orange text-white font-bold text-base shadow-xl shadow-[#FC5200]/30 hover:scale-[1.02] active:scale-[0.98] transition flex items-center justify-center gap-3">
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-2 0.6-2.65 1.35-.58.66-1.09 1.74-.96 2.76 1.01.08 2.07-.51 2.69-1.26z"/></svg>
+            <span>Coba di iPhone (Xcode)</span>
+          </a>
+          <a href="#fitur" class="w-full sm:w-auto px-8 py-4 rounded-2xl glass-card text-white font-bold text-base hover:bg-white/10 active:scale-[0.98] transition flex items-center justify-center gap-2">
+            <span>Eksplorasi Fitur</span>
+            <span>⚡️</span>
+          </a>
+        </div>
+
+        <!-- Metric highlights -->
+        <div class="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 max-w-lg mx-auto lg:mx-0">
+          <div>
+            <div class="text-2xl sm:text-3xl font-extrabold text-white">100%</div>
+            <div class="text-xs text-gray-400 font-medium">Swift 6 Concurrency</div>
+          </div>
+          <div>
+            <div class="text-2xl sm:text-3xl font-extrabold text-[#FC5200]">0.1s</div>
+            <div class="text-xs text-gray-400 font-medium">GPS Filter Latency</div>
+          </div>
+          <div>
+            <div class="text-2xl sm:text-3xl font-extrabold text-[#2ECC71]">OLED</div>
+            <div class="text-xs text-gray-400 font-medium">Dark Pro HUD</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Phone Mockup -->
+      <div class="lg:col-span-5 flex justify-center">
+        <div class="relative w-[320px] sm:w-[350px] p-4 bg-[#141820] rounded-[52px] border-4 border-gray-700/60 shadow-2xl glow-orange">
+          <!-- Notch/Dynamic Island -->
+          <div class="absolute top-7 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-full z-20 flex items-center justify-between px-3">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#FC5200] animate-pulse"></span>
+            <span class="text-[9px] font-mono text-white/80 font-bold">5.24 km</span>
+          </div>
+
+          <!-- Screen Container -->
+          <div class="bg-[#0E1014] rounded-[42px] overflow-hidden p-5 pt-14 space-y-4 text-white relative">
+            
+            <!-- Live Status Header -->
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#2ECC71] animate-ping"></span>
+                <span class="text-xs font-bold uppercase tracking-wider text-[#2ECC71]">Lari Luar Ruang</span>
+              </div>
+              <span class="text-xs font-mono text-gray-400" id="live-timer">00:24:18</span>
+            </div>
+
+            <!-- Big Stat: Distance -->
+            <div class="text-center py-2">
+              <div class="text-5xl font-black tracking-tight" id="live-distance">5.24</div>
+              <div class="text-xs uppercase font-bold text-[#FC5200] tracking-widest mt-1">Kilometer (KM)</div>
+            </div>
+
+            <!-- Primary Metric Grid -->
+            <div class="grid grid-cols-2 gap-2.5">
+              <div class="bg-[#181B22] p-3 rounded-2xl border border-white/5 text-center">
+                <div class="text-[11px] text-gray-400 uppercase font-semibold">Pace Saat Ini</div>
+                <div class="text-2xl font-black text-white mt-0.5" id="live-pace">4'38"</div>
+                <div class="text-[10px] text-[#2ECC71] font-bold">▲ +0:12 vs Ghost</div>
+              </div>
+              <div class="bg-[#181B22] p-3 rounded-2xl border border-white/5 text-center">
+                <div class="text-[11px] text-gray-400 uppercase font-semibold">Detak Jantung</div>
+                <div class="text-2xl font-black text-[#FC5200] mt-0.5 flex items-center justify-center gap-1">
+                  <span>❤️</span> <span id="live-hr">164</span>
+                </div>
+                <div class="text-[10px] text-gray-400 font-bold">Zona 4 (Threshold)</div>
+              </div>
+            </div>
+
+            <!-- Athletic Intelligence Cards -->
+            <div class="space-y-2">
+              <!-- Ghost Runner Card -->
+              <div class="bg-gradient-to-r from-[#181B22] to-[#202530] p-3 rounded-2xl border border-[#FC5200]/30 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-lg">👻</span>
+                  <div>
+                    <div class="text-xs font-bold">Virtual Ghost Runner</div>
+                    <div class="text-[10px] text-gray-400">Target Sub-25m 5K</div>
+                  </div>
+                </div>
+                <span class="text-xs font-mono font-bold text-[#2ECC71] bg-[#2ECC71]/10 px-2 py-1 rounded-lg">+38m di depan</span>
+              </div>
+
+              <!-- Cadence Metronome -->
+              <div class="bg-[#181B22] p-3 rounded-2xl border border-white/5 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-lg">⏱️</span>
+                  <div>
+                    <div class="text-xs font-bold">Cadence Lock</div>
+                    <div class="text-[10px] text-gray-400">Target 180 SPM</div>
+                  </div>
+                </div>
+                <span class="text-xs font-mono font-bold text-[#FC5200] bg-[#FC5200]/10 px-2 py-1 rounded-lg">182 SPM</span>
+              </div>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="pt-2 flex items-center gap-2">
+              <button class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-bold text-white transition">Jeda</button>
+              <button class="w-full py-3 rounded-xl gradient-orange text-xs font-bold text-white shadow-lg shadow-[#FC5200]/30 transition">Selesai</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Interactive Live Telemetry Simulator -->
+  <section id="demo-hud" class="py-20 px-6 bg-[#0E1015] border-y border-white/10">
+    <div class="max-w-7xl mx-auto space-y-12">
+      <div class="text-center space-y-4 max-w-3xl mx-auto">
+        <span class="text-xs font-extrabold uppercase tracking-widest text-[#FC5200] bg-[#FC5200]/10 px-3 py-1 rounded-full border border-[#FC5200]/20">Simulasi Interaktif</span>
+        <h2 class="text-3xl sm:text-5xl font-black text-white">Uji Coba Engine Latihan Secara Live</h2>
+        <p class="text-gray-400 text-sm sm:text-base">Tekan tombol simulasi di bawah ini untuk melihat bagaimana LocationEngine, Pacing Coach, dan Heart Rate Zones bereaksi secara real-time.</p>
+      </div>
+
+      <!-- Simulator Dashboard -->
+      <div class="glass-card rounded-3xl p-6 sm:p-10 max-w-4xl mx-auto glow-orange">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6">
+          <div class="flex items-center gap-3">
+            <button id="sim-btn" onclick="toggleSimulation()" class="gradient-orange text-white text-sm font-bold px-6 py-3 rounded-xl shadow-lg shadow-[#FC5200]/30 hover:scale-105 transition flex items-center gap-2">
+              <span id="sim-icon">▶️</span>
+              <span id="sim-text">Mulai Simulasi 5K Run</span>
+            </button>
+            <button onclick="resetSimulation()" class="bg-white/10 hover:bg-white/15 text-white text-sm font-bold px-4 py-3 rounded-xl transition">
+              Reset
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-[#2ECC71]" id="sim-status-dot"></span>
+            <span class="text-xs font-mono font-bold text-gray-300" id="sim-status">Siap Memulai (Idle)</span>
+          </div>
+        </div>
+
+        <!-- Dynamic Live Metrics -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8">
+          <div class="bg-[#0A0C10] p-4 rounded-2xl border border-white/5">
+            <div class="text-xs text-gray-400 font-semibold">Jarak Tempuh</div>
+            <div class="text-3xl font-black text-white mt-1" id="sim-dist">0.00 <span class="text-sm text-[#FC5200]">km</span></div>
+            <div class="text-[11px] text-gray-500 mt-1">Split ke-1</div>
+          </div>
+          <div class="bg-[#0A0C10] p-4 rounded-2xl border border-white/5">
+            <div class="text-xs text-gray-400 font-semibold">Kecepatan & Pace</div>
+            <div class="text-3xl font-black text-white mt-1" id="sim-pace">0'00" <span class="text-sm text-[#FC5200]">/km</span></div>
+            <div class="text-[11px] text-[#2ECC71] mt-1" id="sim-speed">0.0 km/jam</div>
+          </div>
+          <div class="bg-[#0A0C10] p-4 rounded-2xl border border-white/5">
+            <div class="text-xs text-gray-400 font-semibold">Detak Jantung (BPM)</div>
+            <div class="text-3xl font-black text-[#FC5200] mt-1" id="sim-bpm">-- <span class="text-sm text-gray-400">bpm</span></div>
+            <div class="text-[11px] text-gray-500 mt-1" id="sim-zone">Zona Istirahat</div>
+          </div>
+          <div class="bg-[#0A0C10] p-4 rounded-2xl border border-white/5">
+            <div class="text-xs text-gray-400 font-semibold">Elevasi & Tanjakan</div>
+            <div class="text-3xl font-black text-[#2ECC71] mt-1" id="sim-elev">+0 <span class="text-sm text-gray-400">m</span></div>
+            <div class="text-[11px] text-gray-500 mt-1" id="sim-climb">Grade: 0.0%</div>
+          </div>
+        </div>
+
+        <!-- Live Audio Cue Output Box -->
+        <div class="mt-6 p-4 rounded-2xl bg-[#141820] border border-[#FC5200]/20 flex items-start gap-3">
+          <span class="text-xl">🎙️</span>
+          <div>
+            <div class="text-xs font-bold text-[#FC5200] uppercase tracking-wider">Audio Voice Cue (AI Coach):</div>
+            <div class="text-sm text-gray-300 mt-0.5 italic" id="sim-audio">"Siap berlari. Tekan Mulai untuk menyalakan audio cue pelatih."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Feature Suite Grid -->
+  <section id="fitur" class="py-24 px-6 max-w-7xl mx-auto space-y-16">
+    <div class="text-center space-y-4 max-w-3xl mx-auto">
+      <span class="text-xs font-extrabold uppercase tracking-widest text-[#FC5200] bg-[#FC5200]/10 px-3 py-1 rounded-full border border-[#FC5200]/20">Fitur Lengkap</span>
+      <h2 class="text-3xl sm:text-5xl font-black text-white">Semua Kebutuhan Atlet Profesional</h2>
+      <p class="text-gray-400 text-sm sm:text-base">Dirancang dari nol dengan standar kompetisi atletik dunia untuk akurasi data tanpa kompromi.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <!-- Card 1 -->
+      <div class="glass-card glass-card-hover rounded-3xl p-8 space-y-4">
+        <div class="w-14 h-14 rounded-2xl bg-[#FC5200]/10 border border-[#FC5200]/30 flex items-center justify-center text-2xl text-[#FC5200]">
+          👻
+        </div>
+        <h3 class="text-xl font-bold text-white">Virtual Ghost Runner</h3>
+        <p class="text-sm text-gray-400 leading-relaxed">
+          Berlatihlah melawan avatar virtual yang mensimulasikan catatan waktu terbaik Anda (PR) atau target pace balapan secara real-time.
+        </p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="glass-card glass-card-hover rounded-3xl p-8 space-y-4">
+        <div class="w-14 h-14 rounded-2xl bg-[#2ECC71]/10 border border-[#2ECC71]/30 flex items-center justify-center text-2xl text-[#2ECC71]">
+          ⛰️
+        </div>
+        <h3 class="text-xl font-bold text-white">Climb Classifier (UCI)</h3>
+        <p class="text-sm text-gray-400 leading-relaxed">
+          Kategorisasi tanjakan otomatis standar Strava/UCI (Cat 4 hingga HC) dengan profil elevasi, panjang segmen, dan persentase kemiringan gradien.
+        </p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="glass-card glass-card-hover rounded-3xl p-8 space-y-4">
+        <div class="w-14 h-14 rounded-2xl bg-[#FFA033]/10 border border-[#FFA033]/30 flex items-center justify-center text-2xl text-[#FFA033]">
+          🫁
+        </div>
+        <h3 class="text-xl font-bold text-white">VO2 Max & Race Predictor</h3>
+        <p class="text-sm text-gray-400 leading-relaxed">
+          Estimasi kapasitas aerobik dan algoritma prediksi waktu balap untuk jarak 5K, 10K, 21K Half Marathon, hingga 42K Full Marathon.
+        </p>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="glass-card glass-card-hover rounded-3xl p-8 space-y-4">
+        <div class="w-14 h-14 rounded-2xl bg-[#9B59B6]/10 border border-[#9B59B6]/30 flex items-center justify-center text-2xl text-[#9B59B6]">
+          🔋
+        </div>
+        <h3 class="text-xl font-bold text-white">TRIMP & Recovery Gauge</h3>
+        <p class="text-sm text-gray-400 leading-relaxed">
+          Analisis beban fisiologis Banister TRIMP, Chronic Training Load (CTL), Fatigue (ATL), dan rekomendasi jam istirahat optimal.
+        </p>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="glass-card glass-card-hover rounded-3xl p-8 space-y-4">
+        <div class="w-14 h-14 rounded-2xl bg-[#3498DB]/10 border border-[#3498DB]/30 flex items-center justify-center text-2xl text-[#3498DB]">
+          📡
+        </div>
+        <h3 class="text-xl font-bold text-white">Live Group Run Radar</h3>
+        <p class="text-sm text-gray-400 leading-relaxed">
+          Pindai pelari komunitas di sekitar rute Anda dalam radius 1.5 km secara anonim dan temukan teman lari dengan pace yang sepadan.
+        </p>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="glass-card glass-card-hover rounded-3xl p-8 space-y-4">
+        <div class="w-14 h-14 rounded-2xl bg-[#E74C3C]/10 border border-[#E74C3C]/30 flex items-center justify-center text-2xl text-[#E74C3C]">
+          🚁
+        </div>
+        <h3 class="text-xl font-bold text-white">3D Aerial Flyover & AI Story</h3>
+        <p class="text-sm text-gray-400 leading-relaxed">
+          Reka ulang rute lari dengan kamera helikopter 3D pitch 60° dan baca narasi motivasi AI yang dirangkum otomatis dari seluruh data sesi Anda.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Download / Install Section -->
+  <section id="download" class="py-24 px-6 relative overflow-hidden">
+    <div class="max-w-5xl mx-auto glass-card rounded-[40px] p-8 sm:p-16 border border-[#FC5200]/30 glow-orange text-center space-y-8 relative">
+      <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-[#FC5200] to-[#FF8C00] p-1 shadow-2xl shadow-[#FC5200]/40">
+        <div class="w-full h-full bg-[#0E1014] rounded-[22px] flex items-center justify-center text-4xl font-black text-[#FC5200]">
+          ⚡️
+        </div>
+      </div>
+
+      <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Siap Memecahkan Rekor Baru?</h2>
+      <p class="text-gray-400 max-w-xl mx-auto text-sm sm:text-base">
+        Aplikasi StrideSync siap dikompilasi langsung ke iPhone Anda via Xcode atau terminal, gratis untuk pengembangan & komunitas pelari.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+        <a href="https://github.com/Irs622/stridesync-ios" target="_blank" class="w-full sm:w-auto px-8 py-4 rounded-2xl gradient-orange text-white font-bold text-base shadow-xl shadow-[#FC5200]/30 hover:scale-105 transition flex items-center justify-center gap-2">
+          <span>Unduh Source Code (GitHub)</span>
+          <span>⚡️</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 px-6 border-t border-white/10 text-center text-xs text-gray-500 space-y-2">
+    <p>© 2026 StrideSync iOS. Built with ❤️ and Swift 6 for runners worldwide.</p>
+    <p class="text-gray-600">Created by Irsal Shydiq • Apple Developer & Community Running Project</p>
+  </footer>
+
+  <!-- Interactive Simulator Script -->
+  <script>
+    let isSimulating = false;
+    let simInterval = null;
+    let simSeconds = 0;
+    let simDistKm = 0.0;
+    let simPace = 300;
+    let simElev = 0.0;
+
+    function formatTime(secs) {
+      const m = Math.floor(secs / 60);
+      const s = Math.floor(secs % 60);
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function formatPace(paceSec) {
+      const m = Math.floor(paceSec / 60);
+      const s = Math.floor(paceSec % 60);
+      return `${m}'${String(s).padStart(2, '0')}"`;
+    }
+
+    function toggleSimulation() {
+      if (isSimulating) {
+        pauseSimulation();
+      } else {
+        startSimulation();
+      }
+    }
+
+    function startSimulation() {
+      isSimulating = true;
+      document.getElementById('sim-btn').classList.remove('gradient-orange');
+      document.getElementById('sim-btn').classList.add('bg-yellow-500');
+      document.getElementById('sim-text').innerText = 'Jeda Simulasi';
+      document.getElementById('sim-icon').innerText = '⏸️';
+      document.getElementById('sim-status').innerText = 'Sedang Merekam Live...';
+      document.getElementById('sim-status-dot').className = 'w-3 h-3 rounded-full bg-[#2ECC71] animate-ping';
+      
+      document.getElementById('sim-audio').innerText = '"Latihan dimulai. Target 5 km dengan pace 4:45/km. Semangat!"';
+
+      simInterval = setInterval(() => {
+        simSeconds += 2;
+        simDistKm += 0.009;
+        simElev += 0.15;
+        
+        let hr = Math.min(178, 140 + Math.floor(simSeconds / 3));
+        let pace = Math.max(260, 310 - Math.floor(simSeconds / 2));
+        let speedKmh = (3600 / pace).toFixed(1);
+
+        document.getElementById('sim-dist').innerHTML = `${simDistKm.toFixed(2)} <span class="text-sm text-[#FC5200]">km</span>`;
+        document.getElementById('sim-pace').innerHTML = `${formatPace(pace)} <span class="text-sm text-[#FC5200]">/km</span>`;
+        document.getElementById('sim-speed').innerText = `${speedKmh} km/jam`;
+        document.getElementById('sim-bpm').innerHTML = `${hr} <span class="text-sm text-gray-400">bpm</span>`;
+        document.getElementById('sim-elev').innerHTML = `+${Math.floor(simElev)} <span class="text-sm text-gray-400">m</span>`;
+        
+        if (hr > 165) {
+          document.getElementById('sim-zone').innerText = 'Zona 4 (Threshold)';
+          document.getElementById('sim-zone').className = 'text-[11px] text-[#FC5200] font-bold';
+        } else {
+          document.getElementById('sim-zone').innerText = 'Zona 3 (Aerobik)';
+          document.getElementById('sim-zone').className = 'text-[11px] text-[#2ECC71] font-bold';
+        }
+
+        if (simSeconds === 10) {
+          document.getElementById('sim-audio').innerText = '"Km 1 selesai. Pace 4:42 /km. Pertahankan cadence 180 SPM!"';
+        } else if (simSeconds === 24) {
+          document.getElementById('sim-audio').innerText = '"Tanjakan terdeteksi: Monas Sprint (+15m, Grade 3.2%). Naikkan ayunan lengan!"';
+        } else if (simSeconds === 40) {
+          document.getElementById('sim-audio').innerText = '"Ghost Runner tertinggal 45 meter. Kamu berada di jalur Personal Best!"';
+        }
+
+      }, 500);
+    }
+
+    function pauseSimulation() {
+      isSimulating = false;
+      clearInterval(simInterval);
+      document.getElementById('sim-btn').classList.remove('bg-yellow-500');
+      document.getElementById('sim-btn').classList.add('gradient-orange');
+      document.getElementById('sim-text').innerText = 'Lanjutkan Simulasi';
+      document.getElementById('sim-icon').innerText = '▶️';
+      document.getElementById('sim-status').innerText = 'Dijeda (Paused)';
+      document.getElementById('sim-status-dot').className = 'w-3 h-3 rounded-full bg-yellow-400';
+      document.getElementById('sim-audio').innerText = '"Latihan dijeda."';
+    }
+
+    function resetSimulation() {
+      pauseSimulation();
+      simSeconds = 0;
+      simDistKm = 0.0;
+      simElev = 0.0;
+      document.getElementById('sim-text').innerText = 'Mulai Simulasi 5K Run';
+      document.getElementById('sim-icon').innerText = '▶️';
+      document.getElementById('sim-status').innerText = 'Siap Memulai (Idle)';
+      document.getElementById('sim-status-dot').className = 'w-3 h-3 rounded-full bg-[#2ECC71]';
+      document.getElementById('sim-dist').innerHTML = `0.00 <span class="text-sm text-[#FC5200]">km</span>`;
+      document.getElementById('sim-pace').innerHTML = `0'00" <span class="text-sm text-[#FC5200]">/km</span>`;
+      document.getElementById('sim-speed').innerText = `0.0 km/jam`;
+      document.getElementById('sim-bpm').innerHTML = `-- <span class="text-sm text-gray-400">bpm</span>`;
+      document.getElementById('sim-elev').innerHTML = `+0 <span class="text-sm text-gray-400">m</span>`;
+      document.getElementById('sim-zone').innerText = 'Zona Istirahat';
+      document.getElementById('sim-zone').className = 'text-[11px] text-gray-500 mt-1';
+      document.getElementById('sim-audio').innerText = '"Siap berlari. Tekan Mulai untuk menyalakan audio cue pelatih."';
+    }
+  </script>
+</body>
+</html>
