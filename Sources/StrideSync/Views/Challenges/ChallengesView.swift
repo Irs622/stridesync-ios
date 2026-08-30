@@ -140,29 +140,29 @@ public struct ChallengesView: View {
                 title: "Tantangan Lari 100 km",
                 subtitle: "Selesaikan total 100 kilometer lari dalam bulan ini.",
                 targetDistanceMeters: 100_000.0,
-                currentProgressMeters: 64_200.0,
+                currentProgressMeters: 0.0,
                 activityType: .run,
                 startDate: now,
                 endDate: endOfMonth,
                 badgeIconName: "figure.run",
-                isJoined: true
+                isJoined: false
             ),
             Challenge(
                 title: "Gran Fondo 100 km Sepeda",
                 subtitle: "Gowes 100 kilometer dalam satu sesi latihan.",
                 targetDistanceMeters: 100_000.0,
-                currentProgressMeters: 100_000.0,
+                currentProgressMeters: 0.0,
                 activityType: .ride,
                 startDate: now,
                 endDate: endOfMonth,
                 badgeIconName: "trophy.fill",
-                isJoined: true
+                isJoined: false
             ),
             Challenge(
                 title: "Tantangan Elevasi 2000m",
                 subtitle: "Taklukkan total 2.000 meter ketinggian tanjakan.",
                 targetDistanceMeters: 2_000.0,
-                currentProgressMeters: 850.0,
+                currentProgressMeters: 0.0,
                 activityType: .hike,
                 startDate: now,
                 endDate: endOfMonth,

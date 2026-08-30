@@ -117,8 +117,8 @@ public struct ProfileView: View {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 statBlock(title: "TOTAL JARAK", value: athlete.formattedTotalDistance, icon: "figure.run", color: StrideTheme.primaryOrange)
                 statBlock(title: "TOTAL ELEVASI", value: String(format: "%.0f m", athlete.totalElevationGainMeters), icon: "mountain.2.fill", color: .purple)
-                statBlock(title: "TOTAL WAKTU", value: "42j 15m", icon: "clock.fill", color: .blue)
-                statBlock(title: "RATA-RATA PACE", value: "4:35 /km", icon: "speedometer", color: StrideTheme.athleticGreen)
+                statBlock(title: "TOTAL WAKTU", value: athlete.totalActivitiesCount == 0 ? "0j 0m" : "42j 15m", icon: "clock.fill", color: .blue)
+                statBlock(title: "RATA-RATA PACE", value: athlete.totalDistanceMeters == 0 ? "--:--" : "4:35 /km", icon: "speedometer", color: StrideTheme.athleticGreen)
             }
             .padding(.horizontal, 16)
             
@@ -154,6 +154,8 @@ public struct ProfileView: View {
                     .background(StrideTheme.cardBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 }
+                .buttonStyle(.plain)
+                
                 NavigationLink {
                     VO2MaxPredictorView()
                 } label: {
@@ -238,10 +240,10 @@ public struct ProfileView: View {
                 
                 HStack(alignment: .bottom, spacing: 12) {
                     ForEach(["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"], id: \.self) { day in
-                        let height: CGFloat = day == "Sab" ? 90 : (day == "Rab" ? 65 : (day == "Min" ? 80 : 35))
+                        let height: CGFloat = athlete.totalActivitiesCount == 0 ? 8 : (day == "Sab" ? 90 : (day == "Rab" ? 65 : (day == "Min" ? 80 : 35)))
                         VStack(spacing: 6) {
                             RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                .fill(day == "Sab" || day == "Min" ? StrideTheme.primaryOrange : StrideTheme.primaryOrange.opacity(0.35))
+                                .fill(athlete.totalActivitiesCount == 0 ? Color.secondary.opacity(0.15) : (day == "Sab" || day == "Min" ? StrideTheme.primaryOrange : StrideTheme.primaryOrange.opacity(0.35)))
                                 .frame(height: height)
                             
                             Text(day)
@@ -263,54 +265,73 @@ public struct ProfileView: View {
     
     private var gearTrackerSection: some View {
         VStack(spacing: 12) {
-            ForEach(gearList) { gear in
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack {
-                        Image(systemName: gear.activityType == .run ? "shoe.fill" : "bicycle")
-                            .foregroundStyle(StrideTheme.primaryOrange)
-                        Text("\(gear.brand) \(gear.name)")
-                            .font(.system(.headline, design: .rounded, weight: .bold))
-                        
-                        Spacer()
-                        
-                        Text(String(format: "%.0f / %.0f km", gear.currentDistanceMeters / 1000.0, gear.maxLifeDistanceMeters / 1000.0))
-                            .font(.caption.monospacedDigit().bold())
-                            .foregroundStyle(Color.secondary)
-                    }
-                    
-                    // Progress bar
-                    GeometryReader { geo in
-                        let progress = min(1.0, gear.currentDistanceMeters / gear.maxLifeDistanceMeters)
-                        ZStack(alignment: .leading) {
-                            Capsule()
-                                .fill(Color.secondary.opacity(0.15))
-                                .frame(height: 8)
-                            Capsule()
-                                .fill(progress > 0.85 ? Color.red : StrideTheme.primaryOrange)
-                                .frame(width: geo.size.width * CGFloat(progress), height: 8)
-                        }
-                    }
-                    .frame(height: 8)
-                    
-                    HStack {
-                        Text(String(format: "Sisa umur pakai: %.0f%%", gear.lifeRemainingPercentage))
-                            .font(.caption2.bold())
-                            .foregroundStyle(gear.lifeRemainingPercentage < 20 ? Color.red : Color.secondary)
-                        Spacer()
-                        if gear.isDefault {
-                            Text("DEFAULT")
-                                .font(.system(size: 9, weight: .bold))
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(StrideTheme.primaryOrange.opacity(0.15))
-                                .foregroundStyle(StrideTheme.primaryOrange)
-                                .clipShape(Capsule())
-                        }
-                    }
+            if gearList.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "shoe.2.fill")
+                        .font(.system(size: 44))
+                        .foregroundStyle(StrideTheme.primaryOrange.opacity(0.6))
+                    Text("Belum Ada Gear Terdaftar")
+                        .font(.system(.headline, design: .rounded, weight: .bold))
+                    Text("Daftarkan sepatu lari atau sepeda untuk memantau jarak tempuh pemakaian.")
+                        .font(.footnote)
+                        .foregroundStyle(Color.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
                 }
-                .padding(16)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 36)
                 .background(StrideTheme.cardBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            } else {
+                ForEach(gearList) { gear in
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack {
+                            Image(systemName: gear.activityType == .run ? "shoe.fill" : "bicycle")
+                                .foregroundStyle(StrideTheme.primaryOrange)
+                            Text("\(gear.brand) \(gear.name)")
+                                .font(.system(.headline, design: .rounded, weight: .bold))
+                            
+                            Spacer()
+                            
+                            Text(String(format: "%.0f / %.0f km", gear.currentDistanceMeters / 1000.0, gear.maxLifeDistanceMeters / 1000.0))
+                                .font(.caption.monospacedDigit().bold())
+                                .foregroundStyle(Color.secondary)
+                        }
+                        
+                        // Progress bar
+                        GeometryReader { geo in
+                            let progress = min(1.0, gear.currentDistanceMeters / gear.maxLifeDistanceMeters)
+                            ZStack(alignment: .leading) {
+                                Capsule()
+                                    .fill(Color.secondary.opacity(0.15))
+                                    .frame(height: 8)
+                                Capsule()
+                                    .fill(progress > 0.85 ? Color.red : StrideTheme.primaryOrange)
+                                    .frame(width: geo.size.width * CGFloat(progress), height: 8)
+                            }
+                        }
+                        .frame(height: 8)
+                        
+                        HStack {
+                            Text(String(format: "Sisa umur pakai: %.0f%%", gear.lifeRemainingPercentage))
+                                .font(.caption2.bold())
+                                .foregroundStyle(gear.lifeRemainingPercentage < 20 ? Color.red : Color.secondary)
+                            Spacer()
+                            if gear.isDefault {
+                                Text("DEFAULT")
+                                    .font(.system(size: 9, weight: .bold))
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(StrideTheme.primaryOrange.opacity(0.15))
+                                    .foregroundStyle(StrideTheme.primaryOrange)
+                                    .clipShape(Capsule())
+                            }
+                        }
+                    }
+                    .padding(16)
+                    .background(StrideTheme.cardBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
             }
         }
         .padding(.horizontal, 16)
@@ -318,117 +339,82 @@ public struct ProfileView: View {
     
     private var trophyCaseSection: some View {
         VStack(spacing: 20) {
-            // All-Time Personal Best Records
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Image(systemName: "crown.fill")
-                        .foregroundStyle(Color.yellow)
-                    Text("Rekor Pribadi Sepanjang Masa (PR)")
-                        .font(.system(.headline, design: .rounded, weight: .bold))
-                }
-                
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                    prCard(title: "1 KM", time: "3:42", pace: "3:42 /km", icon: "1.circle.fill")
-                    prCard(title: "5 KM", time: "19:48", pace: "3:57 /km", icon: "5.circle.fill")
-                    prCard(title: "10 KM", time: "41:15", pace: "4:07 /km", icon: "10.circle.fill")
-                    prCard(title: "HALF MARATHON", time: "1:32:10", pace: "4:22 /km", icon: "medal.fill")
-                }
-            }
-            .padding(16)
-            .background(StrideTheme.cardBackground)
-            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-            
-            // Achievement Badges
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
+            if athlete.trophyBadges.isEmpty {
+                VStack(spacing: 12) {
                     Image(systemName: "trophy.fill")
-                        .foregroundStyle(Color.yellow)
-                    Text("Lencana Prestasi Komunitas")
+                        .font(.system(size: 44))
+                        .foregroundStyle(Color.yellow.opacity(0.7))
+                    Text("Lemari Piala Masih Kosong")
                         .font(.system(.headline, design: .rounded, weight: .bold))
+                    Text("Selesaikan tantangan bulanan atau pecahkan rekor jarak untuk mengoleksi lencana piala di sini.")
+                        .font(.footnote)
+                        .foregroundStyle(Color.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
                 }
-                
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                    ForEach(athlete.trophyBadges, id: \.self) { badge in
-                        VStack(spacing: 8) {
-                            Circle()
-                                .fill(Color.yellow.opacity(0.15))
-                                .frame(width: 70, height: 70)
-                                .overlay {
-                                    Image(systemName: "trophy.fill")
-                                        .font(.title2)
-                                        .foregroundStyle(Color.yellow)
-                                }
-                            Text(badge)
-                                .font(.caption2.bold())
-                                .multilineTextAlignment(.center)
-                                .lineLimit(2)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 36)
+                .background(StrideTheme.cardBackground)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            } else {
+                // Achievement Badges
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: "trophy.fill")
+                            .foregroundStyle(Color.yellow)
+                        Text("Lencana Prestasi Komunitas")
+                            .font(.system(.headline, design: .rounded, weight: .bold))
+                    }
+                    
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                        ForEach(athlete.trophyBadges, id: \.self) { badge in
+                            VStack(spacing: 8) {
+                                Circle()
+                                    .fill(Color.yellow.opacity(0.15))
+                                    .frame(width: 70, height: 70)
+                                    .overlay {
+                                        Image(systemName: "trophy.fill")
+                                            .font(.title2)
+                                            .foregroundStyle(Color.yellow)
+                                    }
+                                Text(badge)
+                                    .font(.caption2.bold())
+                                    .multilineTextAlignment(.center)
+                                    .lineLimit(2)
+                            }
+                            .padding(.vertical, 8)
                         }
-                        .padding(.vertical, 8)
                     }
                 }
+                .padding(16)
+                .background(StrideTheme.cardBackground)
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
-            .padding(16)
-            .background(StrideTheme.cardBackground)
-            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         }
         .padding(.horizontal, 16)
-    }
-    
-    private func prCard(title: String, time: String, pace: String, icon: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Image(systemName: icon)
-                    .foregroundStyle(StrideTheme.primaryOrange)
-                Text(title)
-                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                    .foregroundStyle(Color.secondary)
-            }
-            Text(time)
-                .font(.system(size: 20, weight: .heavy, design: .rounded))
-                .monospacedDigit()
-            Text("Pace: \(pace)")
-                .font(.caption2)
-                .foregroundStyle(Color.secondary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
-        .background(Color.primary.opacity(0.04))
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-    }
-    
-    private func statFollow(title: String, count: Int) -> some View {
-        VStack(spacing: 2) {
-            Text("\(count)")
-                .font(.system(.headline, design: .rounded, weight: .heavy))
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(Color.secondary)
-        }
     }
     
     private var annualHeatmapCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Image(systemName: "calendar")
-                    .foregroundStyle(StrideTheme.primaryOrange)
-                Text("Kalender Aktivitas Tahunan")
+                Text("Log Konsistensi Tahunan")
                     .font(.system(.headline, design: .rounded, weight: .bold))
                 Spacer()
-                Text("52 Minggu")
-                    .font(.caption2.bold())
-                    .foregroundStyle(Color.secondary)
+                Text("\(athlete.totalActivitiesCount) Sesi")
+                    .font(.caption.bold())
+                    .foregroundStyle(StrideTheme.primaryOrange)
             }
             
-            // 52-week horizontal grid (7 rows per column)
+            // 52-Column Grid Simulation
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 3) {
-                    ForEach(0..<52, id: \.self) { weekIndex in
+                    ForEach(0..<52, id: \.self) { week in
                         VStack(spacing: 3) {
-                            ForEach(0..<7, id: \.self) { dayIndex in
-                                let intensity = heatmapIntensity(week: weekIndex, day: dayIndex)
+                            ForEach(0..<7, id: \.self) { day in
+                                let intensity = heatmapIntensity(week: week, day: day)
                                 RoundedRectangle(cornerRadius: 2)
                                     .fill(heatmapColor(for: intensity))
-                                    .frame(width: 9, height: 9)
+                                    .frame(width: 10, height: 10)
                             }
                         }
                     }
@@ -436,29 +422,22 @@ public struct ProfileView: View {
                 .padding(.vertical, 4)
             }
             
-            // Legend
-            HStack(spacing: 6) {
-                Text("Sedikit")
-                    .font(.system(size: 9, weight: .bold))
+            HStack {
+                Text("Kurang")
+                    .font(.caption2)
                     .foregroundStyle(Color.secondary)
-                
-                ForEach(0...4, id: \.self) { level in
-                    RoundedRectangle(cornerRadius: 2)
-                        .fill(heatmapColor(for: level))
-                        .frame(width: 8, height: 8)
+                HStack(spacing: 3) {
+                    ForEach(0..<5) { level in
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(heatmapColor(for: level))
+                            .frame(width: 8, height: 8)
+                    }
                 }
-                
                 Text("Banyak")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.caption2)
                     .foregroundStyle(Color.secondary)
-                
                 Spacer()
-                
-                Text("142 Hari Aktif")
-                    .font(.caption2.bold())
-                    .foregroundStyle(StrideTheme.primaryOrange)
             }
-            .padding(.top, 2)
         }
         .padding(16)
         .background(StrideTheme.cardBackground)
@@ -467,7 +446,7 @@ public struct ProfileView: View {
     }
     
     private func heatmapIntensity(week: Int, day: Int) -> Int {
-        // Deterministic mock distribution representing athlete's active training days
+        guard athlete.totalActivitiesCount > 0 else { return 0 }
         let seed = (week * 7 + day) % 31
         if seed % 7 == 0 || seed % 11 == 0 {
             return 0 // Rest day
@@ -512,24 +491,31 @@ public struct ProfileView: View {
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
     
+    private func statFollow(title: String, count: Int) -> some View {
+        VStack(spacing: 2) {
+            Text("\(count)")
+                .font(.system(.headline, design: .rounded, weight: .bold))
+            Text(title)
+                .font(.caption2)
+                .foregroundStyle(Color.secondary)
+        }
+    }
+    
     public static func sampleAthlete() -> AthleteProfile {
         AthleteProfile(
-            username: "budisport",
-            fullName: "Budi Santoso",
-            bio: "Marathon runner in training 🏃‍♂️ | 5K PB: 19:42 | Jakarta, Indonesia",
-            totalDistanceMeters: 452_000.0,
-            totalActivitiesCount: 48,
-            totalElevationGainMeters: 3_420.0,
-            followersCount: 184,
-            followingCount: 129,
-            trophyBadges: ["Marathon Finisher", "March 100K", "KOM Monas", "Early Bird 5AM", "Century Ride"]
+            username: "athlete",
+            fullName: "Atlet StrideSync",
+            bio: "Selamat datang di StrideSync! Mulai lari untuk memecahkan rekor pertamamu.",
+            totalDistanceMeters: 0.0,
+            totalActivitiesCount: 0,
+            totalElevationGainMeters: 0.0,
+            followersCount: 0,
+            followingCount: 0,
+            trophyBadges: []
         )
     }
     
     public static func sampleGear() -> [GearItem] {
-        [
-            GearItem(name: "Vaporfly 3", brand: "Nike", maxLifeDistanceMeters: 600_000, currentDistanceMeters: 240_000, isDefault: true, activityType: .run),
-            GearItem(name: "Tarmac SL7", brand: "Specialized", maxLifeDistanceMeters: 5_000_000, currentDistanceMeters: 1_850_000, isDefault: false, activityType: .ride)
-        ]
+        []
     }
 }
