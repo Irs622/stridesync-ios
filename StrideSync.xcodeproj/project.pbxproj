@@ -125,6 +125,8 @@
 		B0FC50BC92FC6B841D7F363B /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25C898C1AD83D568B2013B72 /* WatchSessionManager.swift */; };
 		19EE14A1B2EF48486181389C /* WatchWorkoutEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEEE846EDBC699F8EA107A8 /* WatchWorkoutEngine.swift */; };
 		B131156398D4E65C5FA30F3C /* WeatherIntelligenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88916E45EA2CA98EB1F1D944 /* WeatherIntelligenceService.swift */; };
+		7A1F2C3D4E5F6A7B8C9D0E1F /* SupabaseRealtimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B2E3D4C5B6A7F8E9D0C1B2A /* SupabaseRealtimeManager.swift */; };
+		5C3B2A1D4E6F8A9B0C1D2E3F /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 4A3B2C1D0E9F8A7B6C5D4E3F /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -247,6 +249,8 @@
 		25C898C1AD83D568B2013B72 /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/StrideSync/Services/WatchSessionManager.swift"; sourceTree = "<group>"; };
 		DFEEE846EDBC699F8EA107A8 /* WatchWorkoutEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/StrideSync/Services/WatchWorkoutEngine.swift"; sourceTree = "<group>"; };
 		88916E45EA2CA98EB1F1D944 /* WeatherIntelligenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/StrideSync/Services/WeatherIntelligenceService.swift"; sourceTree = "<group>"; };
+		6B2E3D4C5B6A7F8E9D0C1B2A /* SupabaseRealtimeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/StrideSync/Services/SupabaseRealtimeManager.swift"; sourceTree = "<group>"; };
+		4A3B2C1D0E9F8A7B6C5D4E3F /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = "Resources/Localizable.xcstrings"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -389,6 +393,7 @@
 				25C898C1AD83D568B2013B72 /* WatchSessionManager.swift */,
 				DFEEE846EDBC699F8EA107A8 /* WatchWorkoutEngine.swift */,
 				88916E45EA2CA98EB1F1D944 /* WeatherIntelligenceService.swift */,
+				6B2E3D4C5B6A7F8E9D0C1B2A /* SupabaseRealtimeManager.swift */,
 			);
 			path = "";
 			sourceTree = "<group>";
@@ -397,6 +402,7 @@
 			isa = PBXGroup;
 			children = (
 				394B00E80A2D9397DB9EC777 /* Assets.xcassets */,
+				4A3B2C1D0E9F8A7B6C5D4E3F /* Localizable.xcstrings */,
 			);
 			path = "";
 			sourceTree = "<group>";
@@ -470,6 +476,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B8BC027F2359F7FE5351730E /* Assets.xcassets in Resources */,
+				5C3B2A1D4E6F8A9B0C1D2E3F /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -597,6 +604,7 @@
 				B0FC50BC92FC6B841D7F363B /* WatchSessionManager.swift in Sources */,
 				19EE14A1B2EF48486181389C /* WatchWorkoutEngine.swift in Sources */,
 				B131156398D4E65C5FA30F3C /* WeatherIntelligenceService.swift in Sources */,
+				7A1F2C3D4E5F6A7B8C9D0E1F /* SupabaseRealtimeManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
