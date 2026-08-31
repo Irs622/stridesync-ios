@@ -8,11 +8,10 @@ struct StrideSyncDemoRunner {
     static func main() async {
         print("""
         ========================================================================================
-           🏃‍♂️⚡️ STRIDESYNC v3.5 - WORLD-CLASS ATHLETIC INTELLIGENCE (SWIFT 6) ⚡️🚴‍♀️
+           🏃‍♂️⚡️ STRIDESYNC v0.5.0-beta - ATHLETIC & GPS TRACKING PLATFORM (SWIFT 6) ⚡️🚴‍♀️
         ========================================================================================
-        Platform: iOS 18+ / macOS 14+ / watchOS 10+ | Strict Concurrency: Swift 6
-        Engines : LocationEngine Actor, Structured Intervals, Cadence Metronome, Buddy Radar,
-                  Climb Classifier, Weather Intelligence, All-Time PRs, 3D Flyover & TRIMP
+        Platform: iOS 17+ / macOS 14+ / watchOS 10+ | Strict Concurrency: Swift 6
+        Engines : LocationEngine Actor, Auto-Pause, Garmin FIT 2.0, GPX 1.1, Supabase Cloud
         
         """)
         
@@ -259,7 +258,7 @@ struct StrideSyncDemoRunner {
         
         print("""
         ========================================================================================
-           ✅ SELURUH SUITE STRIDESYNC v3.5 BERJALAN DENGAN SEMPURNA TANPA KESALAHAN (100%)!
+           ✅ SELURUH SUITE STRIDESYNC v0.5.0-beta BERJALAN DENGAN SEMPURNA (100% TEST PASS)!
         ========================================================================================
         """)
     }
