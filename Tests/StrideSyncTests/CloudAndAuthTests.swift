@@ -10,8 +10,9 @@ struct CloudAndAuthTests {
     @Test("Test Email Authentication and Session Persistence")
     func testEmailAuth() async throws {
         let authManager = AuthManager()
+        let testSecretKey = "sample_test_key_nonsecret"
         
-        let success = await authManager.loginWithEmail(email: "athlete@stridesync.app", password: "password123")
+        let success = await authManager.loginWithEmail(email: "athlete@stridesync.app", password: testSecretKey)
         #expect(success == true)
         #expect(authManager.currentUser != nil)
         #expect(authManager.currentUser?.email == "athlete@stridesync.app")
@@ -66,5 +67,34 @@ struct CloudAndAuthTests {
         #expect(leaderboard.count >= 3)
         #expect(leaderboard.first?.rank == 1)
     }
+    
+    @Test("Test Supabase Realtime WebSocket Event Stream")
+    func testSupabaseRealtimeManager() async throws {
+        let realtimeManager = SupabaseRealtimeManager()
+        let testActivityId = UUID()
+        let testUserId = UUID()
+        
+        let stream = await realtimeManager.feedEventsStream()
+        
+        // Broadcast a mock kudo event
+        let mockEvent = RealtimeFeedEvent(
+            eventType: .kudosInserted,
+            activityId: testActivityId,
+            userId: testUserId,
+            userName: "Alex"
+        )
+        
+        await realtimeManager.broadcastMockEvent(mockEvent)
+        
+        for await event in stream {
+            #expect(event.eventType == .kudosInserted)
+            #expect(event.activityId == testActivityId)
+            #expect(event.userName == "Alex")
+            break
+        }
+        
+        await realtimeManager.disconnect()
+    }
 }
+
 

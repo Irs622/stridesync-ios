@@ -1,8 +1,8 @@
 # Product Requirement Document (PRD)
 ## Project: StrideSync (Aplikasi Fitness & Activity Tracking berbasis Swift)
-**Versi:** 1.0  
-**Status:** Ready for Development  
-**Target Platform:** iOS 18+ (Swift 6, SwiftUI), watchOS companion  
+**Versi:** 0.5.0-beta  
+**Status:** In Active Beta Testing & Community Preview  
+**Target Platform:** iOS 17+ / 18+ (Swift 6, SwiftUI), watchOS companion  
 
 ---
 
@@ -356,7 +356,7 @@ Aplikasi menggunakan struktur **Bottom Tab Bar 5-Menu**:
 
 ## 8. Rencana Tahapan Rilis (Development Roadmap)
 
-### Phase 1: MVP (Core Tracking & Offline App)
+### Phase 1: MVP & Core Tracking (v0.1 - v0.3)
 - [x] Setup arsitektur Swift 6, SwiftUI, SwiftData.
 - [x] Core Location Tracking Engine (Start, Pause, Resume, Stop, Auto-Pause).
 - [x] Live Metrics Display & Real-time MapKit route rendering.
@@ -364,59 +364,30 @@ Aplikasi menggunakan struktur **Bottom Tab Bar 5-Menu**:
 - [x] Halaman ringkasan aktivitas (Splits, Elevation, Pace).
 - [x] Penyimpanan lokal SwiftData & Snapshot actors.
 
-### Phase 2: Live Activity & Apple Ecosystem
+### Phase 2: Live Activity & Cloud Backend (v0.4 - v0.5.0-beta)
 - [x] Live Activities & Dynamic Island (`ActivityKit`).
 - [x] Integrasi HealthKit (Heart Rate, Calories, sync to Apple Fitness).
 - [x] WidgetKit (Home & Lock Screen Widgets).
 - [x] Pembuatan Shareable Social Card (Image generation untuk IG Story 9:16).
 - [x] Pengaturan Privacy Zones (Geofencing 100m-1000m).
+- [x] Garmin FIT 2.0 Binary Encoder & GPX 1.1 Exporter.
+- [x] Cloud Backend Supabase (PostgreSQL + Row Level Security).
+- [x] 81 Unit Tests (100% Passing).
 
-### Phase 3: Cloud, Social Feed & Community
-- [x] State Management & Data Architecture (Auth, User Profile, Sync).
-- [x] Social Feed (Follow, Timeline list, animated Kudos, Komentar sheet).
-- [x] Explore Atlet & Komunitas (Clubs, Global Search 4-Scope).
-- [x] Interactive Notification Center (Kudos, Komentar, KOM tergeser).
+### Phase 3: Field Testing & Battery Optimization (v0.6.0-beta - Next)
+- [ ] Pengujian lapangan jangka panjang di iPhone fisik (lari 10K / 21K).
+- [ ] Validasi konsumsi daya baterai di background (< 6% per jam).
+- [ ] Uji coba filtering GPS di area gedung padat (*urban canyon*).
 
-### Phase 4: Segments, Leaderboards & Gamification
-- [x] Algoritma Segment Matching pada jalur GPS (Haversine Gate Radius).
-- [x] Leaderboard KOM/QOM & Rekor Personal (PR) dengan medali podium.
-- [x] Monthly Challenges & Badges Gamification (Progress bar & rewards).
-- [x] Gear Tracker (Masa pakai sepatu lari & sepeda).
+### Phase 4: Hardware BLE & Real-World Group Radar Trial (v0.7.0-beta)
+- [ ] Field trial sensor eksternal Bluetooth SIG (Chest Strap HR & Cycling Power Meter).
+- [ ] Pengujian Live Safety Beacon & Group Run Radar bersama komunitas pelari lokal.
 
-### Phase 5: Security, Dual Export & System Hardening (Completed)
-- [x] Garmin FIT 2.0 Binary Encoder & Decoder ([`FITService.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/FITService.swift)).
-- [x] Keychain Security Encrypted Storage ([`KeychainManager.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/KeychainManager.swift)).
-- [x] Cloud Network Client dengan Bearer Token Injection ([`NetworkClient.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/NetworkClient.swift)).
-- [x] SwiftData Versioned Schema `V1` & Migration Plan ([`StrideSyncSchema.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Models/StrideSyncSchema.swift)).
-- [x] Home & Lock Screen Widgets via `WidgetKit` ([`StrideSyncWidgets.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/LiveActivity/StrideSyncWidgets.swift)).
-- [x] Dynamic i18n Localization Engine ([`LocalizationManager.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/LocalizationManager.swift)).
-- [x] Telemetry Analytics & Background Offline Sync Queue ([`AnalyticsService.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/AnalyticsService.swift), [`BackgroundSyncManager.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/BackgroundSyncManager.swift)).
+### Phase 5: App Store Submission & TestFlight Publik (v1.0.0 Stable)
+- [ ] Finalisasi aset promosi App Store dan String Catalog i18n.
+- [ ] Pengajuan App Store Review & rilis Apple TestFlight publik.
 
-### Phase 6: Athletic Intelligence & Coaching (v2.0 - Next)
-- [ ] Training Load TRIMP & Recovery Gauge Advisor.
-- [ ] AI Adaptive Voice Coach & Target Pace Split Engine.
-- [ ] Structured Interval Workout Builder & Custom Repetitions.
-- [ ] Running Cadence Metronome & CoreMotion Dynamics.
-
-### Phase 7: Live Safety, Navigation & Standalone watchOS (v2.1)
-- [ ] Live Safety Beacon (Web/SMS Emergency LiveTrack with battery & ETA).
-- [ ] GPX Course Following & Turn-by-Turn Waypoint Guidance.
-- [ ] Ghost Pacer (Real-time HUD avatar vs Personal Record / KOM).
-- [ ] Incident & Crash Fall Detection (`CoreMotion`).
-- [ ] Standalone Apple Watch Workout App (`HKWorkoutSession`).
-
-### Phase 8: BLE Hardware Sensors & Modern Apple APIs (v2.2)
-- [ ] Bluetooth LE Heart Rate Straps & Cycling Power Meters (`CoreBluetooth`).
-- [ ] iOS 18 Control Center Widgets & Action Button Shortcuts (`AppIntents`).
-- [ ] Interactive Lock Screen Live Activity Controls (Pause/Resume & Lap).
-
-### Phase 9: Viral Visual Media & Spatial Heatmaps (v2.3)
-- [ ] 3D Animated Route Video Generator (MP4 Flyover Reels).
-- [ ] Personal Global Heatmap ("Tile Hunter / Fog of War").
-- [ ] Live Group Run Radar on HUD Map.
-- [ ] In-App Interactive Segment Trimming Tool.
-
-*(Rincian lengkap dan arsitektur teknis spesifik dapat dilihat pada dokumen [ROADMAP.md](file:///Users/mac/Downloads/swift-library/ROADMAP.md)).*
+*(Rincian lengkap dan matriks pengujian unit dapat dilihat pada dokumen [ROADMAP.md](file:///Users/mac/Downloads/swift-library/ROADMAP.md)).*
 
 ---
 

@@ -151,3 +151,106 @@ Alur pembuka 3-langkah menggunakan komponen modern SwiftUI:
 * **Slide 2:** Pelatih Suara & Apple Health (Permohonan izin `HKHealthStore`).
 * **Slide 3:** Komunitas Global & Live Buddy Radar.
 * **Persistensi:** Disimpan di `@AppStorage("hasCompletedOnboarding")`.
+
+---
+
+## 9. Athletic Intelligence & Physiological Banister TRIMP Model
+
+Kalkulasi beban fisiologis latihan pada [`TrainingLoadCalculator.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/TrainingLoadCalculator.swift) menerapkan formula **Banister TRIMP (Training Impulse)**:
+
+$$w(t) = D \cdot \Delta\text{HR}_{\text{ratio}} \cdot 0.64 e^{1.92 \cdot \Delta\text{HR}_{\text{ratio}}} \quad (\text{Pria})$$
+$$w(t) = D \cdot \Delta\text{HR}_{\text{ratio}} \cdot 0.86 e^{1.67 \cdot \Delta\text{HR}_{\text{ratio}}} \quad (\text{Wanita})$$
+
+Di mana:
+$$\Delta\text{HR}_{\text{ratio}} = \frac{\text{HR}_{\text{avg}} - \text{HR}_{\text{rest}}}{\text{HR}_{\text{max}} - \text{HR}_{\text{rest}}}$$
+dan $D$ adalah durasi latihan dalam satuan menit.
+
+```mermaid
+graph LR
+    A[Sesi Workout Selesai] --> B[Hitung TRIMP Skor]
+    B --> C[ATL 7-Hari: Exponential Decay kelelahan]
+    B --> D[CTL 28-Hari: Kebugaran Dasar]
+    C & D --> E[TSB = CTL - ATL (Training Stress Balance)]
+    E --> F[Kesiapan Tubuh: Fresh / Optimal / Overload / Exhausted]
+    F --> G[Rekomendasi Jam Pemulihan Recovery Gauge]
+```
+
+* **Acute Training Load (ATL / Fatigue, $\tau = 7\text{ hari}$):**
+  $$\text{ATL}_t = \text{ATL}_{t-1} + \frac{\text{TRIMP}_t - \text{ATL}_{t-1}}{7}$$
+* **Chronic Training Load (CTL / Fitness, $\tau = 28\text{ hari}$):**
+  $$\text{CTL}_t = \text{CTL}_{t-1} + \frac{\text{TRIMP}_t - \text{CTL}_{t-1}}{28}$$
+* **Training Stress Balance (TSB / Form):**
+  $$\text{TSB} = \text{CTL} - \text{ATL}$$
+
+---
+
+## 10. Algoritma GPX Turn-by-Turn & Cross-Track Error Navigation
+
+Modul [`RouteNavigationEngine.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/RouteNavigationEngine.swift) memandu atlet mengikuti jalur GPX yang diimpor menggunakan perhitungan geometris geodesik:
+
+```
+                  P (Posisi Aktual Atlet)
+                 /|
+                / |  Cross-Track Distance (d_xt)
+               /  |  [Threshold Peringatan: > 30m]
+              /   ▼
+        A ───●────X─────────────────────────────▶ B (Segmen Rute GPX)
+      Waypoint_k                              Waypoint_{k+1}
+```
+
+1. **Pencarian Segmen Terdekat:** Mengidentifikasi segmen rute $[A, B]$ paling dekat dengan posisi atlet $P$.
+2. **Kalkulasi Cross-Track Distance ($d_{\text{xt}}$):**
+   $$d_{\text{xt}} = \arcsin\left(\sin(d_{AP}/R) \cdot \sin(\theta_{AP} - \theta_{AB})\right) \cdot R$$
+   Jika $d_{\text{xt}} > 30\text{ meter}$, engine memicu getaran haptic peringatan rute menyimpang (*Off-Course Alert*).
+3. **Peringatan Belokan Maju (*Look-ahead Waypoint*):** Mendeteksi sudut belokan pada $\Delta\text{heading} > 45^\circ$ dalam jarak 50m sebelum persimpangan.
+
+---
+
+## 11. Interpolasi Kamera 3D Aerial Satellite Flyover (Pitch 60°)
+
+Modul [`FlyoverReplayEngine.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/FlyoverReplayEngine.swift) menghasilkan video visualisasi 3D dari koordinat GPS:
+
+* **Kamera Satelit:** `MapCamera` dengan sudut kemiringan konstan $60^\circ$ (*pitch*) dan ketinggian relatif $400\text{ meter}$ di atas permukaan tanah.
+* **Heading Interpolation:** Menghitung sudut arah kamera (*bearing*) secara kontinu mengikuti arah gerak rute:
+  $$\theta = \text{atan2}(\sin\Delta\lambda \cdot \cos\phi_2, \; \cos\phi_1 \cdot \sin\phi_2 - \sin\phi_1 \cdot \cos\phi_2 \cdot \cos\Delta\lambda)$$
+* **Milestone Detection:** Menandai kilometer split, tanjakan tertinggi (*peak altitude*), dan segmen sprint dengan pin visual 3D interaktif.
+
+---
+
+## 12. Protokol Biner Bluetooth SIG GATT Sensor BLE
+
+Modul [`BLEHeartRateAndSensorManager.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/BLEHeartRateAndSensorManager.swift) memproses paket data biner `CoreBluetooth` standar Bluetooth SIG:
+
+### 1. Heart Rate Measurement Service (`0x180D`, Karakteristik `0x2A37`)
+* **Byte 0 (Flags):**
+  * `Bit 0 = 0`: Format detak jantung 8-bit (`UInt8` pada Byte 1).
+  * `Bit 0 = 1`: Format detak jantung 16-bit (`UInt16` pada Byte 1-2).
+  * `Bit 4 = 1`: Terdapat data interval RR (detak per detak untuk HRV).
+
+### 2. Cycling Power Service (`0x1818`, Karakteristik `0x2A63`)
+* **Byte 0-1 (Flags):** Indikator keberadaan data Pedal Power Balance, Torque, dan Cadence.
+* **Byte 2-3 (Instantaneous Power):** Nilai daya kayuhan atlet dalam satuan Watt (`Int16`, little-endian).
+* **Crank Revolution & Event Time:** Kalkulasi cadence kayuhan (RPM) dari selisih revolusi pedal terhadap selisih waktu event ($1/1024\text{ detik}$).
+
+---
+
+## 13. Fall Detection & Live Emergency Safety Beacon
+
+Sistem keamanan darurat pada [`FallDetectionEngine.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/FallDetectionEngine.swift) dan [`LiveSafetyBeaconService.swift`](file:///Users/mac/Downloads/swift-library/Sources/StrideSync/Services/LiveSafetyBeaconService.swift):
+
+```mermaid
+stateDiagram-v2
+    [*] --> Monitoring: CoreMotion Accelerometer
+    Monitoring --> ImpactSpike: Lonjakan G-Force > 3.5g
+    ImpactSpike --> ZeroMotionCheck: Verifikasi Imobilitas (>5 detik)
+    ZeroMotionCheck --> SirenCountdown: Atlet Tidak Bergerak
+    ZeroMotionCheck --> Monitoring: Atlet Kembali Bergerak (False Alarm)
+    SirenCountdown --> SMSAlertTriggered: Tidak Ada Pembatalan (30 Detik)
+    SirenCountdown --> Monitoring: Dibatalkan Manual oleh Atlet
+    SMSAlertTriggered --> [*]: Kirim Tautan Live Beacon Web & Lokasi GPS
+```
+
+* **Impact Threshold:** Deteksi anomali akselerasi total $|G| = \sqrt{a_x^2 + a_y^2 + a_z^2} > 3.5\text{g}$.
+* **Post-Impact Immobilitas:** Pengecekan gerak tubuh selama 5 detik setelah benturan.
+* **Sirene & Countdown:** Tampilan layar penuh `EmergencyAlertOverlayView` dengan hitung mundur audio-haptic 30 detik sebelum pengiriman SMS darurat dan koordinat satelit otomatis.
+
