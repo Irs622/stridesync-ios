@@ -3,57 +3,57 @@
 **Document Version:** 0.5.0-beta (Beta Community Preview)  
 **Project:** StrideSync (iOS 17+, Swift 6, Supabase PostgreSQL, watchOS)  
 **Status:** In Active Beta Testing (81/81 Tests Passing)  
-**Cost Model:** 100% Free / Zero-Cost Architecture (Rp 0)  
+**Cost Model:** 100% Free / Zero-Cost Architecture  
 
 ---
 
-## 📊 Status Implementasi Tahapan (Implementation Matrix — v0.5.0-beta)
+## 📊 Implementation Matrix (v0.5.0-beta)
 
-| Modul | Fitur / Komponen | Status (v0.5-beta) | Pengujian & File Referensi |
+| Module | Feature / Component | Status (v0.5-beta) | Testing & Reference Files |
 | :--- | :--- | :---: | :--- |
-| **Modul 1** | **Pro GPS & Telemetry Engine** (Noise filtering, Auto-pause, Actor isolation) | ✅ Selesai (Beta) | `LocationEngine.swift` • `LocationEngineTests.swift` |
-| **Modul 2** | **Dark OLED HUD Recording** (Large typography, dynamic splits chart, elevation) | ✅ Selesai (Beta) | `RecordViewModel.swift` • `RecordView.swift` |
-| **Modul 3** | **Dual Export Engine** (GPX 1.1 XML & Garmin FIT 2.0 Binary Protocol) | ✅ Selesai (Beta) | `GPXService.swift` • `FITService.swift` • `FITServiceTests.swift` |
-| **Modul 4** | **Virtual Segments & KOM/QOM** (40m Gate Matching, PR detector) | ✅ Selesai (Beta) | `SegmentMatcher.swift` • `PersonalRecordDetector.swift` |
-| **Modul 5** | **Privacy Zones & Geofencing** (Sanitasi koordinat rumah & kantor) | ✅ Selesai (Beta) | `PrivacyZoneService.swift` • `PrivacyZoneTests.swift` |
-| **Modul 6** | **Athletic Intelligence** (Banister TRIMP, Recovery Gauge, VO2 Max, Race Predictor) | ✅ Selesai (Beta) | `TrainingLoadCalculator.swift` • `VO2MaxPredictor.swift` |
-| **Modul 7** | **Safety Beacon & Fall Detection** (SMS live link, 30s countdown, G-Force spike) | ✅ Selesai (Beta) | `SafetyBeaconService.swift` • `FallDetectionService.swift` |
-| **Modul 8** | **Hardware BLE Sensors** (Bluetooth SIG 0x2A37 Heart Rate, 0x2A63 Power Meter) | ✅ Selesai (Beta) | `BLESensorManager.swift` • `BLESensorTests.swift` |
-| **Modul 9** | **Climb Classifier & UCI Grade** (Cat 4 to HC, Grade Adjusted Pace GAP) | ✅ Selesai (Beta) | `ClimbClassifier.swift` • `ClimbClassifierTests.swift` |
-| **Modul 10** | **Spatial Heatmap & 3D Flyover** (Slippy Map tile spatial index, 3D Camera Replay) | ✅ Selesai (Beta) | `GlobalHeatmapService.swift` • `FlyoverReplayEngine.swift` |
-| **Modul 11** | **Group Run & Live Buddy Radar** (P2P BLE Mesh scanning, Proximity filter) | ✅ Selesai (Beta) | `BuddyRadarService.swift` • `BuddyRadarTests.swift` |
-| **Modul 12** | **Cloud Backend & Database** (Supabase PostgreSQL, Row Level Security RLS) | ✅ Selesai (Beta) | `database/schema.sql` • `SupabaseConfig.swift` • `CloudSyncEngine.swift` |
-| **Modul 13** | **Onboarding Pengguna Baru** (3-langkah interaktif, izin GPS & HealthKit) | ✅ Selesai (Beta) | `OnboardingView.swift` • `OnboardingAndBackgroundTests.swift` |
-| **Modul 14** | **Background Modes & Audio Ducking** (GPS di saku celana, ducking Spotify) | ✅ Selesai (Beta) | `Info.plist` • `AudioCueService.swift` • `LiveLocationManager.swift` |
-| **Modul 15** | **Aset Ikon & Panduan Rilis Sideload** (1024x1024 px Icon, panduan USB & Sideloadly) | ✅ Selesai (Beta) | `assets/AppIcon-1024.png` • `docs/FREE_DEPLOYMENT_GUIDE.md` |
+| **Module 1** | **Pro GPS & Telemetry Engine** (Noise filtering, Auto-pause, Actor isolation) | ✅ Completed (Beta) | `LocationEngine.swift` • `LocationEngineTests.swift` |
+| **Module 2** | **Dark OLED HUD Recording** (Large typography, dynamic splits chart, elevation) | ✅ Completed (Beta) | `RecordViewModel.swift` • `RecordView.swift` |
+| **Module 3** | **Dual Export Engine** (GPX 1.1 XML & Garmin FIT 2.0 Binary Protocol) | ✅ Completed (Beta) | `GPXService.swift` • `FITService.swift` • `FITServiceTests.swift` |
+| **Module 4** | **Virtual Segments & KOM/QOM** (40m Gate Matching, PR detector) | ✅ Completed (Beta) | `SegmentMatcher.swift` • `PersonalRecordDetector.swift` |
+| **Module 5** | **Privacy Zones & Geofencing** (Sanitizes home & office location coordinates) | ✅ Completed (Beta) | `PrivacyZoneService.swift` • `PrivacyZoneTests.swift` |
+| **Module 6** | **Athletic Intelligence** (Banister TRIMP, Recovery Gauge, VO2 Max, Race Predictor) | ✅ Completed (Beta) | `TrainingLoadCalculator.swift` • `VO2MaxPredictor.swift` |
+| **Module 7** | **Safety Beacon & Fall Detection** (SMS live link, 30s countdown, G-Force spike) | ✅ Completed (Beta) | `SafetyBeaconService.swift` • `FallDetectionService.swift` |
+| **Module 8** | **Hardware BLE Sensors** (Bluetooth SIG 0x2A37 Heart Rate, 0x2A63 Power Meter) | ✅ Completed (Beta) | `BLESensorManager.swift` • `BLESensorTests.swift` |
+| **Module 9** | **Climb Classifier & UCI Grade** (Cat 4 to HC, Grade Adjusted Pace GAP) | ✅ Completed (Beta) | `ClimbClassifier.swift` • `ClimbClassifierTests.swift` |
+| **Module 10** | **Spatial Heatmap & 3D Flyover** (Slippy Map tile spatial index, 3D Camera Replay) | ✅ Completed (Beta) | `GlobalHeatmapService.swift` • `FlyoverReplayEngine.swift` |
+| **Module 11** | **Group Run & Live Buddy Radar** (P2P BLE Mesh scanning, Proximity filter) | ✅ Completed (Beta) | `BuddyRadarService.swift` • `BuddyRadarTests.swift` |
+| **Module 12** | **Cloud Backend & Database** (Supabase PostgreSQL, Row Level Security RLS) | ✅ Completed (Beta) | `database/schema.sql` • `SupabaseConfig.swift` • `CloudSyncEngine.swift` |
+| **Module 13** | **New User Onboarding** (3-step interactive setup, GPS & HealthKit permissions) | ✅ Completed (Beta) | `OnboardingView.swift` • `OnboardingAndBackgroundTests.swift` |
+| **Module 14** | **Background Modes & Audio Ducking** (In-pocket GPS, Spotify audio ducking) | ✅ Completed (Beta) | `Info.plist` • `AudioCueService.swift` • `LiveLocationManager.swift` |
+| **Module 15** | **App Icon & Sideload Deployment Guide** (1024x1024 px Icon, USB & Sideloadly guide) | ✅ Completed (Beta) | `assets/AppIcon-1024.png` • `docs/FREE_DEPLOYMENT_GUIDE.md` |
 
 ---
 
-## 🎯 Tahapan Menuju Rilis Stabil (Release Milestones)
+## 🎯 Release Milestones
 
-### 📍 v0.5.0-beta (Versi Saat Ini)
-- [x] Rilis paket `.IPA` beta untuk pengujian komunitas melalui Sideloadly / AltStore.
-- [x] 81 Unit Tests tervalidasi pada modul kalkulator dan engine lokal (100% Passing).
-- [x] Integrasi database gratis Supabase PostgreSQL & SwiftData local-first.
+### 📍 v0.5.0-beta (Current Version)
+- [x] Release `.IPA` beta package for community testing via Sideloadly / AltStore.
+- [x] 81 Unit Tests validated across local calculator and engine modules (100% Passing).
+- [x] Integration of free Supabase PostgreSQL cloud database & local-first SwiftData.
 
 ### 📍 v0.6.0-beta (Field Testing & Battery Optimization)
-- [ ] Uji coba lapangan GPS outdoor dalam durasi panjang (lari 10K - Half Marathon) di perangkat fisik.
-- [ ] Pengukuran konsumsi daya baterai di background (< 6% per jam).
-- [ ] Penyempurnaan filter akurasi GPS pada area perkotaan padat / gedung tinggi (*urban canyon*).
+- [ ] Long-duration outdoor GPS field trials (10K to Half Marathon distance) on physical devices.
+- [ ] In-depth background power consumption measurement (< 6% battery draw per hour).
+- [ ] Refinement of GPS noise rejection filters in dense urban high-rise areas (*urban canyons*).
 
 ### 📍 v0.7.0-beta (Multi-User & Bluetooth Field Trial)
-- [ ] Uji coba koneksi sensor detak jantung Bluetooth (chest strap) dan power meter sepeda di lapangan.
-- [ ] Pengujian Live Safety Beacon dan P2P Buddy Radar bersama grup pelari lokal.
+- [ ] Field testing of Bluetooth heart rate monitors (chest strap) and cycling power meters.
+- [ ] Live Safety Beacon and P2P Buddy Radar testing with local group runners.
 
-### 📍 v1.0.0 (Target Rilis Publik & App Store)
-- [ ] Finalisasi aset App Store, tangkapan layar promosi resmi, dan String Catalog i18n.
-- [ ] App Store Review submission & pembukaan Apple TestFlight publik.
+### 📍 v1.0.0 (Target Public & App Store Release)
+- [ ] Finalization of App Store metadata assets, promo screenshots, and String Catalog i18n localization.
+- [ ] Submission for App Store Review & launch of public Apple TestFlight.
 
 ---
 
-## 🧪 Ringkasan Pengujian Kualitas Unit Test (v0.5.0-beta)
+## 🧪 Unit Test Suite Verification (v0.5.0-beta)
 
-```
+```text
 ✔ Suite "Running Dynamics Biomechanics Tests" passed (100%)
 ✔ Suite "Training Load & Physiological Recovery Tests" passed (100%)
 ✔ Suite "Virtual Ghost Runner Tests" passed (100%)

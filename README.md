@@ -9,23 +9,23 @@
 [![SwiftData](https://img.shields.io/badge/Persistence-SwiftData-2ECC71.svg?style=for-the-badge)](https://developer.apple.com/documentation/swiftdata)
 [![Live Web Preview](https://img.shields.io/badge/Web_Live-Vercel-000000.svg?style=for-the-badge&logo=vercel&logoColor=white)](https://stridesync-web.vercel.app)
 [![Tests](https://img.shields.io/badge/Tests-81%2F81%20Passing%20(100%25)-2ECC71.svg?style=for-the-badge)]()
-[![Zero Cost](https://img.shields.io/badge/Cost-100%25%20Free%20(Rp%200)-success.svg?style=for-the-badge)]()
+[![Zero Cost](https://img.shields.io/badge/Cost-100%25%20Free-success.svg?style=for-the-badge)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
 **A high-performance, modern athletic intelligence and GPS running platform built with Swift 6, SwiftUI, SwiftData, CoreLocation Actors, MapKit, ActivityKit (Dynamic Island), HealthKit, Supabase PostgreSQL, and Garmin FIT 2.0.**
 
 🌐 **Live Web Preview:** [https://stridesync-web.vercel.app](https://stridesync-web.vercel.app)  
-💻 **Repositori Web:** [https://github.com/Irs622/stridesync-web](https://github.com/Irs622/stridesync-web)  
-📥 **Download .IPA Langsung:** [StrideSync.ipa (v0.5.0-beta)](https://stridesync-web.vercel.app/downloads/StrideSync.ipa)  
+💻 **Web Repository:** [https://github.com/Irs622/stridesync-web](https://github.com/Irs622/stridesync-web)  
+📥 **Direct .IPA Download:** [StrideSync.ipa (v0.5.0-beta)](https://stridesync-web.vercel.app/downloads/StrideSync.ipa)  
 🏷️ **GitHub Pre-Release:** [v0.5.0-beta Release Notes](https://github.com/Irs622/stridesync-ios/releases/tag/v0.5.0-beta)
 
-[Tampilan Aplikasi](#-tampilan-antarmuka-aplikasi-visual-showcase) • [Fitur Unggulan](#-fitur-utama-core-features) • [Tumpukan Teknologi](#-tumpukan-teknologi-tech-stack) • [Panduan Menjalankan Rp 0](#-cara-menjalankan--memasang-aplikasi) • [Struktur Proyek](#-struktur-direktori-proyek) • [Dokumentasi Lengkap](#-dokumentasi-lengkap)
+[Visual Showcase](#-visual-showcase) • [Core Features](#-core-features) • [Tech Stack](#-tech-stack) • [Setup & Installation](#-getting-started--installation) • [Directory Structure](#-project-directory-structure) • [Documentation](#-documentation-index)
 
 </div>
 
 ---
 
-## 📱 Tampilan Antarmuka Aplikasi (Visual Showcase)
+## 📱 Visual Showcase
 
 <div align="center">
 <table>
@@ -35,44 +35,44 @@
       <br />
       <b>📰 1. Community Feed</b>
       <br />
-      <sub>Linimasa sosial, filter olahraga & Kudos</sub>
+      <sub>Social timeline, sport filters & Kudos</sub>
     </td>
     <td align="center" width="33%">
       <img src="assets/screenshots/03_record_hud.png" alt="Record HUD" width="100%" style="border-radius: 14px;" />
       <br />
       <b>⏱️ 2. Pro HUD Recording</b>
       <br />
-      <sub>OLED dark theme, live GPS & metrik besar</sub>
+      <sub>OLED dark theme, live GPS & bold metrics</sub>
     </td>
     <td align="center" width="33%">
       <img src="assets/screenshots/02_explore_maps.png" alt="Explore Maps" width="100%" style="border-radius: 14px;" />
       <br />
-      <b>🗺️ 3. Explore & Segmen</b>
+      <b>🗺️ 3. Explore & Segments</b>
       <br />
-      <sub>Peta interaktif & rute tanjakan populer</sub>
+      <sub>Interactive map & popular climb routes</sub>
     </td>
   </tr>
   <tr>
     <td align="center" width="33%">
       <img src="assets/screenshots/04_challenges.png" alt="Challenges" width="100%" style="border-radius: 14px;" />
       <br />
-      <b>🏆 4. Tantangan Bulanan</b>
+      <b>🏆 4. Monthly Challenges</b>
       <br />
-      <sub>Progress bar 100K & piala virtual</sub>
+      <sub>100K progress bar & virtual trophies</sub>
     </td>
     <td align="center" width="33%">
       <img src="assets/screenshots/05_profile.png" alt="Profile & Gear" width="100%" style="border-radius: 14px;" />
       <br />
-      <b>👤 5. Profil & Gear Tracker</b>
+      <b>👤 5. Profile & Gear Tracker</b>
       <br />
-      <sub>Statistik atlet & umur pakai sepatu/sepeda</sub>
+      <sub>Athlete statistics & shoe/bike mileage</sub>
     </td>
     <td align="center" width="33%">
       <img src="assets/screenshots/06_global_search.png" alt="Global Search" width="100%" style="border-radius: 14px;" />
       <br />
-      <b>🔍 6. Pencarian Global</b>
+      <b>🔍 6. Global Search</b>
       <br />
-      <sub>Pencarian cerdas atlet, aktivitas & klub</sub>
+      <sub>Smart search for athletes, workouts & clubs</sub>
     </td>
   </tr>
 </table>
@@ -80,139 +80,141 @@
 
 ---
 
-## 🌟 Tentang Proyek (About StrideSync)
+## 🌟 About StrideSync
 
-**StrideSync** adalah platform pelacak aktivitas atletik luar ruangan (lari, bersepeda, hiking, dan jalan santai) berbasis iOS yang memadukan keandalan **GPS Engine kelas telemetri** dengan **ekosistem sosial komunitas olahraga modern**.
+**StrideSync** is an outdoor endurance athletic tracking platform (running, cycling, hiking, and walking) for iOS that combines telemetry-grade **GPS Engine reliability** with a **modern community social ecosystem**.
 
-Proyek ini dirancang dari awal dengan prinsip **Local-First, Zero-Cost Resilience, Security-First & Privacy-First Architecture**:
-* 💸 **100% Gratis & Bebas Biaya Server (Rp 0):** Berjalan secara *Local-First* menggunakan **SwiftData** dan terhubung ke **Supabase Cloud (PostgreSQL Free Tier)** tanpa biaya server bulanan sepeser pun.
-* 🛡️ **Privasi & Enkripsi Atlet Terjamin:** Data lokasi di sekitar rumah disanitasi dengan geofence masking, Row Level Security (RLS) di database cloud, serta token sesi tersimpan aman di **Apple Keychain Security Framework**.
-* ⚡️ **Swift 6 Strict Concurrency:** Mengeliminasi seluruh potensi *data race* pada pemrosesan koordinat GPS dengan mengisolasi perhitungan pada `actor LocationEngine`.
-* 🎧 **Background Modes & Audio Ducking:** GPS tetap melacak rute di saku celana saat layar terkunci dan suara pelatih (*Audio Cues*) otomatis mengecilkan lagu Spotify / Apple Music.
-* 🎨 **Native App Icon & Asset Catalog:** Dilengkapi paket aset icon resmi 1024x1024 px di `Resources/Assets.xcassets/AppIcon.appiconset`.
-* 📦 **Dual Export Engine:** Ekspor dan impor data rute dalam format **GPX 1.1 XML** dan format biner Garmin **FIT 2.0**.
+Engineered from the ground up on **Local-First, Zero-Cost Resilience, Security-First, and Privacy-First Architecture**:
+* 💸 **100% Free & Zero Server Overhead:** Operates *Local-First* using **SwiftData** and seamlessly connects to **Supabase Cloud (PostgreSQL Free Tier)** with zero recurring server costs.
+* 🛡️ **Guaranteed Athlete Privacy & Encryption:** Sensitive location data near home/office is sanitized via geofence masking, Row Level Security (RLS) on cloud database, and session tokens stored securely in **Apple Keychain Security Framework**.
+* ⚡️ **Swift 6 Strict Concurrency:** Eliminates data races during high-frequency GPS coordinate calculations by isolating state on `actor LocationEngine`.
+* 🎧 **Background Modes & Audio Ducking:** Tracks GPS routes accurately in your pocket when locked, automatically ducking Spotify / Apple Music audio during tactical coach voice cues.
+* 🎨 **Native App Icon & Asset Catalog:** Includes official 1024x1024 px app icon asset package located in `Resources/Assets.xcassets/AppIcon.appiconset`.
+* 📦 **Dual Export Engine:** Import and export workout routes in **GPX 1.1 XML** format and binary Garmin **FIT 2.0** protocol.
 
 ---
 
-## 🛠️ Tumpukan Teknologi (Tech Stack)
+## 🛠️ Tech Stack
 
-| Kategori | Teknologi / Framework | Deskripsi Penggunaan |
+| Category | Technology / Framework | Description & Usage |
 | :--- | :--- | :--- |
 | **Language** | **Swift 6.0** | Strict Concurrency Checking (`-swift-version 6`), Actor isolation, Sendable models |
-| **UI Framework** | **SwiftUI & MapKit** | Declarative modern UI, `MapPolyline` gradient styling, custom markers, haptics |
-| **Persistence** | **SwiftData** | `@Model` relational local-first storage dengan zero memory leakage |
-| **Project Setup** | **StrideSync.xcodeproj** | Native iOS target dengan bundle ID `irsalteam.stridesync` & shared scheme |
+| **UI Framework** | **SwiftUI & MapKit** | Declarative UI, `MapPolyline` gradient styling, custom markers, haptic feedback |
+| **Persistence** | **SwiftData** | `@Model` relational local-first storage with zero memory leakage |
+| **Project Setup** | **StrideSync.xcodeproj** | Native iOS target with bundle ID `irsalteam.stridesync` & shared scheme |
 | **Cloud Backend** | **Supabase (PostgreSQL 15+)** | Cloud Database, Row Level Security (RLS), Multi-user Social Feed & Segments |
-| **Auth & Security** | **Sign in with Apple & Keychain** | Apple ID 1-tap auth, Email auth & `SecItem` API Keychain encryption |
-| **Background Modes**| **CoreLocation & AVFoundation** | `UIBackgroundModes: location, audio` dengan audio ducking Spotify/Apple Music |
+| **Auth & Security** | **Sign in with Apple & Keychain** | Apple ID 1-tap authentication, Email auth & `SecItem` API Keychain encryption |
+| **Background Modes**| **CoreLocation & AVFoundation** | `UIBackgroundModes: location, audio` with Spotify / Apple Music audio ducking |
 | **Live Tracking** | **ActivityKit & WidgetKit** | Dynamic Island, Lock Screen Live Activities & Home Screen widgets |
-| **Health Sync** | **HealthKit** | Otorisasi dan sinkronisasi workout native via `HKWorkoutBuilder` |
-| **Export Engines**| **GPX 1.1 & Garmin FIT 2.0** | Generator XML GPX 1.1 dan Encoder/Decoder biner Garmin FIT 2.0 |
-| **P2P Radar** | **CoreBluetooth (BLE)** | Pemindaian detak jantung, cycling power GATT & direct mesh Buddy Radar |
-| **Testing** | **Swift Testing Framework** | **81 Unit Tests** lulus 100% pada 37 Test Suites |
+| **Health Sync** | **HealthKit** | Native authorization & workout synchronization via `HKWorkoutBuilder` |
+| **Export Engines**| **GPX 1.1 & Garmin FIT 2.0** | GPX 1.1 XML generator & Garmin FIT 2.0 binary encoder/decoder |
+| **P2P Radar** | **CoreBluetooth (BLE)** | Bluetooth GATT heart rate chest straps, cycling power meters & Buddy Radar |
+| **Testing** | **Swift Testing Framework** | **81 Unit Tests** 100% passing across 37 Test Suites |
 
 ---
 
-## 🚀 Fitur Utama (Core Features)
+## 🚀 Core Features
 
 ### 1. 🛰️ Pro-Grade GPS & Telemetry Engine
-- **Actor-Isolated Location Tracking (`LocationEngine`)**: Mengisolasi proses penerimaan koordinat GPS pada background actor terpisah untuk mencegah *race condition* dan *main-thread blocking*.
-- **GPS Noise & Drift Rejection**: Menolak koordinat dengan akurasi horizontal rendah (`> 25 meter`) dan menyaring anomali lonjakan kecepatan.
-- **Smart Auto-Pause & Resume**: Otomatis menjeda perekaman saat atlet berhenti di lampu merah (`speed < 0.8 m/s`) dan melanjutkan kembali saat bergerak.
-- **Kilometer Splits Calculator**: Menghitung *pacing split* dan akumulasi elevasi secara presisi per kilometer.
+- **Actor-Isolated Location Tracking (`LocationEngine`)**: Isolates GPS coordinate processing on a dedicated background actor to eliminate race conditions and main-thread blocking.
+- **GPS Noise & Drift Rejection**: Filters out low horizontal accuracy coordinates (`> 25 meters`) and rejects velocity anomaly spikes.
+- **Smart Auto-Pause & Resume**: Automatically pauses recording when stopping at traffic lights (`speed < 0.8 m/s`) and resumes when moving.
+- **Kilometer Splits Calculator**: Computes precise pacing splits and elevation gains per kilometer.
 
 ### 2. 👻 Virtual Ghost Runner
-- Berlari melawan bayangan catatan waktu terbaik pribadi (PR) atau target pace tertentu dengan indikator delta jarak (+/- meter) real-time di layar.
+- Compete against your personal record (PR) shadow or target pace with real-time distance delta (+/- meters) displayed on screen.
 
 ### 3. ⛰️ Climb Classifier & UCI Grade Analysis
-- Deteksi otomatis tanjakan kategori standar UCI / Strava (*Cat 4, 3, 2, 1, dan Hors Catégorie / HC*) dengan perhitungan Climb Score dan Grade Adjusted Pace (GAP).
+- Automatic climb category detection adhering to UCI / Strava standards (*Cat 4, 3, 2, 1, and Hors Catégorie / HC*) with Climb Score and Grade Adjusted Pace (GAP).
 
 ### 4. 🫁 VO2 Max & Race Predictor
-- Estimasi kapasitas aerobik VO2 Max dan kalkulasi waktu finish balapan untuk **5K, 10K, Half Marathon (21.1 km), dan Full Marathon (42.2 km)** berbasis model fisiologis *Jack Daniels VDOT* dan *Riegel*.
+- Aerobic capacity VO2 Max estimation and race completion predictor for **5K, 10K, Half Marathon (21.1 km), and Full Marathon (42.2 km)** based on *Jack Daniels VDOT* and *Riegel* physiological models.
 
 ### 5. 📊 Training Load (Banister TRIMP) & Recovery Gauge
-- Kalkulasi beban fisiologis latihan berbasis formula matematis **Banister TRIMP**, pemodelan kelelahan sesaat (*Acute Load ATL* 7 hari), kebugaran dasar (*Chronic Load CTL* 28 hari), dan estimasi jam pemulihan otot.
+- Physiological training load calculation using **Banister TRIMP** mathematical formula, fatigue modeling (*Acute Load ATL* 7 days), fitness modeling (*Chronic Load CTL* 28 days), and muscle recovery hours.
 
 ### 6. 👑 Virtual Segments & KOM/QOM Leaderboard
-- **Spatial Segment Matcher**: Algoritma pencocokan polylines rute terhadap segmen virtual jalanan dengan radius toleransi pintu masuk/keluar (*gate radius* 40m).
-- **Crown & Personal Record (PR)**: Penentuan gelar **King/Queen of the Mountain (KOM/QOM)** tercepat dan pemecahan rekor pribadi.
+- **Spatial Segment Matcher**: Polyline route matching algorithm against street segments with a 40m gate tolerance radius.
+- **Crown & Personal Record (PR)**: Automatic **King/Queen of the Mountain (KOM/QOM)** title detection and personal record tracking.
 
 ### 7. 🎯 Live Audio Pacing Coach & Audio Ducking
-- Mengatur target waktu tempuh balapan (*Sub-20m 5K, Sub-50m 10K, Sub-4h Marathon*) dengan evaluasi delta waktu real-time dan panduan suara taktis bilingual via `AVSpeechSynthesizer`.
+- Set target race finish times (*Sub-20m 5K, Sub-50m 10K, Sub-4h Marathon*) with real-time time delta evaluation and tactical voice announcements via `AVSpeechSynthesizer`.
 
 ### 8. 📶 External Bluetooth BLE Sensors (CoreBluetooth)
-- Pemindaian dan pembacaan paket biner standar Bluetooth SIG GATT untuk sensor dada detak jantung (`0x180D`/`0x2A37`) dan sensor daya kayuh sepeda (*Cycling Power* `0x1818`/`0x2A63`).
+- Scan and decode standard Bluetooth SIG GATT binary packets for heart rate chest straps (`0x180D`/`0x2A37`) and cycling power meters (`0x1818`/`0x2A63`).
 
 ### 9. 📡 Live Group Run Radar & Safety Beacon
-- Pemindaian pelari komunitas sekitar dalam radius 1.5 km secara anonim, sistem deteksi benturan keras/jatuh (*Fall Detection G > 3.5g*), dan tautan live tracking darurat.
+- Scan nearby community runners within a 1.5 km radius anonymously, hard fall detection system (*Fall Detection G > 3.5g*), and emergency live tracking beacon links.
 
 ### 10. 🚁 3D Aerial Flyover Replay & AI Workout Story
-- Rekonstruksi visual rute lari dengan kamera satelit 3D helikopter pitch 60° serta narasi motivasi AI yang dirangkum dari data performa sesi.
+- 3D helicopter satellite replay of recorded routes with a 60° pitch camera angle and AI-generated motivational summaries.
 
 ---
 
-## 💻 Cara Menjalankan & Memasang Aplikasi
+## 💻 Getting Started & Installation
 
-### Opsi 1: Membuka di Xcode (macOS)
+### Option 1: Open in Xcode (macOS)
 ```bash
-# 1. Clone repositori
+# 1. Clone repository
 git clone https://github.com/Irs622/stridesync-ios.git
 cd stridesync-ios
 
-# 2. Buka proyek Xcode native
+# 2. Open native Xcode project
 open StrideSync.xcodeproj
 ```
 
-### Opsi 2: Menjalankan via Terminal Langsung
+### Option 2: Run via Terminal
 ```bash
-# Build untuk iOS Simulator / Perangkat Fisik
+# Build for iOS Simulator or Physical Device
 xcodebuild build -project StrideSync.xcodeproj -scheme StrideSync -destination 'generic/platform=iOS'
 ```
 
-### Opsi 3: Memasang ke iPhone Fisik Anda (100% Gratis / Rp 0)
-1. Sambungkan iPhone ke Mac dengan kabel data USB.
-2. Di Xcode: Buka target **StrideSync** → tab **Signing & Capabilities**.
-3. Pilih **Personal Team (Apple ID gratis)** Anda (`PU23ZB2X47`).
-4. Pilih iPhone Anda di bagian atas, lalu klik **▶️ Play (Run)**.
-5. Pada iPhone: Buka **Settings** → **General** → **VPN & Device Management** → klik **Trust Developer**.
+### Option 3: Install to Physical iPhone (100% Free / Zero Cost)
+1. Connect your iPhone to Mac via USB cable.
+2. In Xcode: Select target **StrideSync** → **Signing & Capabilities** tab.
+3. Select your **Personal Team (Free Apple ID)** (`PU23ZB2X47`).
+4. Select your connected iPhone at the top device selector, then click **▶️ Play (Run)**.
+5. On your iPhone: Open **Settings** → **General** → **VPN & Device Management** → tap **Trust Developer**.
 
-### Opsi 4: Mengunduh File .IPA Langsung (Sideloading)
-Unduh paket [StrideSync.ipa (v0.5.0-beta)](https://stridesync-web.vercel.app/downloads/StrideSync.ipa) dan install menggunakan **AltStore**, **Sideloadly**, **TrollStore**, atau **Scarlet**.
+### Option 4: Download Direct .IPA File (Sideloading)
+Download [StrideSync.ipa (v0.5.0-beta)](https://stridesync-web.vercel.app/downloads/StrideSync.ipa) and install using **AltStore**, **Sideloadly**, **TrollStore**, or **Scarlet**.
 
 ---
 
-## 📁 Struktur Direktori Proyek
+## 📁 Project Directory Structure
 
-```
+```text
 stridesync-ios/
-├── StrideSync.xcodeproj/            # Konfigurasi Proyek Xcode Native (iOS App)
-│   ├── project.pbxproj              # Target, Build Settings, & Permissions
-│   └── xcshareddata/xcschemes/      # Shared Scheme StrideSync
-├── Package.swift                    # Konfigurasi Swift Package Manager (Swift 6)
+├── StrideSync.xcodeproj/            # Native Xcode Project Configuration (iOS App)
+│   ├── project.pbxproj              # Targets, Build Settings, & Permissions
+│   └── xcshareddata/xcschemes/      # StrideSync Shared Schemes
+├── Package.swift                    # Swift Package Manager Manifest (Swift 6)
 ├── Resources/
 │   └── Assets.xcassets/
-│       └── AppIcon.appiconset/      # Aset Ikon Aplikasi Resmi iOS (1024x1024)
+│       └── AppIcon.appiconset/      # Official iOS App Icon Asset Pack (1024x1024)
 ├── Sources/
 │   └── StrideSync/
-│       ├── AppMain.swift            # Entry Point @main SwiftUI App
+│       ├── AppMain.swift            # SwiftUI App Entrypoint (@main)
 │       ├── Models/                  # SwiftData Models & Codable DTOs
 │       ├── Services/                # GPS Actor, Audio, BLE, Supabase, SyncEngine
 │       ├── ViewModels/              # Observable MVVM State Managers
 │       └── Views/                   # SwiftUI Screens (HUD, Onboarding, Social, Profile)
 ├── database/
-│   └── schema.sql                   # Skema PostgreSQL Cloud + RLS Policies
+│   └── schema.sql                   # Supabase PostgreSQL Cloud Schema + RLS Policies
 ├── docs/
-│   ├── APP_STORE_GUIDE.md           # Panduan Lengkap App Store Review & TestFlight
-│   └── FREE_DEPLOYMENT_GUIDE.md     # Panduan Instalasi Fisik Tanpa Bayar (Rp 0)
+│   ├── APP_STORE_GUIDE.md           # App Store Review & TestFlight Deployment Guide
+│   └── FREE_DEPLOYMENT_GUIDE.md     # Zero-Cost Physical iPhone Installation Guide
 └── Tests/
     └── StrideSyncTests/             # 81 Unit Tests across 37 Test Suites (100% PASS)
 ```
 
 ---
 
-## 📄 Lisensi & Kredit
+## 📄 License & Credits
 
-- **Pembuat / Developer**: [Irsal Shydiq](https://github.com/Irs622)
-- **Website Promosi**: [https://stridesync-web.vercel.app](https://stridesync-web.vercel.app)
-- **Repositori Web**: [https://github.com/Irs622/stridesync-web](https://github.com/Irs622/stridesync-web)
-- Dibangun dengan dedikasi untuk komunitas pelari dan pegiat olahraga Indonesia 🇮🇩
+- **Developer**: [Irsal Shydiq](https://github.com/Irs622)
+- **Web App**: [https://stridesync-web.vercel.app](https://stridesync-web.vercel.app)
+- **Web Repository**: [https://github.com/Irs622/stridesync-web](https://github.com/Irs622/stridesync-web)
+- Built with dedication for runners and athletic endurance communities 🏃‍♂️⚡️
+
+Distributed under the official **[MIT License](LICENSE)**.

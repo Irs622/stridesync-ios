@@ -1,54 +1,55 @@
-# 🏃‍♂️ Panduan Menjalankan StrideSync 100% Gratis (Biaya Rp 0)
+# 🏃‍♂️ StrideSync Zero-Cost Deployment Guide (100% Free)
 
-Panduan ini menjelaskan cara menggunakan dan memasang aplikasi **StrideSync** ke perangkat iPhone fisik Anda dan teman-teman Anda **tanpa perlu membayar akun Apple Developer ($99) atau menyewa server (Rp 0)**.
-
----
-
-## 🌟 1. Arsitektur "Local-First" Bebas Biaya Server
-StrideSync dirancang dengan prinsip **Local-First**:
-* **Database Mandiri (SwiftData):** Seluruh rute GPS, grafik elevasi, split kilometer, estimasi VO2 Max, dan riwayat rekor lari tersimpan aman di memori lokal iPhone Anda.
-* **Bebas Kuota & Offline 100%:** Anda bisa merekam lari di pegunungan, hutan, atau luar negeri tanpa perlu koneksi internet.
-* **Ekspor & Berbagi Tanpa Batas:** Anda bisa mengekspor rute lari dalam format standar dunia **GPX 1.1 XML** atau **FIT** dan langsung membagikannya via WhatsApp, AirDrop, Telegram, atau mengimpornya ke Strava / Garmin Connect secara gratis!
+This guide explains how to install and run **StrideSync** on your physical iPhone and share it with friends **without paying for an Apple Developer Account ($99) or renting cloud servers**.
 
 ---
 
-## 📲 2. Cara Memasang Aplikasi ke iPhone Asli Anda (Gratis via Xcode)
+## 🌟 1. "Local-First" Zero Server Overhead Architecture
 
-Anda bisa memasang aplikasi ini langsung ke iPhone Anda menggunakan akun Apple ID biasa (gratis):
+StrideSync is engineered on **Local-First** design principles:
+* **Self-Contained Storage (SwiftData):** All GPS routes, elevation charts, kilometer splits, VO2 Max estimates, and personal record histories are stored securely in local iPhone memory.
+* **100% Offline Capability:** Record outdoor runs in mountains, forests, or abroad without an internet connection.
+* **Unlimited Export & Sharing:** Export workout routes in world-standard **GPX 1.1 XML** or **Garmin FIT** formats and share via AirDrop, Messages, or import directly into Strava / Garmin Connect for free!
 
-### Langkah-langkah:
-1. **Sambungkan iPhone ke Mac:**
-   * Gunakan kabel data USB/Type-C untuk menghubungkan iPhone ke laptop Mac Anda.
-   * Pada layar iPhone, pilih **"Trust This Computer" (Percayai Komputer Ini)**.
-2. **Aktifkan Developer Mode di iPhone (Khusus iOS 16+):**
-   * Di iPhone, buka menu **Settings (Pengaturan)** ➡️ **Privacy & Security (Privasi & Keamanan)**.
-   * Gulir ke paling bawah, ketuk **Developer Mode (Mode Pengembang)**, lalu aktifkan (ON) dan restart iPhone.
-3. **Buka Proyek di Xcode:**
-   * Buka folder proyek ini di Xcode:
+---
+
+## 📲 2. How to Install on Your Physical iPhone (Free via Xcode)
+
+Install StrideSync directly onto your iPhone using a standard free Apple ID account:
+
+### Step-by-Step Instructions:
+1. **Connect iPhone to Mac:**
+   * Connect your iPhone to your Mac using a USB/Type-C cable.
+   * On your iPhone screen, select **"Trust This Computer"**.
+2. **Enable Developer Mode on iPhone (iOS 16+):**
+   * On iPhone, open **Settings** ➡️ **Privacy & Security**.
+   * Scroll to the bottom, tap **Developer Mode**, switch it **ON**, and restart your iPhone.
+3. **Open Project in Xcode:**
+   * Open the project in Xcode:
      ```bash
-     open Package.swift
+     open StrideSync.xcodeproj
      ```
-4. **Pilih Personal Team Gratis:**
-   * Pada tab *Signing & Capabilities*, masukkan akun Apple ID (iCloud) gratis Anda di bagian **Team**.
-5. **Jalankan ke iPhone:**
-   * Pada bagian atas Xcode (Device Selector), ganti pilihan dari *Simulator* menjadi **Nama iPhone Anda**.
-   * Klik tombol **▶️ Play (Run)**.
-   * Aplikasi StrideSync akan langsung terpasang di iPhone Anda dan siap dibawa lari di luar ruangan!
+4. **Select Free Personal Team:**
+   * Under *Signing & Capabilities* tab, enter your free Apple ID (iCloud) account in the **Team** dropdown.
+5. **Run on Physical iPhone:**
+   * At the top of Xcode (Device Selector), change selection from *Simulator* to **Your iPhone Name**.
+   * Click **▶️ Play (Run)**.
+   * StrideSync will compile and launch directly on your physical iPhone!
 
 ---
 
-## 👥 3. Cara Membagikan ke Teman Tanpa Bayar Server
+## 👥 3. Sharing with Friends Without Server Costs
 
-* **Opsi A (Sideloading Gratis):** Teman Anda bisa memasang file build menggunakan kabel USB atau aplikasi sideloading gratis seperti *Sideloadly* / *AltStore*.
-* **Opsi B (Ekspor GPX Lari Bersama):** Setelah selesai lari bersama, Anda cukup mengetuk tombol **Bagikan GPX** di layar ringkasan latihan untuk mengirimkan file rute lengkap ke WhatsApp teman Anda.
-* **Opsi C (Database Cloud Gratis via Gmail):** Jika ingin fitur linimasa komunitas online, Anda cukup membuat akun gratis di **Supabase.com** atau **Firebase** dengan akun Gmail gratis (kuota gratis hingga 50.000 pengguna).
+* **Option A (Free Sideloading):** Friends can install build artifacts using USB cables or free sideloading tools like *Sideloadly* / *AltStore*.
+* **Option B (Group Run GPX Export):** After a group workout, tap **Share GPX** on the workout summary screen to send the complete route file via Messages or AirDrop.
+* **Option C (Free Cloud Backend via Gmail):** If community social feed synchronization is desired, set up a free project on **Supabase.com** with a free Gmail account (free tier supports up to 50,000 active users).
 
 ---
 
-## 🛠️ 4. Menjalankan Tes Otomatis
-Untuk memastikan seluruh 81 fitur aplikasi berjalan normal tanpa error:
+## 🛠️ 4. Running Automated Unit Tests
+
+To verify all features operate cleanly without regression:
 ```bash
 swift test
 ```
-Semua 37 rangkaian tes akan tervalidasi dengan sukses (**100% PASS**).
-
+All 37 test suites will execute and pass successfully (**100% PASS**).

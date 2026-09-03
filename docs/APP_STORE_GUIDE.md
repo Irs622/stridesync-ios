@@ -1,80 +1,79 @@
-# 🍎 Panduan Lengkap Publikasi App Store & TestFlight (StrideSync iOS)
+# 🍎 Complete App Store & TestFlight Deployment Guide (StrideSync iOS)
 
-Dokumen ini adalah panduan resmi langkah-demi-langkah untuk mendaftarkan, menguji (*TestFlight*), dan merilis aplikasi **StrideSync** ke **Apple App Store**.
+This document is the official step-by-step guide for registering, testing (*TestFlight*), and releasing **StrideSync** to the **Apple App Store**.
 
 ---
 
-## 1. 📋 Persiapan Akun & App Store Connect
-1. **Daftar Apple Developer Program:**
-   * Buka [developer.apple.com/programs](https://developer.apple.com/programs/) ($99 USD/tahun).
-2. **Buat App ID & Provisioning Profile:**
+## 1. 📋 Account & App Store Connect Setup
+1. **Enroll in Apple Developer Program:**
+   * Go to [developer.apple.com/programs](https://developer.apple.com/programs/) ($99 USD/year).
+2. **Create App ID & Provisioning Profile:**
    * **Bundle Identifier:** `com.stridesync.ios`
-   * **Capabilities yang Diaktifkan:**
+   * **Enabled Capabilities:**
      * `Sign in with Apple`
      * `HealthKit`
      * `Push Notifications`
      * `Background Modes` (Location updates, Audio, Background fetch)
-3. **Buat Aplikasi di App Store Connect:**
-   * Masuk ke [appstoreconnect.apple.com](https://appstoreconnect.apple.com).
-   * Klik `+` -> **New App**.
+3. **Create App in App Store Connect:**
+   * Log in to [appstoreconnect.apple.com](https://appstoreconnect.apple.com).
+   * Click `+` -> **New App**.
    * **Name:** `StrideSync: Running & GPS Tracker`
-   * **Primary Language:** `Indonesian (id)` / `English (U.S.)`
+   * **Primary Language:** `English (U.S.)`
    * **Primary Category:** `Health & Fitness`
    * **Secondary Category:** `Sports`
 
 ---
 
-## 2. 📝 Metadata & Deskripsi Pemasaran (ASO)
+## 2. 📝 Metadata & App Store Optimization (ASO)
 
-### **Judul (App Title):**
+### **App Title:**
 `StrideSync – GPS Run & Social Fitness`
 
-### **Subtitle (30 Karakter):**
-`Lari, Rute GPS & Komunitas`
+### **Subtitle (30 Characters):**
+`Running, GPS Routes & Community`
 
-### **Kata Kunci (Keywords SEO - 100 Karakter):**
-`lari,running,strava,gps,maraton,jogging,rute,metronome,vo2max,sepeda,healthkit,komunitas,radar,speedometer`
+### **Keywords (100 Characters):**
+`running,run,strava,gps,marathon,jogging,route,metronome,vo2max,cycling,healthkit,community,radar`
 
-### **Deskripsi Lengkap (Description):**
-```
-Tingkatkan performa olahraga dan lari harianmu dengan StrideSync – aplikasi pelacak GPS, biomekanik cerdas, dan komunitas atlet modern.
+### **Description:**
+```text
+Elevate your daily running and athletic performance with StrideSync – your telemetry-grade GPS tracker, intelligent biomechanics guide, and modern athletic community.
 
-FITUR UNGGULAN:
-• 📍 Presisi Pelacak GPS: Rekam jarak, pace, split 1-km, dan elevasi tanjakan dengan akurasi tinggi.
-• 🎙️ Pelatih Suara (Audio Cues): Dapatkan pengumuman waktu dan kecepatan langsung di earphone saat berlari tanpa perlu melihat layar.
-• 🗺️ 3D Flyover Replay: Putar ulang rute larimu dalam simulasi kamera 3D satelit yang menakjubkan.
-• 🔋 Metronom Kadens & Biomekanik: Sinkronisasikan langkah kaki ke irama 170-190 SPM untuk efisiensi energi.
-• 📡 Live Buddy Radar & Safety Beacon: Pantau posisi teman lari dan bagikan link live tracking darurat via SMS.
-• 🥇 Segmen & All-Time PRs: Taklukkan rute segmen kota terdekat dan kumpulkan lencana piala rekor pribadimu.
-• ⌚ Sinkronisasi Apple Health & Apple Watch.
+KEY FEATURES:
+• 📍 Precision GPS Tracking: Record distance, pace, 1-km splits, and elevation gains with high accuracy.
+• 🎙️ Audio Coach (Audio Cues): Receive real-time pace and split announcements directly in your earphones.
+• 🗺️ 3D Flyover Replay: Replay your recorded routes in an immersive 3D satellite camera simulation.
+• 🔋 Cadence Metronome & Biomechanics: Sync your stride to 170-190 SPM rhythm for optimal running efficiency.
+• 📡 Live Buddy Radar & Safety Beacon: Monitor nearby running companions and share emergency live tracking links via SMS.
+• 🥇 Segments & All-Time PRs: Conquer local street segments and collect personal record trophies.
+• ⌚ Apple Health & Apple Watch Sync.
 
-Siap melangkah lebih jauh? Unduh StrideSync hari ini dan mulailah berlari!
+Ready to step further? Download StrideSync today and start running!
 ```
 
 ---
 
-## 3. 🔒 Jawaban Kuisioner Privasi Apple (App Store Review)
-Saat mengisi bagian **App Privacy** di App Store Connect:
-* **Location (Lokasi):**
+## 3. 🔒 Apple Privacy Questionnaire Answers (App Store Review)
+When completing the **App Privacy** section in App Store Connect:
+* **Location:**
   * *Collected:* Yes.
-  * *Purpose:* App Functionality (Melacak rute lari & segmen).
+  * *Purpose:* App Functionality (Tracking workout routes & segments).
   * *Linked to User:* Yes.
 * **Health & Fitness (HealthKit):**
-  * *Collected:* Yes (Detak jantung & kalori).
+  * *Collected:* Yes (Heart rate & calories).
   * *Purpose:* Analytics & App Functionality.
-  * *Used for Advertising:* **NO** (Penting: Jangan pernah pilih iklan untuk HealthKit).
-* **Contact Info (Email/Nama):**
-  * *Collected:* Yes (Untuk autentikasi Sign in with Apple).
+  * *Used for Advertising:* **NO** (Important: Never select advertising for HealthKit).
+* **Contact Info (Email/Name):**
+  * *Collected:* Yes (For Sign in with Apple authentication).
 
 ---
 
-## 4. 🚀 Kompilasi & Unggah ke TestFlight (Otomatis)
+## 4. 🚀 Automated Build & Upload to TestFlight
 
-Jalankan skrip build rilis yang telah disediakan di terminal:
+Run the release build script provided in terminal:
 ```bash
 chmod +x scripts/build_release_ipa.sh
 ./scripts/build_release_ipa.sh
 ```
 
-Arsip `.ipa` atau `.xcarchive` akan otomatis siap diunggah menggunakan **Xcode Organizer** atau alat **Transporter App** di macOS!
-
+The resulting `.ipa` or `.xcarchive` will be ready for upload using **Xcode Organizer** or the **Transporter App** on macOS!

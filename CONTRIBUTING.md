@@ -1,77 +1,77 @@
-# 🤝 Panduan Kontribusi Resmi StrideSync (Contributing Guidelines)
+# 🤝 Official StrideSync Contributing Guidelines
 
-Selamat datang di proyek **StrideSync iOS**! Untuk menjaga keandalan kelas telemetri, keamanan data atlet, dan integritas arsitektur **Swift 6**, seluruh kontributor diwajibkan mematuhi aturan dan standar rekayasa perangkat lunak ketat yang tercantum dalam dokumen ini.
-
----
-
-## 🏛️ 1. Prinsip Utama Rekayasa (Engineering Principles)
-
-1. ⚡️ **Swift 6 Data-Race Safety:** Seluruh kode baru harus lolos kompilasi Swift 6 Strict Concurrency tanpa peringatan (*zero warnings*).
-2. 🛡️ **Privacy & Security First:** Lokasi sensitif pengguna (rumah/kantor) wajib disanitasi dengan geofencing masking, dan kredensial/token wajib tersimpan di **Apple Keychain**.
-3. 💾 **Local-First & Schema Integrity:** Aplikasi harus 100% fungsional saat offline. Seluruh perubahan struktur data `@Model` wajib menyertakan migrasi skema terversi (`StrideSyncSchema` / `SchemaMigrationPlan`).
-4. 🧪 **100% Passing Test Gate:** Pull Request (PR) tidak akan diterima jika ada satu pun tes unit yang gagal (*broken build*).
+Welcome to the **StrideSync iOS** project! To maintain telemetry-grade reliability, athlete data privacy, and **Swift 6** architectural integrity, all contributors are required to adhere to the software engineering standards set forth in this document.
 
 ---
 
-## 🌿 2. Alur Kerja Git & Standar Penamaan Branch
+## 🏛️ 1. Engineering Principles
 
-### 2.1 Format Nama Branch
-Gunakan awalan jenis pekerjaan diikuti dengan nama modul/fitur secara spesifik dalam huruf kecil (*kebab-case*):
+1. ⚡️ **Swift 6 Data-Race Safety:** All new code must compile under Swift 6 Strict Concurrency without warnings (*zero warnings*).
+2. 🛡️ **Privacy & Security First:** Sensitive user location data (home/office) must be sanitized with geofence masking, and credentials/tokens must be stored in **Apple Keychain**.
+3. 💾 **Local-First & Schema Integrity:** The app must be 100% functional offline. Any changes to `@Model` data structures must include versioned schema migration plans (`StrideSyncSchema` / `SchemaMigrationPlan`).
+4. 🧪 **100% Passing Test Gate:** Pull Requests (PRs) will not be merged if any unit tests fail (*broken build*).
 
-| Jenis | Pola Penamaan | Contoh |
+---
+
+## 🌿 2. Git Workflow & Branch Naming Conventions
+
+### 2.1 Branch Name Format
+Use a task type prefix followed by a specific lower-case module/feature name in kebab-case:
+
+| Type | Naming Pattern | Example |
 | :--- | :--- | :--- |
-| **Fitur Baru** | `feature/<nama-fitur>` | `feature/live-safety-beacon`, `feature/pacing-coach` |
-| **Perbaikan Bug** | `bugfix/<deskripsi-bug>` | `bugfix/fix-gpx-elevation-overflow`, `bugfix/split-pause-drift` |
-| **Performa & Optimasi**| `perf/<target-optimasi>`| `perf/kalman-filter-memory`, `perf/mapkit-overlay-fps` |
-| **Refaktorisasi** | `refactor/<nama-modul>` | `refactor/location-engine-actors`, `refactor/ble-manager` |
-| **Dokumentasi** | `docs/<nama-dokumen>` | `docs/update-architecture-v2`, `docs/api-reference` |
+| **New Feature** | `feature/<feature-name>` | `feature/live-safety-beacon`, `feature/pacing-coach` |
+| **Bug Fix** | `bugfix/<bug-description>` | `bugfix/fix-gpx-elevation-overflow`, `bugfix/split-pause-drift` |
+| **Performance** | `perf/<optimization-target>`| `perf/kalman-filter-memory`, `perf/mapkit-overlay-fps` |
+| **Refactoring** | `refactor/<module-name>` | `refactor/location-engine-actors`, `refactor/ble-manager` |
+| **Documentation**| `docs/<doc-name>` | `docs/update-architecture-v2`, `docs/api-reference` |
 
-### 2.2 Alur Kerja (Step-by-Step Workflow)
-1. **Fork & Clone** repository ke mesin lokal Anda:
+### 2.2 Step-by-Step Workflow
+1. **Fork & Clone** the repository to your local machine:
    ```bash
    git clone https://github.com/Irs622/stridesync-ios.git
    cd stridesync-ios
    ```
-2. **Sinkronkan dengan branch `main` terbaru:**
+2. **Synchronize with the latest `main` branch:**
    ```bash
    git checkout main
    git pull origin main
    ```
-3. **Buat branch baru:**
+3. **Create a new branch:**
    ```bash
-   git checkout -b feature/nama-fitur-anda
+   git checkout -b feature/your-feature-name
    ```
-4. **Tulis kode, dokumentasi, dan unit test.**
-5. **Jalankan test suite lokal:**
+4. **Write code, documentation, and unit tests.**
+5. **Run local test suite:**
    ```bash
    swift test
    ```
-6. **Kirimkan commit terstruktur dan buat Pull Request.**
+6. **Submit structured commits and create a Pull Request.**
 
 ---
 
-## 📝 3. Standar Pesan Commit (Conventional Commits v1.0)
+## 📝 3. Commit Message Standards (Conventional Commits v1.0)
 
-Pesan commit harus mengikuti spesifikasi **[Conventional Commits](https://www.conventionalcommits.org/)**:
+Commit messages must follow the **[Conventional Commits](https://www.conventionalcommits.org/)** specification:
 
 ```text
-<type>(<optional scope>): <deskripsi singkat dalam bahasa imperatif>
+<type>(<optional scope>): <short description in imperative mood>
 
-[opsional body penjelasan alasan perubahan dan trade-off]
-[opsional footer referensi issue / breaking change]
+[optional body explaining rationale and trade-offs]
+[optional footer referencing issues or breaking changes]
 ```
 
-### Jenis Prefix yang Diizinkan:
-* `feat:` Penambahan fitur baru untuk pengguna.
-* `fix:` Perbaikan bug pada sistem atau algoritma.
-* `refactor:` Perubahan kode tanpa mengubah fungsionalitas eksternal.
-* `perf:` Peningkatan efisiensi komputasi, memori, atau daya baterai.
-* `test:` Penambahan atau pembaruan suite pengujian unit.
-* `docs:` Perubahan pada dokumen `.md` (PRD, README, ARCHITECTURE, dll).
-* `security:` Peningkatan enkripsi, sanitasi data geofence, atau penanganan Keychain.
-* `chore:` Pemeliharaan dependensi, konfigurasi build CI/CD, atau skrip automasi.
+### Allowed Prefix Types:
+* `feat:` A new feature for the user.
+* `fix:` A bug fix in system or algorithms.
+* `refactor:` Code changes without altering external functionality.
+* `perf:` Improvements to computational efficiency, memory, or battery.
+* `test:` Adding or updating unit test suites.
+* `docs:` Changes to `.md` documentation files (PRD, README, ARCHITECTURE, etc.).
+* `security:` Improvements to encryption, geofence data sanitization, or Keychain handling.
+* `chore:` Maintenance of dependencies, CI/CD build configuration, or automation scripts.
 
-### Contoh Pesan Commit yang Baik:
+### Examples of Good Commit Messages:
 ```bash
 feat(pacing): implement dynamic audio cue feedback for target splits
 fix(navigation): resolve cross-track error threshold on sharp hairpin turns
@@ -81,74 +81,24 @@ security(privacy): enforce 200m geofence masking before exporting GPX files
 
 ---
 
-## 🛡️ 4. Aturan Rekayasa & Kualitas Kode yang Ketat
+## 🛡️ 4. Code Quality & Strict Engineering Rules
 
 ### 4.1 Swift 6 Concurrency & Actor Isolation
-* **Actor Boundary Safety:** Jangan mengirimkan tipe data non-`Sendable` melintasi batas Actor. Selalu buat struct snapshot (misal: `TelemetrySnapshot`, `SplitSnapshot`, `PacingTarget`).
-* **Isolasi Hardware & Komputasi Berat:** Seluruh kalkulasi GPS kontinu wajib berada dalam `actor LocationEngine`, sedangkan pembaruan UI wajib diisolasi pada `@MainActor`.
-* **Zero Force Unwrapping:** Dilarang keras menggunakan force unwrap `!` pada kode produksi kecuali pada data konstan mock pengujian statis. Gunakan `guard let`, `if let`, atau fallback default `??`.
-* **Non-Blocking Execution:** Dilarang memanggil `Thread.sleep(...)` pada alur kerja async. Selalu gunakan `Task.sleep(nanoseconds:)`.
+* **Actor Boundary Safety:** Never send non-`Sendable` data types across Actor boundaries. Always create snapshot structs (e.g., `TelemetrySnapshot`, `SplitSnapshot`, `PacingTarget`).
+* **Hardware & Heavy Computation Isolation:** All continuous GPS calculations must reside inside `actor LocationEngine`, while UI updates must be isolated to `@MainActor`.
+* **Zero Force Unwrapping:** Force unwrapping `!` is strictly prohibited in production code except static mock test constants. Use `guard let`, `if let`, or default fallback `??`.
+* **Non-Blocking Execution:** Never call `Thread.sleep(...)` on async workflows. Always use `Task.sleep(nanoseconds:)`.
 
-### 4.2 Persistensi Basis Data & SwiftData Schema Migration
-* Dilarang mengubah properti `@Model` secara langsung tanpa mendaftarkannya pada skema terversi (`StrideSyncSchema.swift`).
-* Setiap migrasi struktur tabel (menambah, menghapus, atau mengubah relasi) wajib menyertakan `SchemaMigrationPlan` yang teruji agar pengguna lama tidak mengalami *app crash* saat pembaruan versi.
+### 4.2 Database Persistence & SwiftData Schema Migration
+* Do not alter `@Model` properties directly without registering them in versioned schemas (`StrideSyncSchema.swift`).
+* Every table structure migration (adding, removing, or changing relationships) must include tested `SchemaMigrationPlan` to prevent app crashes for existing users.
 
-### 4.3 Privasi Data Geospasial & Keamanan
-* Setiap fungsi ekspor file publik (`GPXService`, `FITService`, Web Live Beacon) **wajib** melewati filter sanitasi titik koordinat di sekitar rumah/kantor pengguna via `PrivacyZoneService`.
-* Kredensial sensitif, token autentikasi, dan kunci enkripsi **wajib** disimpan di Apple Keychain Security Framework via `KeychainManager`, dilarang disimpan dalam bentuk *plain-text* di `UserDefaults`.
-
-### 4.4 Kompatibilitas Multiplatform (iOS 18+, watchOS 11+, macOS)
-* Kode harus aman dikompilasi lintas platform. Gunakan compiler directives yang tepat:
-  ```swift
-  #if os(iOS)
-  .navigationBarTitleDisplayMode(.inline)
-  #endif
-  ```
-* Hindari memanggil API eksklusif iOS di target modul bersama tanpa pembungkus `#if os(iOS)` / `#if !os(watchOS)`.
-
-### 4.5 Desain Antarmuka & Design System
-* Wajib menggunakan token warna semantik resmi dari `StrideTheme` (`StrideTheme.primaryOrange`, `StrideTheme.athleticGreen`, `StrideTheme.cardBackground`, `StrideTheme.hudDark`).
-* Jangan menggunakan nilai warna heksadesimal acak (*hardcoded*) di dalam komponen tampilan.
-* Seluruh sudut elemen kartu (*card corners*) wajib menggunakan gaya kontinyu (`style: .continuous`).
+### 4.3 Geospatial Data Privacy & Security
+* Every public file export function (`GPXService`, `FITService`, Web Live Beacon) **must** pass coordinate points through sanitization filters around user home/office via `PrivacyZoneService`.
+* Sensitive credentials, authentication tokens, and private keys **must** be saved in Apple Keychain Security Framework via `KeychainManager`. Plaintext storage in `UserDefaults` is strictly forbidden.
 
 ---
 
-## 🧪 5. Standar Pengujian Unit (Unit Testing Standards)
+## 📄 License
 
-1. **Wajib Menyertakan Unit Test Baru:** Setiap penambahan modul `Service`, `Engine`, atau `Calculator` baru wajib menyertakan test suite pengujian mandiri di direktori `Tests/StrideSyncTests/`.
-2. **Gunakan Swift Testing Framework Modern:** Manfaatkan `@Suite`, `@Test`, dan makro `#expect(...)` daripada `XCTest` warisan lama.
-3. **Pengujian Nilai Ekstrem (*Edge Cases*):**
-   * Uji penolakan koordinat noise / GPS drift (`accuracy > 25m`).
-   * Uji kondisi tanpa sinyal detak jantung (fallback ke RPE).
-   * Uji toleransi deviasi belokan rute navigasi ($> 30\text{m}$ off-course).
-4. **Verifikasi Keberhasilan 100%:**
-   ```bash
-   swift test
-   ```
-   *Seluruh 48+ test suites harus lulus dengan status hijau (100% Passing).*
-
----
-
-## ✅ 6. Daftar Periksa Pra-Pull Request (Pre-PR Checklist)
-
-Sebelum menekan tombol **Create Pull Request**, pastikan Anda telah mencentang seluruh poin berikut:
-
-- [ ] Kode baru lolos kompilasi tanpa peringatan di bawah **Swift 6 Strict Concurrency**.
-- [ ] Menjalankan `swift test` dan **100% tes unit lulus**.
-- [ ] Menambahkan unit test baru untuk setiap logika kalkulasi / parsing data yang baru dibuat.
-- [ ] Format pesan commit mengikuti standar **Conventional Commits** (`feat:`, `fix:`, dll).
-- [ ] Perubahan skema basis data `@Model` telah disertai versi `StrideSyncSchema` dan `SchemaMigrationPlan`.
-- [ ] Seluruh data lokasi eksternal telah disanitasi dengan `PrivacyZoneService`.
-- [ ] Tidak ada token atau kunci sensitif yang disimpan sembarangan di luar `KeychainManager`.
-- [ ] Dokumentasi terkait ([`PRD.md`](PRD.md), [`README.md`](README.md), atau [`ROADMAP.md`](ROADMAP.md)) telah diperbarui bila ada perubahan alur.
-
----
-
-## 🔍 7. Kebijakan Review & Penggabungan Kode (Review & Merge)
-
-1. **Code Review:** Setiap Pull Request akan ditinjau oleh tim pengembang utama untuk memastikan kesesuaian arsitektur Clean MVVM-C dan efisiensi memori.
-2. **Automated CI/CD:** GitHub Actions akan secara otomatis mengompilasi proyek dan menjalankan seluruh pengujian unit.
-3. **Squash and Merge:** Setelah disetujui, PR akan digabungkan ke branch `main` menggunakan metode *Squash and Merge* dengan pesan deskripsi yang rapi.
-
----
-*Terima kasih telah membantu membangun platform pelacak kebugaran dan sosial atletik generasi masa depan bersama StrideSync!*
+By contributing to **StrideSync iOS**, you agree that your contributions will be licensed under its **[MIT License](LICENSE)**.
